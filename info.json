@@ -1,0 +1,10 @@
+{
+  "name": "EndgameCombat",
+  "version": "0.0.1",
+  "title": "Endgame Combat",
+  "author": "Reika",
+  "contact": "",
+  "homepage": "",
+  "description": "Adds more powerful endgame combat capability.",
+  "dependencies": ["base >= 0.12.0"]
+}
