@@ -95,3 +95,17 @@ function Modify_Power(train, factor)
 	local newpow = num*factor
 	obj.max_power = newpow .. endmult
 end
+
+function spawnFireArea(entity)
+	local range = 36
+	local nfire = 180+math.random(160)
+	for i = 1, nfire do
+		local ang = math.random()*2*math.pi
+		local r = (math.random())^(1/2)*range
+		local dx = r*math.cos(ang)
+		local dy = r*math.sin(ang)
+		local fx = entity.position.x+dx
+		local fy = entity.position.y+dy
+		entity.surface.create_entity{name = "big-fire-flame", position = {x = fx, y = fy}, force = game.forces.neutral}
+	end
+end

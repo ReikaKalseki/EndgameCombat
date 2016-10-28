@@ -62,6 +62,9 @@ else
   nukeExplosives = 200
   table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"alien-artifact", 10})
   table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"alien-artifact", 10})
+  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"poison-capsule", 10})
+  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"advanced-circuit", 5})
+  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"alien-artifact", 1})
   data.raw["recipe"]["nuke-shell"].energy_required = data.raw["recipe"]["nuke-shell"].energy_required*10
 end
 
@@ -90,3 +93,21 @@ if data.raw.item["nitinol-alloy"] then
 else
 	table.insert(data.raw["recipe"]["better-tank"].ingredients,{"plastic-bar", 50})
 end
+
+data:extend( --extra convenience recipes
+{
+ {
+    type = "recipe",
+    name = "bullet-conversion-1",
+    enabled = "true",
+    energy_required = 3,
+    ingredients =
+    {
+	  {"firearm-magazine", 1},
+      {"copper-plate", 3}
+    },
+    result = "piercing-rounds-magazine"
+  }
+ }
+)
+table.insert(data.raw["technology"]["military-2"].effects, {type = "unlock-recipe", recipe = "bullet-conversion-1"})

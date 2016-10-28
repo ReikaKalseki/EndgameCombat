@@ -10,3 +10,17 @@ require("prototypes.tank")
 require("prototypes.armor")
 
 require("prototypes.recipes")
+
+
+-----------FLAMETHROWER-----------
+--entities
+require("prototypes.entity.fire2")
+
+--items
+require("prototypes.item.flamethrower2")
+
+--recipies
+require("prototypes.recipe.flamethrower2")
+
+--tech
+require("prototypes.technology.flamethrower2")

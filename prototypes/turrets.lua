@@ -53,6 +53,7 @@ data:extend(
     inventory_size = 2,
     automated_ammo_count = 10,
     attacking_speed = 0.5,
+    call_for_help_radius = 50,
     resistances =
     {
       {
@@ -105,6 +106,7 @@ data:extend(
           width = 90,
           height = 75,
           axially_symmetrical = false,
+          frame_count = 1,
           direction_count = 1,
           shift = {0.0625, -0.046875},
         },
@@ -160,6 +162,7 @@ data:extend(
 	fast_replaceable_group =  "laser-turret",
     dying_explosion = "medium-explosion",
     folding_speed = 0.05,
+    call_for_help_radius = 60,
     resistances =
     {
       {
@@ -256,6 +259,7 @@ data:extend(
           width = 98,
           height = 82,
           axially_symmetrical = false,
+          frame_count = 1,
           direction_count = 1,
           shift = { 0.109375, 0.03125 }
         },
@@ -302,7 +306,7 @@ data:extend(
           }
         }
       },
-      sound = make_laser_sounds()
+      sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 },
     }
   },
   
@@ -324,6 +328,7 @@ data:extend(
     inventory_size = 2,
     automated_ammo_count = 10,
     attacking_speed = 0.25,
+    call_for_help_radius = 80,
     resistances =
     {
       {
@@ -376,6 +381,7 @@ data:extend(
           width = 90,
           height = 75,
           axially_symmetrical = false,
+          frame_count = 1,
           direction_count = 1,
           shift = {0.0625, -0.046875},
         },

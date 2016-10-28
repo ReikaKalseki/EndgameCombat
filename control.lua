@@ -1,6 +1,7 @@
-require "defines"
+--require "defines"
 require "util"
-
+require "functions"
+--[[
 script.on_load(function()
 	if global.EndgameCombatVars == nil then
 		global.EndgameCombatVars = {}
@@ -16,5 +17,12 @@ script.on_event(defines.events.on_research_finished, function(event)
 	end
 	if event.research.name == "logistic-defence-2" then
 		global.EndgameCombatVars.robotDefenceLevelBoostFactor = 1.5
+	end
+end)
+--]]
+
+script.on_event(defines.events.on_trigger_created_entity, function(event)
+	if event.entity.name == "fire-area-spawner" then
+		spawnFireArea(event.entity)
 	end
 end)

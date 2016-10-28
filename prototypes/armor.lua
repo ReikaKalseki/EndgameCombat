@@ -1,6 +1,18 @@
 data:extend(
 {
   {
+    type = "equipment-grid",
+    name = "huge-equipment-grid",
+    width = 16,
+    height = 32,
+    equipment_categories = {"armor"}
+  }
+}
+)
+
+data:extend(
+{
+  {
     type = "armor",
     name = "power-armor-3",
     icon = "__EndgameCombat__/graphics/icons/power-armor-3.png",
@@ -36,7 +48,8 @@ data:extend(
     subgroup = "armor",
     order = "e[power-armor-3]",
     stack_size = 1,
-    equipment_grid = {width = 32, height = 16}
+    equipment_grid = "huge-equipment-grid",
+    inventory_size_bonus = 40
   },
   
   {
@@ -82,6 +95,7 @@ data:extend(
       usage_priority = "secondary-input",
       buffer_capacity = "45kJ"
     },
+    categories = {"armor"},
     attack_parameters =
     {
       type = "projectile",
@@ -141,7 +155,8 @@ data:extend(
       usage_priority = "primary-input"
     },
     energy_input = "1.5kW",
-    tint = {r = 0.05, g = 0.1, b = 0.15, a = 0.01}
+    tint = {r = 0.05, g = 0.1, b = 0.15, a = 0.01},
+    categories = {"armor"}
   },
 }
 )

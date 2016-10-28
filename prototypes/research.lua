@@ -140,8 +140,8 @@ data:extend(
     prerequisites =
     {
       "power-armor-3",
-	  "basic-electric-discharge-defense-equipment",
-	  "basic-laser-defense-equipment",
+	  "discharge-defense-equipment",
+	  "personal-laser-defense-equipment",
 	  "night-vision-equipment",
 	  "energy-shield-equipment",
 	  "battery-equipment",
@@ -375,6 +375,38 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
+    {
+    type = "technology",
+    name = "napalm-shells",
+    icon = "__EndgameCombat__/graphics/technology/napalm-shells.png",
+    prerequisites =
+    {
+	  "fire-ammo",
+      "military-4"
+    },
+	effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "napalm-shell"
+      }
+    },
+    unit =
+    {
+      count = 400,
+      ingredients =
+      {
+        {"science-pack-1", 4},
+        {"science-pack-2", 2},
+        {"science-pack-3", 1},
+        {"alien-science-pack", 1},
+      },
+      time = 60
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
   
   {
     type = "technology",
@@ -442,6 +474,37 @@ data:extend(
         {"alien-science-pack", 1},
       },
       time = 240
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+      {
+    type = "technology",
+    name = "capsules",
+    icon = "__EndgameCombat__/graphics/technology/capsules.png",
+    prerequisites =
+    {
+	  "military-4",
+      "advanced-oil-processing",
+    },
+	effects =
+    {
+	    {
+        type = "unlock-recipe",
+        recipe = "acid-capsule"
+      },
+    },
+    unit =
+    {
+      count = 100,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+      },
+      time = 40
     },
     upgrade = true,
     order = "a-f",

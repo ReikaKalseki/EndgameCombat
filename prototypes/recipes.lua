@@ -88,7 +88,7 @@
     enabled = false,
     energy_required = 40,
     ingredients = {
-		{"basic-laser-defense-equipment", 1},
+		{"personal-laser-defense-equipment", 1},
 		{"plasma-turret", 5},
 		{"processing-unit", 10},
 		{"electronic-circuit", 25},
@@ -228,6 +228,21 @@
     },
     result = "neutron-shell"
   },
+      {
+    type = "recipe",
+    name = "napalm-shell",
+    enabled = "false",
+    energy_required = 45,
+	category = "advanced-crafting",
+    ingredients =
+    {
+      {"flame-thrower-ammo", 20},
+	  {"steel-plate", 20},
+	  {"explosives", 10},
+      {"plastic-bar", 25}
+    },
+    result = "napalm-shell"
+  },
     {
     type = "recipe",
     name = "hiex-cannon-shell-big",
@@ -255,6 +270,20 @@
       {"explosives", 1},
     },
     result = "radiation-capsule"
+  },
+      {
+    type = "recipe",
+    name = "acid-capsule",
+    enabled = "false",
+    energy_required = 30,
+    category = "crafting-with-fluid",
+    ingredients =
+    {
+      {"steel-plate", 5},
+      {"plastic-bar", 7},
+      {type="fluid", name = "sulfuric-acid", amount = 1}
+    },
+    result = "acid-capsule"
   }
 }
 )

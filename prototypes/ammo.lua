@@ -185,6 +185,38 @@ data:extend(
     order = "c",
     stack_size = 100
   },
+        {
+    type = "ammo",
+    name = "napalm-shell",
+    icon = "__EndgameCombat__/graphics/icons/napalm-shell.png",
+    flags = {"goes-to-main-inventory"},
+    ammo_type =
+    {
+      category = "cannon-shell",
+      target_type = "direction",
+      source_effects =
+      {
+        type = "create-entity",
+        entity_name = "explosion-gunshot"
+      },
+      action =
+      {
+        type = "direct",
+        action_delivery =
+        {
+          type = "projectile",
+          projectile = "napalm-projectile",
+          starting_speed = 0.25,
+          direction_deviation = 0.1,
+          range_deviation = 0.1,
+          max_range = 120
+        }
+      },
+    },
+    subgroup = "ammo",
+    order = "c",
+    stack_size = 100
+  },
   
     {
     type = "capsule",
@@ -220,6 +252,43 @@ data:extend(
     },
     subgroup = "capsule",
     order = "b[radiation-capsule]",
+    stack_size = 100
+   },
+   
+       {
+    type = "capsule",
+    name = "acid-capsule",
+    icon = "__EndgameCombat__/graphics/icons/acid-capsule.png",
+    flags = {"goes-to-quickbar"},
+    capsule_action =
+    {
+      type = "throw",
+      attack_parameters =
+      {
+        type = "projectile",
+        ammo_category = "capsule",
+        cooldown = 20,
+        projectile_creation_distance = 0.6,
+        range = 30,
+        ammo_type =
+        {
+          category = "capsule",
+          target_type = "position",
+          action =
+          {
+            type = "direct",
+            action_delivery =
+            {
+              type = "projectile",
+              projectile = "acid-capsule",
+              starting_speed = 0.3
+            }
+          }
+        }
+      }
+    },
+    subgroup = "capsule",
+    order = "b[acid-capsule]",
     stack_size = 100
    },
 }
