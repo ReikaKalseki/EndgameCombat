@@ -2,15 +2,15 @@ data:extend(
 {
   {
     type = "gun",
-    name = "flame-thrower-2",
-    icon = "__base__/graphics/icons/flame-thrower.png",
+    name = "flamethrower-2",
+    icon = "__base__/graphics/icons/flamethrower.png",
     flags = {"goes-to-main-inventory"},
     subgroup = "gun",
-    order = "e[flame-thrower]",
+    order = "e[flamethrower]",
     attack_parameters =
     {
       type = "stream",
-      ammo_category = "flame-thrower",
+      ammo_category = "flamethrower",
       cooldown = 1,
       movement_slow_down_factor = 0.6,
       projectile_creation_distance = 0.6,

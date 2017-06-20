@@ -5,7 +5,7 @@
   "author": "Reika",
   "contact": "",
   "homepage": "",
-  "factorio_version" : "0.14",
+  "factorio_version" : "0.15",
   "description": "Adds more powerful endgame combat capability.",
   "dependencies": ["base >= 0.14.0"]
 }

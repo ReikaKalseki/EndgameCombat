@@ -68,7 +68,7 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
-        {
+  {
     type = "technology",
     name = "tough-spiked-walls",
     icon = "__EndgameCombat__/graphics/technology/tough-spiked-walls.png",
@@ -125,7 +125,8 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
       },
       time = 30
     },
@@ -167,7 +168,8 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
       },
       time = 30
     },
@@ -200,7 +202,7 @@ data:extend(
         {"science-pack-1", 4},
         {"science-pack-2", 2},
         {"science-pack-3", 1},
-        {"alien-science-pack", 2},
+        {"military-science-pack", 2},
       },
       time = 60
     },
@@ -237,7 +239,7 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
   
   {
@@ -265,7 +267,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
       },
       time = 30
     },
@@ -306,7 +308,7 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
-      {
+  {
     type = "technology",
     name = "logistic-defence-2",
     icon = "__EndgameCombat__/graphics/technology/logistic.png",
@@ -329,7 +331,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
       },
       time = 30
     },
@@ -399,13 +401,13 @@ data:extend(
         {"science-pack-1", 4},
         {"science-pack-2", 2},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
       },
       time = 60
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
   
   {
@@ -437,7 +439,7 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
     {
     type = "technology",
@@ -450,10 +452,10 @@ data:extend(
     },
 	effects =
     {
-      {
+      --[[{
         type = "unlock-recipe",
         recipe = "nuke-shell"
-      },
+      },--]]
 	        {
         type = "unlock-recipe",
         recipe = "radiation-capsule"
@@ -471,13 +473,14 @@ data:extend(
         {"science-pack-1", 8},
         {"science-pack-2", 4},
         {"science-pack-3", 2},
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
       },
       time = 240
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
       {
     type = "technology",
@@ -508,7 +511,7 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
 
 --turrets
@@ -537,6 +540,8 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
+		{"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
       },
       time = 30
     },
@@ -569,6 +574,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
+		{"high-tech-science-pack", 1},
       },
       time = 45
     },
@@ -606,7 +612,7 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 128,
+	icon_size = 32,
   },
   
   --upgrades
@@ -715,7 +721,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1}
+        {"military-science-pack", 1}
       },
       time = 60
     },
@@ -741,7 +747,7 @@ data:extend(
       count = 200,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -770,7 +776,7 @@ data:extend(
       count = 300,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -887,7 +893,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1}
+        {"military-science-pack", 1}
       },
       time = 60
     },
@@ -913,7 +919,7 @@ data:extend(
       count = 200,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -942,7 +948,7 @@ data:extend(
       count = 300,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -971,7 +977,7 @@ data:extend(
       count = 400,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 3},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -1000,7 +1006,7 @@ data:extend(
       count = 600,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 4},
         {"science-pack-2", 3},
         {"science-pack-3", 2}
@@ -1029,7 +1035,7 @@ data:extend(
       count = 800,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 6},
         {"science-pack-2", 4},
         {"science-pack-3", 2}
@@ -1055,16 +1061,19 @@ data:extend(
     prerequisites = {"plasma-turret-damage-9"},
     unit =
     {
-      count = 1000,
+      count_formula = "2^(L-7)*100",
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 8},
         {"science-pack-2", 4},
-        {"science-pack-3", 2}
+        {"science-pack-3", 2},
+        {"high-tech-science-pack", 1},
+        {"space-science-pack", 1},
       },
       time = 120
     },
+    max_level = "infinite",
     upgrade = true,
     order = "e-n-f",
 	icon_size = 128,
@@ -1175,7 +1184,7 @@ data:extend(
         {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"alien-science-pack", 1}
+        {"military-science-pack", 1}
       },
       time = 60
     },
@@ -1201,7 +1210,7 @@ data:extend(
       count = 200,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -1230,7 +1239,7 @@ data:extend(
       count = 300,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -1260,7 +1269,7 @@ data:extend(
       count = 400,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 3},
         {"science-pack-2", 2},
         {"science-pack-3", 1}
@@ -1290,7 +1299,7 @@ data:extend(
       count = 500,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 4},
         {"science-pack-2", 3},
         {"science-pack-3", 2}
@@ -1320,7 +1329,7 @@ data:extend(
       count = 800,
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 6},
         {"science-pack-2", 4},
         {"science-pack-3", 2}
@@ -1347,18 +1356,148 @@ data:extend(
     prerequisites = {"plasma-turret-speed-9"},
     unit =
     {
-      count = 1200,
+      count_formula = "2^(L-7)*100",
       ingredients =
       {
-        {"alien-science-pack", 1},
+        {"military-science-pack", 1},
         {"science-pack-1", 8},
         {"science-pack-2", 4},
-        {"science-pack-3", 2}
+        {"science-pack-3", 2},
+        {"high-tech-science-pack", 1},
+        {"space-science-pack", 1},
       },
       time = 90
     },
+    max_level = "infinite",
     upgrade = true,
     order = "e-n-l",
+	icon_size = 128,
+  },
+  
+  --repair alloys
+  {
+    type = "technology",
+    name = "healing-alloys-1",
+    icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+    prerequisites =
+    {
+      "better-turrets",
+    },
+    unit =
+    {
+      count = 100,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 4},
+		{"high-tech-science-pack", 8},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+    {
+    type = "technology",
+    name = "healing-alloys-2",
+    icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+    prerequisites =
+    {
+      "healing-alloys-1",
+    },
+    unit =
+    {
+      count = 200,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 4},
+		{"high-tech-science-pack", 8},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+      {
+    type = "technology",
+    name = "healing-alloys-3",
+    icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+    prerequisites =
+    {
+      "healing-alloys-2",
+    },
+    unit =
+    {
+      count = 400,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 4},
+		{"high-tech-science-pack", 8},
+      },
+      time = 40
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+      {
+    type = "technology",
+    name = "healing-alloys-4",
+    icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+    prerequisites =
+    {
+      "healing-alloys-3",
+    },
+    unit =
+    {
+      count = 800,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 4},
+		{"high-tech-science-pack", 8},
+      },
+      time = 45
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+      {
+    type = "technology",
+    name = "healing-alloys-5",
+    icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+    prerequisites =
+    {
+      "healing-alloys-4",
+    },
+    unit =
+    {
+      count = 1600,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 4},
+		{"high-tech-science-pack", 8},
+      },
+      time = 60
+    },
+    upgrade = true,
+    order = "a-f",
 	icon_size = 128,
   },
 }

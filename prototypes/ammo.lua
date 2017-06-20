@@ -120,7 +120,7 @@ data:extend(
     subgroup = "ammo",
     order = "d[rocket-launcher]-a[basic]",
     stack_size = 100
-  },
+  },--[[
     {
     type = "ammo",
     name = "nuke-shell",
@@ -152,7 +152,7 @@ data:extend(
     subgroup = "ammo",
     order = "c",
     stack_size = 100
-  },
+  },--]]
       {
     type = "ammo",
     name = "neutron-shell",

@@ -1,3 +1,35 @@
+require "constants"
+require "plasmabeam"
+
+function Radar_Defence(factor)
+return
+    {
+      {
+         --how far the mirroring works
+        range = (15+5*factor)--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
+         --what kind of damage triggers the mirroring
+         --if not present then anything triggers the mirroring
+        --damage_type = {"physical", "acid", "biological"},
+         --caused damage will be multiplied by this and added to the subsequent damages
+        reaction_modifier = factor--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
+        action =
+        {
+          type = "direct",
+          action_delivery =
+          {
+            type = "instant",
+            target_effects =
+            {
+              type = "damage",
+               --always use at least 0.1 damage
+              damage = {amount = 0.1, type = "laser"}
+            }
+          }
+        },
+      }
+    }
+end
+
 function Robot_Defence(factor)
 return
     {
@@ -97,15 +129,26 @@ function Modify_Power(train, factor)
 end
 
 function spawnFireArea(entity)
-	local range = 36
 	local nfire = 180+math.random(160)
 	for i = 1, nfire do
 		local ang = math.random()*2*math.pi
-		local r = (math.random())^(1/2)*range
+		local r = (math.random())^(1/2)*NAPALM_RADIUS
 		local dx = r*math.cos(ang)
 		local dy = r*math.sin(ang)
 		local fx = entity.position.x+dx
 		local fy = entity.position.y+dy
 		entity.surface.create_entity{name = "big-fire-flame", position = {x = fx, y = fy}, force = game.forces.neutral}
+	end
+end
+
+function repairTurret(turret, tier)
+	local maxhealth = game.entity_prototypes[turret.name].max_health
+	local health = turret.health
+	local maxrepair = maxhealth-health
+	if maxrepair > 0 then
+		local repair = math.max(1, math.min(REPAIR_LIMITS[tier], math.floor(REPAIR_FACTORS[tier]*maxrepair)))
+		if repair > 0 then
+			turret.health = turret.health + repair
+		end
 	end
 end

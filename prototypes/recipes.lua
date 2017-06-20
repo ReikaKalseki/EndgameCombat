@@ -59,11 +59,10 @@
     type = "recipe",
     name = "power-armor-3",
     enabled = false,
-    energy_required = 60,
+    energy = 60,
     ingredients = {
 		{"power-armor-mk2", 1},
 		{"advanced-circuit", 20},
-		{"processing-unit", 20},
 	},
     result = "power-armor-3"
   },
@@ -72,7 +71,7 @@
     type = "recipe",
     name = "tintless-night-vision-equipment",
     enabled = false,
-    energy_required = 2,
+    energy = 2,
     ingredients = {
 		{"night-vision-equipment", 1},
 		{"advanced-circuit", 5},
@@ -86,7 +85,7 @@
     type = "recipe",
     name = "advanced-laser-defense-equipment",
     enabled = false,
-    energy_required = 40,
+    energy = 40,
     ingredients = {
 		{"personal-laser-defense-equipment", 1},
 		{"plasma-turret", 5},
@@ -122,7 +121,7 @@
       {"iron-gear-wheel", 40},
       {"steel-plate", 20}
     },
-	energy_required = 30,
+	energy = 30,
     result = "big-radar"
   },
 
@@ -137,7 +136,7 @@
       {"iron-gear-wheel", 10},
       {"advanced-circuit", 5},
     },
-	energy_required = 20,
+	energy = 20,
     result = "concussion-turret"
   },
    {
@@ -149,9 +148,9 @@
       {"laser-turret", 1},
       {"iron-gear-wheel", 10},
       {"processing-unit", 5},
-	  {"battery", 20},
+	  --{"battery", 20},
     },
-	energy_required = 30,
+	energy = 30,
     result = "plasma-turret"
   },
  {
@@ -175,14 +174,14 @@
     type = "recipe",
     name = "sulfur-bullet-magazine",
     enabled = "false",
-    energy_required = 3,
+    energy = 3,
 	--category = "advanced-crafting",
     ingredients =
     {
       {"sulfur", 2},
       {"coal", 2},
       {"steel-plate", 1},
-      {"copper-plate", 1}
+      {"copper-plate", 5}
     },
     result = "sulfur-bullet-magazine"
   },
@@ -190,23 +189,22 @@
     type = "recipe",
     name = "sulfur-heavy-bullet-magazine",
     enabled = "false",
-    energy_required = 4,
+    energy = 4,
 	category = "advanced-crafting",
     ingredients =
     {
       {"sulfur", 4},
       {"coal", 2},
       {"steel-plate", 2},
-      {"copper-plate", 2}
     },
     result = "sulfur-heavy-bullet-magazine"
   },
-  
+  --[[
     {
     type = "recipe",
     name = "nuke-shell",
     enabled = "false",
-    energy_required = 45,
+    energy = 45,
 	category = "advanced-crafting",
     ingredients =
     {
@@ -214,12 +212,12 @@
 	  {"processing-unit",5}
     },
     result = "nuke-shell"
-  },
+  },--]]
     {
     type = "recipe",
     name = "neutron-shell",
     enabled = "false",
-    energy_required = 45,
+    energy = 45,
 	category = "advanced-crafting",
     ingredients =
     {
@@ -232,11 +230,11 @@
     type = "recipe",
     name = "napalm-shell",
     enabled = "false",
-    energy_required = 45,
+    energy = 45,
 	category = "advanced-crafting",
     ingredients =
     {
-      {"flame-thrower-ammo", 20},
+      {"flamethrower-ammo", 20},
 	  {"steel-plate", 20},
 	  {"explosives", 10},
       {"plastic-bar", 25}
@@ -247,7 +245,7 @@
     type = "recipe",
     name = "hiex-cannon-shell-big",
     enabled = "false",
-    energy_required = 15,
+    energy = 15,
 	category = "advanced-crafting",
     ingredients =
     {
@@ -261,7 +259,7 @@
     type = "recipe",
     name = "radiation-capsule",
     enabled = "false",
-    energy_required = 40,
+    energy = 40,
 	category = "advanced-crafting",
     ingredients =
     {
@@ -275,7 +273,7 @@
     type = "recipe",
     name = "acid-capsule",
     enabled = "false",
-    energy_required = 30,
+    energy = 30,
     category = "crafting-with-fluid",
     ingredients =
     {

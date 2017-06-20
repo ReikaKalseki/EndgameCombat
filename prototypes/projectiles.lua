@@ -1,5 +1,5 @@
 data:extend({
-  {
+  --[[{
     type = "projectile",
     name = "nuke-projectile",
     flags = {"not-on-map"},
@@ -93,7 +93,7 @@ data:extend({
         starting_frame_speed_deviation = 5
       }
     }
-  },
+  },--]]
     {
     type = "projectile",
     name = "neutron-projectile",

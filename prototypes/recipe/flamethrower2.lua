@@ -2,17 +2,17 @@ data:extend(
 {
   {
     type = "recipe",
-    name = "flame-thrower-2",
+    name = "flamethrower-2",
     enabled = false,
-    energy_required = 15,
+    energy = 15,
     ingredients =
     {
-      {"flame-thrower", 2},
+      {"flamethrower", 2},
       {"steel-plate", 25},
       {"advanced-circuit", 10},
       {"processing-unit", 5}
     },
-    result = "flame-thrower-2"
+    result = "flamethrower-2"
   }
 }
 )

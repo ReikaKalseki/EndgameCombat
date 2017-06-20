@@ -2,16 +2,16 @@ data:extend(
 {
   {
     type = "technology",
-    name = "flame-thrower-2",
-    icon = "__base__/graphics/technology/flame-thrower.png",
+    name = "flamethrower-2",
+    icon = "__base__/graphics/technology/flamethrower.png",
     effects =
     {
       {
         type = "unlock-recipe",
-        recipe = "flame-thrower-2"
+        recipe = "flamethrower-2"
       }
     },
-    prerequisites = {"flame-thrower", "military-3"},
+    prerequisites = {"flamethrower", "military-3"},
     unit =
     {
       count = 100,

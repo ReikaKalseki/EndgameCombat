@@ -156,6 +156,20 @@ data:extend(
     },
     energy_input = "1.5kW",
     tint = {r = 0.05, g = 0.1, b = 0.15, a = 0.01},
+	desaturation_params = 
+    { 
+      smoothstep_min = 0.1,
+      smoothstep_max = 0.7,
+      minimum = 0.3,
+      maximum = 1.0
+    },
+    light_params = 
+    { 
+      smoothstep_min = 0.1,
+      smoothstep_max = 0.7,
+      minimum = 0.666,
+      maximum = 1.0,
+    },
     categories = {"armor"}
   },
 }
