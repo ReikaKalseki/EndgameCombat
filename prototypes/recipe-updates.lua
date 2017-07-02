@@ -1,7 +1,7 @@
 local turretArmorSteel = 10
 
 if data.raw.item["titanium-plate"] then
-  table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"titanium-plate", 25})
+  --table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"titanium-plate", 25})
   table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"titanium-plate", 25})
   table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"titanium-plate", 50})
   
@@ -12,7 +12,7 @@ else
   table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"steel-plate", 100})
 end
 
-table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"steel-plate", turretArmorSteel})
+table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]25})
 table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"steel-plate", turretArmorSteel})
 table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"steel-plate", turretArmorSteel*2})
 
@@ -28,30 +28,15 @@ else
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"processing-unit", 50})
 end
 
-local nukeExplosives = 20
-
-if data.raw.item["uranium-pellet-01"] then
-  --table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-pellet-01", 10})
-  --table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-pellet-10", 4})
-  
-  table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"uranium-pellet-10", 1})
-  
-  table.insert(data.raw["technology"]["nuclear-shells"].prerequisites,"uranium-processing")
-  
-  table.insert(data.raw["recipe"]["hiex-cannon-shell-big"].ingredients,{"uranium-pellet-01", 4})
-  
-  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"uranium-pellet-10", 1})
-  
-  table.insert(data.raw["recipe"]["sulfur-heavy-bullet-magazine"].ingredients,{"uranium-pellet-01", 5})
-else
-  nukeExplosives = 200
-  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"poison-capsule", 10})
-  table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"advanced-circuit", 5})
-  --data.raw["recipe"]["nuke-shell"].energy = data.raw["recipe"]["nuke-shell"].energy*10
-end
-
---table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"explosives", nukeExplosives})
-table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"explosives", nukeExplosives*5})
+--table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-238", 10})
+--table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-235", 4})
+table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"uranium-235", 1})
+table.insert(data.raw["technology"]["nuclear-shells"].prerequisites,"atomic-bomb")
+table.insert(data.raw["recipe"]["hiex-cannon-shell-big"].ingredients,{"uranium-238", 4})
+table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"uranium-235", 1}) 
+table.insert(data.raw["recipe"]["sulfur-heavy-bullet-magazine"].ingredients,{"uranium-238", 5})
+--table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"explosives", 20})
+table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"explosives", 100})
 
 local tankArmorSteel = 50
 
@@ -81,13 +66,13 @@ if data.raw.item["lithium-ion-battery"] then
 else
 	table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"battery", 20})
 end
-
+--[[
 data:extend( --extra convenience recipes
 {
  {
     type = "recipe",
     name = "bullet-conversion-1",
-    enabled = "true",
+    enabled = "false",
     energy_required = 3,
     ingredients =
     {
@@ -97,5 +82,5 @@ data:extend( --extra convenience recipes
     result = "piercing-rounds-magazine"
   }
  }
-)
 table.insert(data.raw["technology"]["military-2"].effects, {type = "unlock-recipe", recipe = "bullet-conversion-1"})
+)--]]

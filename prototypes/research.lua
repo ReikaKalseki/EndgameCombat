@@ -8,6 +8,7 @@ data:extend(
     prerequisites =
     {
 	  "stone-walls",
+	  "steel-processing",
       "military-3",
     },
 	effects =
@@ -24,7 +25,7 @@ data:extend(
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"military-science-pack", 1},
       },
       time = 20
     },
@@ -40,7 +41,8 @@ data:extend(
     {
 	  "stone-walls",
 	  "steel-processing",
-      "military-3",
+      "military-2",
+	  "gates",
     },
 	effects =
     {
@@ -60,7 +62,7 @@ data:extend(
       {
         {"science-pack-1", 2},
         {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        --{"science-pack-3", 1},
       },
       time = 30
     },
@@ -92,6 +94,7 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1},
+        {"military-science-pack", 1},
       },
       time = 40
     },
@@ -521,8 +524,8 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/turrets.png",
     prerequisites =
     {
-	  "military-4",
-      "advanced-electronics-2",
+	  "military-2",
+      "advanced-electronics",
       "turrets",
     },
 	effects =
@@ -539,9 +542,9 @@ data:extend(
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        --{"science-pack-3", 1},
 		{"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
+		--{"high-tech-science-pack", 1},
       },
       time = 30
     },
@@ -565,6 +568,7 @@ data:extend(
     {
       "laser-turrets",
 	  "better-turrets",
+	  "military-4",
     },
     unit =
     {
@@ -575,6 +579,7 @@ data:extend(
         {"science-pack-2", 1},
         {"science-pack-3", 1},
 		{"high-tech-science-pack", 1},
+		{"military-science-pack", 1},
       },
       time = 45
     },
@@ -593,11 +598,28 @@ data:extend(
         type = "unlock-recipe",
         recipe = "cannon-turret"
       },
+	  {
+        type = "unlock-recipe",
+        recipe = "cannon-shell-magazine"
+      },
+	  {
+        type = "unlock-recipe",
+        recipe = "explosive-cannon-shell-magazine"
+      },
+	  {
+        type = "unlock-recipe",
+        recipe = "uranium-cannon-shell-magazine"
+      },
+	  {
+        type = "unlock-recipe",
+        recipe = "explosive-uranium-cannon-shell-magazine"
+      },
     },
     prerequisites =
     {
       "explosives",
 	  "better-turrets",
+	  "military-3",
     },
     unit =
     {
@@ -607,12 +629,13 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 2},
         {"science-pack-3", 1},
+        {"military-science-pack", 1},
       },
       time = 45
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 32,
+	icon_size = 128,
   },
   
   --upgrades
@@ -636,7 +659,7 @@ data:extend(
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        {"science-pack-3", 1}
+        {"military-science-pack", 1}
       },
       time = 30
     },
@@ -664,7 +687,7 @@ data:extend(
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        {"science-pack-3", 1}
+        {"military-science-pack", 1}
       },
       time = 30
     },
@@ -692,7 +715,8 @@ data:extend(
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        {"science-pack-3", 1}
+        {"science-pack-3", 1},
+        {"military-science-pack", 1}
       },
       time = 60
     },
@@ -1382,6 +1406,8 @@ data:extend(
     prerequisites =
     {
       "better-turrets",
+	  "military-4",
+	  "advanced-material-processing-2"
     },
     unit =
     {
