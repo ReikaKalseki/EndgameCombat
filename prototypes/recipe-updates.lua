@@ -1,3 +1,5 @@
+require "config"
+
 local turretArmorSteel = 10
 
 if data.raw.item["titanium-plate"] then
@@ -28,15 +30,14 @@ else
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"processing-unit", 50})
 end
 
---table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-238", 10})
---table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"uranium-235", 4})
-table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"uranium-235", 1})
-table.insert(data.raw["technology"]["nuclear-shells"].prerequisites,"atomic-bomb")
-table.insert(data.raw["recipe"]["hiex-cannon-shell-big"].ingredients,{"uranium-238", 4})
-table.insert(data.raw["recipe"]["radiation-capsule"].ingredients,{"uranium-235", 1}) 
-table.insert(data.raw["recipe"]["sulfur-heavy-bullet-magazine"].ingredients,{"uranium-238", 5})
---table.insert(data.raw["recipe"]["nuke-shell"].ingredients,{"explosives", 20})
-table.insert(data.raw["recipe"]["neutron-shell"].ingredients,{"explosives", 100})
+if Config.spacePlasma then
+	table.insert(data.raw["technology"]["plasma-turrets"].unit.ingredients,{"space-science-pack", 1})
+	data.raw["technology"]["plasma-turrets"].unit.count = 500 --up from 200
+end
+
+if Config.spaceNukes then
+	table.insert(data.raw["technology"]["nuclear-shells"].unit.ingredients,{"space-science-pack", 1})
+end
 
 local tankArmorSteel = 50
 
@@ -66,21 +67,3 @@ if data.raw.item["lithium-ion-battery"] then
 else
 	table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"battery", 20})
 end
---[[
-data:extend( --extra convenience recipes
-{
- {
-    type = "recipe",
-    name = "bullet-conversion-1",
-    enabled = "false",
-    energy_required = 3,
-    ingredients =
-    {
-	  {"firearm-magazine", 1},
-      {"copper-plate", 3}
-    },
-    result = "piercing-rounds-magazine"
-  }
- }
-table.insert(data.raw["technology"]["military-2"].effects, {type = "unlock-recipe", recipe = "bullet-conversion-1"})
-)--]]

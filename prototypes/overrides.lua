@@ -114,3 +114,5 @@ if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
 	})  
 	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
 end
+
+table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")

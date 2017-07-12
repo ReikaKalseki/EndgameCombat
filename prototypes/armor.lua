@@ -4,7 +4,7 @@ data:extend(
     type = "equipment-grid",
     name = "huge-equipment-grid",
     width = 16,
-    height = 32,
+    height = 24,
     equipment_categories = {"armor"}
   }
 }
@@ -60,16 +60,6 @@ data:extend(
     flags = {"goes-to-main-inventory"},
     subgroup = "equipment",
     order = "d[active-defense]-a[advanced-laser-defense-equipment]",
-    stack_size = 20
-  },
-  {
-    type = "item",
-    name = "tintless-night-vision-equipment",
-    icon = "__EndgameCombat__/graphics/icons/night-vision-equipment.png",
-    placed_as_equipment_result = "tintless-night-vision-equipment",
-    flags = {"goes-to-main-inventory"},
-    subgroup = "equipment",
-    order = "f[night-vision]-a[tintless-night-vision-equipment]",
     stack_size = 20
   },
   
@@ -131,46 +121,6 @@ data:extend(
     },
     automatic = true
   },
-    {
-    type = "night-vision-equipment",
-    name = "tintless-night-vision-equipment",
-    sprite =
-    {
-      filename = "__EndgameCombat__/graphics/equipment/night-vision-equipment.png",
-      width = 96,
-      height = 64,
-      priority = "medium"
-    },
-    shape =
-    {
-      width = 3,
-      height = 2,
-      type = "full"
-    },
-    energy_source =
-    {
-      type = "electric",
-      buffer_capacity = "12kJ",
-      input_flow_limit = "24kW",
-      usage_priority = "primary-input"
-    },
-    energy_input = "1.5kW",
-    tint = {r = 0.05, g = 0.1, b = 0.15, a = 0.01},
-	desaturation_params = 
-    { 
-      smoothstep_min = 0.1,
-      smoothstep_max = 0.7,
-      minimum = 0.3,
-      maximum = 1.0
-    },
-    light_params = 
-    { 
-      smoothstep_min = 0.1,
-      smoothstep_max = 0.7,
-      minimum = 0.666,
-      maximum = 1.0,
-    },
-    categories = {"armor"}
-  },
+   
 }
 )

@@ -27,11 +27,11 @@ data:extend(
             },
             {
               type = "damage",
-              damage = { amount = 5 , type = "physical"}
+              damage = { amount = 8 , type = "physical"}
             },
 			{
               type = "damage",
-              damage = { amount = 5 , type = "fire"}
+              damage = { amount = 8 , type = "fire"}
             }
           }
         }
@@ -40,7 +40,7 @@ data:extend(
     magazine_size = 10,
 	subgroup = "ammo",
     order = "a",
-    stack_size = 100
+    stack_size = 200
   },
     {
     type = "ammo",
@@ -69,15 +69,15 @@ data:extend(
             },
             {
               type = "damage",
-              damage = { amount = 40 , type = "physical"}
+              damage = { amount = 24 , type = "physical"}
             },
 			{
               type = "damage",
-              damage = { amount = 20 , type = "impact"}
+              damage = { amount = 10 , type = "impact"}
             },
 			{
               type = "damage",
-              damage = { amount = 10 , type = "fire"}
+              damage = { amount = 16 , type = "fire"}
             }
           }
         }
@@ -86,7 +86,7 @@ data:extend(
     magazine_size = 10,
 	subgroup = "ammo",
     order = "a",
-    stack_size = 100
+    stack_size = 200
   },
   
     {
@@ -187,6 +187,37 @@ data:extend(
   },
         {
     type = "ammo",
+    name = "neutron-rocket",
+    icon = "__EndgameCombat__/graphics/icons/neutron-rocket.png",
+    flags = {"goes-to-main-inventory"},
+    ammo_type =
+    {
+      range_modifier = 3,
+      cooldown_modifier = 3,
+      target_type = "position",
+      category = "rocket",
+      source_effects =
+      {
+        type = "create-entity",
+        entity_name = "explosion-gunshot"
+      },
+      action =
+      {
+        type = "direct",
+        action_delivery =
+        {
+          type = "projectile",
+          projectile = "neutron-projectile",
+          starting_speed = 0.25,
+        }
+      },
+    },
+    subgroup = "ammo",
+    order = "c",
+    stack_size = 100
+  },
+        {
+    type = "ammo",
     name = "napalm-shell",
     icon = "__EndgameCombat__/graphics/icons/napalm-shell.png",
     flags = {"goes-to-main-inventory"},
@@ -210,6 +241,37 @@ data:extend(
           direction_deviation = 0.1,
           range_deviation = 0.1,
           max_range = 120
+        }
+      },
+    },
+    subgroup = "ammo",
+    order = "c",
+    stack_size = 100
+  },
+          {
+    type = "ammo",
+    name = "napalm-rocket",
+    icon = "__EndgameCombat__/graphics/icons/napalm-rocket.png",
+    flags = {"goes-to-main-inventory"},
+    ammo_type =
+    {
+      range_modifier = 2,
+      cooldown_modifier = 2,
+      target_type = "position",
+      category = "rocket",
+      source_effects =
+      {
+        type = "create-entity",
+        entity_name = "explosion-gunshot"
+      },
+      action =
+      {
+        type = "direct",
+        action_delivery =
+        {
+          type = "projectile",
+          starting_speed = 0.25,
+          projectile = "napalm-projectile",
         }
       },
     },

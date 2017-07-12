@@ -128,8 +128,131 @@ data:extend({
     sound = { filename = "__base__/sound/furnace.ogg" },
     max_sounds_per_type = 3
   },	
+ 
+},
+{
+  type = "fire",
+  name = "big-fire-flame-napalm", --like big-fire-flame but lasts 5x longer
+  flags = {"placeable-off-grid", "not-on-map"},
+  duration = 600*new_burn_factor*5,
+  fade_away_duration = 600*new_burn_factor,
+  spread_duration = 600,
+  start_scale = 0.20,
+  end_scale = 1.0,
+  color = {r=1, g=0.9, b=0.3, a=0.65},
+  damage_per_tick = {amount = fire2_damage_per_tick, type = "fire"},
   
-}})
+  spawn_entity = "fire-flame-on-tree",
+  
+  spread_delay = 300,
+  spread_delay_deviation = 180,
+  maximum_spread_count = 100,
+  initial_lifetime = 480*new_burn_factor*5,
+  
+  flame_alpha = 0.35,
+  flame_alpha_deviation = 0.05,
+  
+  emissions_per_tick = 0.025,
+  
+  add_fuel_cooldown = 10,
+  increase_duration_cooldown = 10,
+  increase_duration_by = 20,
+  fade_in_duration = 30,
+  fade_out_duration = 30,
+  
+  lifetime_increase_by = 20,
+  lifetime_increase_cooldown = 10,
+  delay_between_initial_flames = 10,
+  burnt_patch_lifetime = 1800*new_burn_factor,
+  
+  on_fuel_added_action =
+  {
+    type = "direct",
+    action_delivery =
+    {
+      type = "instant",
+      target_effects =
+      {
+        {
+          type = "create-smoke",
+          entity_name = "fire-smoke-on-adding-fuel",
+          -- speed = {-0.03, 0},
+          -- speed_multiplier = 0.99,
+          -- speed_multiplier_deviation = 1.1,
+          offset_deviation = {{-0.5, -0.5}, {0.5, 0.5}},
+          speed_from_center = 0.01
+        }
+      }
+    }
+  },
+  
+  pictures = fireutil.create_fire_pictures({ blend_mode = "normal", animation_speed = 1, scale = 0.5}),
+  
+  smoke_source_pictures = 
+  {
+    { 
+      filename = "__base__/graphics/entity/fire-flame/fire-smoke-source-1.png",
+      line_length = 8,
+      width = 101,
+      height = 138,
+      frame_count = 31,
+      axially_symmetrical = false,
+      direction_count = 1,
+      shift = {-0.109375, -1.1875},
+      animation_speed = 0.5,
+    },
+    { 
+      filename = "__base__/graphics/entity/fire-flame/fire-smoke-source-2.png",
+      line_length = 8,
+      width = 99,
+      height = 138,
+      frame_count = 31,
+      axially_symmetrical = false,
+      direction_count = 1,
+      shift = {-0.203125, -1.21875},
+      animation_speed = 0.5,
+    },
+  },
+  
+  burnt_patch_pictures = fireutil.create_burnt_patch_pictures(),
+  burnt_patch_alpha_default = 0.4,
+  burnt_patch_alpha_variations = {
+   -- { tile = "grass", alpha = 0.4 },
+   -- { tile = "grass-medium", alpha = 0.4 },
+    { tile = "grass-dry", alpha = 0.45 },
+    { tile = "dirt", alpha = 0.3 },
+    { tile = "dirt-dark", alpha = 0.35 },
+    { tile = "sand", alpha = 0.24 },
+    { tile = "sand-dark", alpha = 0.28 },
+    { tile = "stone-path", alpha = 0.26 },
+    { tile = "concrete", alpha = 0.24 },
+  },
+
+  smoke =
+  {
+    {
+      name = "fire-smoke",
+      deviation = {0.5, 0.5},
+      frequency = 0.25 / 2,
+      position = {0.0, -0.8},
+      starting_vertical_speed = 0.05,
+      starting_vertical_speed_deviation = 0.005,
+      vertical_speed_slowdown = 0.99,
+      starting_frame_deviation = 60,
+      height = -0.5,
+    }
+  },
+ 
+  light = {intensity = 1, size = 20},
+  
+  working_sound =
+  {
+    sound = { filename = "__base__/sound/furnace.ogg" },
+    max_sounds_per_type = 3
+  },	
+ 
+},
+})
 --[[
 data:extend(
 {

@@ -13,6 +13,8 @@ require("prototypes.recipes")
 
 require("prototypes.item.cannon-turret-ammo")
 
+require("prototypes.item.biter-flesh")
+
 table.insert(data.raw['projectile']['explosive-cannon-projectile']['action']['action_delivery']['target_effects'], {type = "create-entity", entity_name = "small-scorchmark", check_buildability = true })
 
 -----------FLAMETHROWER-----------

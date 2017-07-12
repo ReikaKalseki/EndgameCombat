@@ -1,3 +1,6 @@
+require "config"
+require "constants"
+
 data:extend(
 {
 --walls
@@ -157,10 +160,6 @@ data:extend(
       {
         type = "unlock-recipe",
         recipe = "advanced-laser-defense-equipment"
-      },
-      {
-        type = "unlock-recipe",
-        recipe = "tintless-night-vision-equipment"
       },
     },
     unit =
@@ -364,6 +363,10 @@ data:extend(
         type = "unlock-recipe",
         recipe = "sulfur-heavy-bullet-magazine"
       },
+	   {
+        type = "unlock-recipe",
+        recipe = "sulfur-heavy-bullet-magazine-conversion"
+      },
     },
     unit =
     {
@@ -387,7 +390,8 @@ data:extend(
     prerequisites =
     {
 	  "fire-ammo",
-      "military-4"
+      "military-4",
+	  "tanks"
     },
 	effects =
     {
@@ -408,7 +412,37 @@ data:extend(
       },
       time = 60
     },
-    upgrade = true,
+    order = "a-f",
+	icon_size = 32,
+  },
+      {
+    type = "technology",
+    name = "napalm-rockets",
+    icon = "__EndgameCombat__/graphics/technology/napalm-rockets.png",
+    prerequisites =
+    {
+	  "napalm-shells",
+	  "rocketry",
+    },
+	effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "napalm-rocket"
+      }
+    },
+    unit =
+    {
+      count = 400,
+      ingredients =
+      {
+        {"science-pack-1", 4},
+        {"science-pack-2", 2},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+      },
+      time = 60
+    },
     order = "a-f",
 	icon_size = 32,
   },
@@ -452,20 +486,22 @@ data:extend(
     {
 	  "military-4",
       "hi-ex-shells",
+	  "rocketry",
+	  "atomic-bomb"
     },
 	effects =
     {
-      --[[{
-        type = "unlock-recipe",
-        recipe = "nuke-shell"
-      },--]]
-	        {
+	  {
         type = "unlock-recipe",
         recipe = "radiation-capsule"
       },
 	        {
         type = "unlock-recipe",
         recipe = "neutron-shell"
+      },
+	  	        {
+        type = "unlock-recipe",
+        recipe = "neutron-rocket"
       },
     },
     unit =
@@ -620,6 +656,7 @@ data:extend(
       "explosives",
 	  "better-turrets",
 	  "military-3",
+	  "tanks",
     },
     unit =
     {
@@ -1417,10 +1454,10 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"military-science-pack", 4},
-		{"high-tech-science-pack", 8},
+        {"military-science-pack", 1},
+		{"biter-flesh", 8}
       },
-      time = 30
+      time = 60
     },
     upgrade = true,
     order = "a-f",
@@ -1442,10 +1479,11 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"military-science-pack", 4},
-		{"high-tech-science-pack", 8},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
+		{"biter-flesh", 12}
       },
-      time = 30
+      time = 75
     },
     upgrade = true,
     order = "a-f",
@@ -1467,10 +1505,11 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"military-science-pack", 4},
-		{"high-tech-science-pack", 8},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
+		{"biter-flesh", 16}
       },
-      time = 40
+      time = 90
     },
     upgrade = true,
     order = "a-f",
@@ -1492,16 +1531,17 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"military-science-pack", 4},
-		{"high-tech-science-pack", 8},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
+		{"biter-flesh", 24}
       },
-      time = 45
+      time = 120
     },
     upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
-      {
+  {
     type = "technology",
     name = "healing-alloys-5",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
@@ -1517,10 +1557,11 @@ data:extend(
         {"science-pack-1", 2},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
-        {"military-science-pack", 4},
-		{"high-tech-science-pack", 8},
+        {"military-science-pack", 1},
+		{"high-tech-science-pack", 1},
+		{"biter-flesh", 32}
       },
-      time = 60
+      time = 180
     },
     upgrade = true,
     order = "a-f",
@@ -1528,4 +1569,39 @@ data:extend(
   },
 }
 )
+
+local i = 6
+while #REPAIR_CHANCES >= i do
+	data:extend(
+	{
+	  {
+		type = "technology",
+		name = "healing-alloys-" .. i,
+		icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+		prerequisites =
+		{
+		  "healing-alloys-" .. (i-1),
+		},
+		unit =
+		{
+		  count = math.ceil(1600*(1.5^(i-5))),
+		  ingredients =
+		  {
+			{"science-pack-1", 2},
+			{"science-pack-2", 1},
+			{"science-pack-3", 1},
+			{"military-science-pack", 1},
+			{"high-tech-science-pack", 1},
+			{"biter-flesh", 32+(16*(i-5))}
+		  },
+		  time = 180+60*(i-5)
+		},
+		upgrade = true,
+		order = "a-f",
+		icon_size = 128,
+	  },
+	}
+	)
+	i = i+1
+end
 

@@ -464,14 +464,14 @@ data:extend({
               target_effects =
               {
                 type = "damage",
-                damage = { amount = 100, type = "radiation"} --was 10
+                damage = { amount = 180, type = "radiation"} --was 10
               }
             }
           }
         }
       }
     },
-    action_frequency = 10 --was 10
+    action_cooldown = 10 --was 10
   },
       {
     type = "projectile",
@@ -518,6 +518,7 @@ data:extend({
     animation =
     {
       filename = "__base__/graphics/entity/cloud/cloud-45-frames.png",
+      flags = { "compressed" },
       priority = "low",
       width = 256,
       height = 256,
@@ -553,14 +554,14 @@ data:extend({
               target_effects =
               {
                 type = "damage",
-                damage = { amount = 10, type = "acid"}
+                damage = { amount = 60, type = "acid"}
               }
             }
           }
         }
       }
     },
-    action_frequency = 20
+    action_cooldown = 20
   },
     {
     type = "smoke-with-trigger",
@@ -611,6 +612,6 @@ data:extend({
         }
       }
     },
-    action_frequency = 20
+    action_cooldown = 20
   },
 })

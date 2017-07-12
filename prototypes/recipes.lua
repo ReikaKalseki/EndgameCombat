@@ -69,20 +69,6 @@
   
   {
     type = "recipe",
-    name = "tintless-night-vision-equipment",
-    enabled = false,
-    energy_required = 2,
-    ingredients = {
-		{"night-vision-equipment", 1},
-		{"advanced-circuit", 5},
-		{"processing-unit", 5},
-		{"electronic-circuit", 10},
-	},
-    result = "tintless-night-vision-equipment"
-  },
-  
-  {
-    type = "recipe",
     name = "advanced-laser-defense-equipment",
     enabled = false,
     energy_required = 40,
@@ -179,7 +165,7 @@
       {"sulfur", 2},
       {"coal", 2},
       {"steel-plate", 1},
-      {"copper-plate", 5}
+      {"copper-plate", 5},
     },
     result = "sulfur-bullet-magazine"
   },
@@ -194,23 +180,23 @@
       {"sulfur", 4},
       {"coal", 2},
       {"steel-plate", 2},
+	  {"uranium-238", 5}
     },
     result = "sulfur-heavy-bullet-magazine"
   },
-  --[[
-    {
+        {
     type = "recipe",
-    name = "nuke-shell",
+    name = "sulfur-heavy-bullet-magazine-conversion",
     enabled = "false",
-    energy_required = 45,
+    energy_required = 2,
 	category = "advanced-crafting",
     ingredients =
     {
-      {"steel-plate", 6},
-	  {"processing-unit",5}
+      {"sulfur-bullet-magazine", 1},
+	  {"uranium-238", 5}
     },
-    result = "nuke-shell"
-  },--]]
+    result = "sulfur-heavy-bullet-magazine"
+  },
     {
     type = "recipe",
     name = "neutron-shell",
@@ -220,9 +206,27 @@
     ingredients =
     {
       {"steel-plate", 10},
-	  {"processing-unit", 25}
+	  {"processing-unit", 25},
+	  {"uranium-235", 1},
+	  {"explosives", 100}
     },
     result = "neutron-shell"
+  },
+      {
+    type = "recipe",
+    name = "neutron-rocket",
+    enabled = "false",
+    energy_required = 45,
+	category = "advanced-crafting",
+    ingredients =
+    {
+	  {"rocket", 1},
+      {"steel-plate", 10},
+	  {"processing-unit", 25},
+	  {"uranium-235", 1},
+	  {"explosives", 100}
+    },
+    result = "neutron-rocket"
   },
       {
     type = "recipe",
@@ -239,6 +243,22 @@
     },
     result = "napalm-shell"
   },
+        {
+    type = "recipe",
+    name = "napalm-rocket",
+    enabled = "false",
+    energy_required = 45,
+	category = "advanced-crafting",
+    ingredients =
+    {
+      {"flamethrower-ammo", 20},
+	  {"steel-plate", 20},
+	  {"explosives", 10},
+      {"plastic-bar", 25},
+      {"rocket", 1}
+    },
+    result = "napalm-rocket"
+  },
     {
     type = "recipe",
     name = "hiex-cannon-shell-big",
@@ -250,6 +270,7 @@
       {"steel-plate", 5},
       {"plastic-bar", 4},
       {"explosives", 12},
+	  {"uranium-238", 2}
     },
     result = "hiex-cannon-shell-big"
   },
@@ -264,6 +285,7 @@
       {"steel-plate", 5},
       {"plastic-bar", 5},
       {"explosives", 1},
+	  {"uranium-235", 1}
     },
     result = "radiation-capsule"
   },
@@ -277,7 +299,7 @@
     {
       {"steel-plate", 5},
       {"plastic-bar", 7},
-      {type="fluid", name = "sulfuric-acid", amount = 10}
+      {type="fluid", name = "sulfuric-acid", amount = 80}
     },
     result = "acid-capsule"
   }

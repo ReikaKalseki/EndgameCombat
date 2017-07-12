@@ -129,7 +129,7 @@ function Modify_Power(train, factor)
 end
 
 function spawnFireArea(entity)
-	local nfire = 180+math.random(160)
+	local nfire = 240+math.random(360) --was 180/160 then 240/220
 	for i = 1, nfire do
 		local ang = math.random()*2*math.pi
 		local r = (math.random())^(1/2)*NAPALM_RADIUS
@@ -137,7 +137,7 @@ function spawnFireArea(entity)
 		local dy = r*math.sin(ang)
 		local fx = entity.position.x+dx
 		local fy = entity.position.y+dy
-		entity.surface.create_entity{name = "big-fire-flame", position = {x = fx, y = fy}, force = game.forces.neutral}
+		entity.surface.create_entity{name = "big-fire-flame-napalm", position = {x = fx, y = fy}, force = game.forces.neutral}
 	end
 end
 
