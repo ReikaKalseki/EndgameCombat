@@ -141,6 +141,26 @@ function spawnFireArea(entity)
 	end
 end
 
+function getTurretRangeResearch(force)
+	if not force.technologies["turret-range-1"].researched then return 0 end
+	local level = 1
+	for i = #TURRET_RANGE_BOOSTS, 1, -1 do
+		if force.technologies["turret-range-" .. i].researched then
+			level = i
+			break
+		end
+	end
+	return level
+end
+
+local function getTurretBaseName(turret)
+	local basename = turret.name
+	if string.find(basename, "-rangeboost-") then
+		basename = string.sub(turret.name, 1, -string.len("-rangeboost-")-2) --aka Java substring(0, length()-"-rangeboost-".length()-1)
+	end
+	return basename
+end
+
 function repairTurret(turret, tier)
 	local maxhealth = game.entity_prototypes[turret.name].max_health
 	local health = turret.health
@@ -150,5 +170,36 @@ function repairTurret(turret, tier)
 		if repair > 0 then
 			turret.health = turret.health + repair
 		end
+	end
+end
+
+function convertTurretForRange(turret, level)
+	if level == 0 then return end
+	if not turret.valid then return end
+	if not turret.surface.valid then return end
+	local surf = turret.surface
+	local pos = {turret.position.x, turret.position.y}
+	local dir = turret.direction
+	local f = turret.force
+	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
+	local e = turret.energy
+	turret.destroy()
+	local repl = surf.create_entity{name=n, position=pos, direction=dir, force=f, fast_replace=true, spill=false}
+	repl.energy = e
+end
+
+function deconvertTurretForRange(turret)
+	if not turret.valid then return end
+	if not turret.surface.valid then return end
+	if string.find(turret.name, "-rangeboost-", 1, true) then
+		local surf = turret.surface
+		local pos = turret.position
+		local dir = turret.direction
+		local f = turret.force
+		local n = getTurretBaseName(turret)
+		local e = turret.energy
+		turret.destroy()
+		local repl = surf.create_entity{name=n, position=pos, direction=dir, force=f, fast_replace=true, spill=false}
+		repl.energy = e
 	end
 end

@@ -305,3 +305,31 @@
   }
 }
 )
+
+ data:extend(
+{
+ {
+    type = "recipe",
+    name = "biter-cooking",
+    enabled = "true",
+    ingredients = {{"biter-flesh", 5}},
+    energy_required = 2,
+    category = "smelting",
+    result = "cooked-biter"
+  },
+   {
+    type = "recipe",
+    name = "biter-fuel",
+    enabled = "false",
+	icon = "__EndgameCombat__/graphics/icons/biter-fuel.png",
+    ingredients = {
+		{"biter-flesh", 25},
+		{type="fluid", name="sulfuric-acid", amount=40}
+	},
+    energy_required = 10,
+    category = "chemistry",
+    result = "solid-fuel"
+  }
+})
+
+table.insert(data.raw.technology["sulfur-processing"].effects, {type="unlock-recipe", recipe="biter-fuel"})

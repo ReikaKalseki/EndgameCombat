@@ -1605,3 +1605,45 @@ while #REPAIR_CHANCES >= i do
 	i = i+1
 end
 
+for l = 1,#TURRET_RANGE_BOOSTS do
+	local packs = {
+		{"science-pack-1", 1},
+		{"science-pack-2", 1}
+	}
+	
+	if l >= 3 then
+		packs[#packs+1] = {"military-science-pack", 1}
+	end	
+	if l >= 5 then
+		packs[#packs+1] = {"science-pack-3", 1}
+	end	
+	if l >= 7 then
+		packs[#packs+1] = {"high-tech-science-pack", 1}
+	end
+	if l >= 10 then
+		packs[#packs+1] = {"space-science-pack", 1}
+	end
+		
+	data:extend(
+	{	
+		{
+			type = "technology",
+			name = "turret-range-" .. l,
+			icon = "__EndgameCombat__/graphics/technology/turret-range.png",
+			prerequisites =
+			l > 1 and {
+			  "turret-range-" .. (l-1),
+			} or nil,
+			unit =
+			{
+			  count = math.ceil(100*(2^(l-1))),
+			  ingredients = packs,
+			  time = 60+20*(l-1)
+			},
+			upgrade = true,
+			order = "a-f",
+			icon_size = 128,
+		},
+	})
+	i = i+1
+end

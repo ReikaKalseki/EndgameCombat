@@ -21,9 +21,19 @@ addRepairTier(1/64, 0.25, 10)
 addRepairTier(1/32, 0.5, 25)
 addRepairTier(1/16, 0.5, 40)
 addRepairTier(1/8, 0.5, 50)
-addRepairTier(1/4, 0.5, 100)
-addRepairTier(1/2, 0.5, 250)
+addRepairTier(1/6, 0.5, 100)
+addRepairTier(1/4, 0.75, 200)
+addRepairTier(1/2, 1, 250)
 
 NAPALM_RADIUS = 36
 
 HEAVY_TRAIN_FACTOR = 25
+
+TURRET_RANGE_BOOSTS = {1, 1, 1, 1, 2, 2, 2, 2, 3, 5} --totals 1, 2, 3, 4, 6, 8, 10, 12, 15, 20
+TURRET_RANGE_BOOST_SUMS = {}
+
+local sum = 0
+for i = 1,#TURRET_RANGE_BOOSTS do
+	sum = sum+TURRET_RANGE_BOOSTS[i]
+	TURRET_RANGE_BOOST_SUMS[#TURRET_RANGE_BOOST_SUMS+1] = sum
+end

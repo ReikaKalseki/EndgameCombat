@@ -2,6 +2,7 @@
 require "util"
 require "functions"
 require "config"
+require "constants"
 
 local loadTick = false
 
@@ -61,7 +62,7 @@ script.on_event(defines.events.on_tick, function(event)
 		--]]
 		
 		--[[
-		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "turret"})
+		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret"})
 		for k,turret in pairs(turrets) do
 			local force = turret.force
 			if --]]--[[global.EndgameCombatVars.--]]--[[placed_turrets[force.name] == nil then--]]
@@ -92,7 +93,10 @@ script.on_event(defines.events.on_tick, function(event)
 			local y1 = chunk.y*32
 			local x2 = x1+32
 			local y2 = y1+32
-			local turrets = game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "turret"})
+			local turrets = game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "ammo-turret"})
+			for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "electric-turret"})) do 
+				table.insert(turrets, v)
+			end
 			for k,turret in pairs(turrets) do
 				local force = turret.force
 				if force ~= game.forces.enemy then
@@ -100,6 +104,7 @@ script.on_event(defines.events.on_tick, function(event)
 						--[[global.EndgameCombatVars.--]]placed_turrets[force.name] = {}
 					end
 					track_entity(--[[global.EndgameCombatVars.--]]placed_turrets[force.name], turret)
+					convertTurretForRange(turret, getTurretRangeResearch(turret.force))
 				end
 			end
 			
@@ -112,7 +117,9 @@ script.on_event(defines.events.on_tick, function(event)
 					end
 				end
 			end
+			
 			table.remove(chunk_cache, 1)
+			chunksPerTick = chunksPerTick-1
 		end
 	end
 	
@@ -160,7 +167,7 @@ end
 
 function repairTurrets(surface, force)
 	local level = 1
-	for i = 5, 1, -1 do
+	for i = #REPAIR_CHANCES, 1, -1 do
 		if force.technologies["healing-alloys-" .. i].researched then
 			level = i
 			break
@@ -174,29 +181,75 @@ function repairTurrets(surface, force)
 	end
 end
 
+local function onFinishedResearch(event)
+	local tech = event.research.name
+	if string.find(tech, "turret-range", 1, true) then
+		local lvl = tonumber(string.sub(tech, -1))
+		for k,turret in pairs(--[[global.EndgameCombatVars.--]]placed_turrets[event.research.force.name]) do
+			if turret.valid then
+				convertTurretForRange(turret, lvl)
+			end
+		end
+		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = event.research.force.name})
+		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = event.research.force.name})) do 
+			table.insert(turrets, v)
+		end
+		for _,turret in pairs(turrets) do
+			convertTurretForRange(turret, lvl)
+		end
+	end
+end
+
+local function onEntityAdded(event)
+	local entity = event.created_entity
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret") and entity.force.technologies["turret-range-1"].researched then
+		convertTurretForRange(entity, getTurretRangeResearch(entity.force))
+		return
+	end
+end
+
 local function onEntityRemoved(event)
+	local entity = event.entity
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret") and entity.force.technologies["turret-range-1"].researched then
+		deconvertTurretForRange(entity)
+		return
+	end
+	
 	local drops = 0
 	local range = 0
-	if event.entity.type == "unit-spawner" and (string.find(event.entity.name, "biter") or string.find(event.entity.name, "spitter")) then
+	if entity.type == "unit-spawner" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
 		drops = math.random(5, 12)
 		range = 4
 	end
-	if event.entity.type == "turret" and string.find(event.entity.name, "worm") then
+	if entity.type == "worm-turret" and string.find(entity.name, "worm") then
 		drops = math.random(2, 5)
 		range = 2
 	end
-	if event.entity.type == "unit" and (string.find(event.entity.name, "biter") or string.find(event.entity.name, "spitter")) then
-		drops = math.random() < 0.2 and math.random(1, 2) or math.random(0, 1)
+	if entity.type == "unit" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
+		local size = 0
+		if string.find(entity.name, "small") then
+			size = 0.1
+		end
+		if string.find(entity.name, "medium") then
+			size = 0.25
+		end
+		if string.find(entity.name, "big") then
+			size = 0.5
+		end
+		if string.find(entity.name, "behemoth") then
+			size = 1
+		end
+		drops = math.random() < size and (math.random() < 0.2 and math.random(1, 2) or math.random(0, 1)) or 0
 		range = 1
 	end
 	if drops > 0 then
 		for i = 1,drops do
-			local pos = {event.entity.position.x, event.entity.position.y}
+			local pos = {entity.position.x, entity.position.y}
 			pos[1] = pos[1]-range+math.random()*2*range
 			pos[2] = pos[2]-range+math.random()*2*range
-			event.entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
+			entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
 			if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
-				local drops = event.entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
+				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
 				for _,item in pairs(drops) do
 					if item.stack and item.stack.name == "biter-flesh" then
 						table.insert(fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
@@ -209,3 +262,10 @@ local function onEntityRemoved(event)
 end
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
+--script.on_event(defines.events.on_preplayer_mined_item, onEntityRemoved)
+--script.on_event(defines.events.on_robot_pre_mined, onEntityRemoved)
+
+script.on_event(defines.events.on_built_entity, onEntityAdded)
+script.on_event(defines.events.on_robot_built_entity, onEntityAdded)
+
+script.on_event(defines.events.on_research_finished, onFinishedResearch)
