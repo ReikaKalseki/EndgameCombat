@@ -30,26 +30,24 @@ table.insert(data.raw["player"]["player"].flags,"animal")
 --addCategoryResistance("turret", "radiation", 0, 100) --worms, do not make resistant
 addCategoryResistance("ammo-turret", "radiation", 0, 100)
 addCategoryResistance("electric-turret", "radiation", 0, 100)
-addCategoryResistance("electric-pole", "radiation", 0, 100)
+addCategoryResistance("fluid-turret", "radiation", 0, 100)
+addCategoryResistance("wall", "radiation", 0, 100)
+
 addCategoryResistance("logistic-robot", "radiation", 0, 100)
 addCategoryResistance("construction-robot", "radiation", 0, 100)
+addCategoryResistance("car", "radiation", 0, 100) --also includes tank
+addCategoryResistance("locomotive", "radiation", 0, 100)
 
---[[
-data.raw["ammo-turret"]["cannon-turret"].attack_parameters.ammo_type.action =
-        {
-          {
-            type = "direct",
-            action_delivery =
-            {
-              {
-                type = "projectile",
-                projectile = "uranium-cannon-projectile",
-                starting_speed = 0.28
-              }
-            }
-          }
-        }
-		--]]
+addCategoryResistance("assembling-machine", "radiation", 0, 100)
+addCategoryResistance("electric-pole", "radiation", 0, 100)
+addCategoryResistance("straight-rail", "radiation", 0, 100)
+addCategoryResistance("curved-rail", "radiation", 0, 100)
+addCategoryResistance("pipe", "radiation", 0, 100)
+addCategoryResistance("pipe-to-ground", "radiation", 0, 100)
+addCategoryResistance("transport-belt", "radiation", 0, 100)
+addCategoryResistance("mining-drill", "radiation", 0, 100)
+addCategoryResistance("lamp", "radiation", 0, 100)
+addCategoryResistance("storage-tank", "radiation", 0, 100)
 	
 if data.raw["construction-robot"]["bob-construction-robot-2"] then
 	data.raw["construction-robot"]["construction-robot"].attack_reaction = Robot_Defence(0.4)

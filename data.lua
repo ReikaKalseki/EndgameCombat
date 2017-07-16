@@ -17,15 +17,9 @@ require("prototypes.item.biter-flesh")
 
 table.insert(data.raw['projectile']['explosive-cannon-projectile']['action']['action_delivery']['target_effects'], {type = "create-entity", entity_name = "small-scorchmark", check_buildability = true })
 
------------FLAMETHROWER-----------
---entities
 require("prototypes.entity.fire2")
+require("prototypes.entity.radiationfire")
 
---items
 require("prototypes.item.flamethrower2")
-
---recipies
 require("prototypes.recipe.flamethrower2")
-
---tech
 require("prototypes.technology.flamethrower2")

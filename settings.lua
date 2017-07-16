@@ -35,4 +35,13 @@ data:extend({
 			localised_name = "Alien drop deconstruction delay",
 			localised_description = "The length of time (in seconds) between an alien dropping an item and the item being marked for deconstruction. Shorter times clear items faster, but increase the risk of robots flying into regions still packed with enemies.",
         },
+		{
+            type = "int-setting",
+            name = "radiation-timer",
+            setting_type = "startup",
+            default_value = 15,
+            order = "r",
+			localised_name = "Radiation lifetime",
+			localised_description = "The length of time (in seconds) that radiation from a neutron bomb lasts.",
+        },
 })

@@ -4,146 +4,135 @@ require "functions"
 require "config"
 require "constants"
 
-local loadTick = false
-
-local placed_turrets = {}
-local chunk_cache = {}
-
-local fleshToDeconstruct = {}
-
---[[
-script.on_load(function()
-	if global.EndgameCombatVars == nil then
-		global.EndgameCombatVars = {}
+function initGlobal(force)
+	if not global.egcombat then
+		global.egcombat = {}
 	end
-	if global.EndgameCombatVars.robotDefenceLevelBoostFactor == nil then
-		global.EndgameCombatVars.robotDefenceLevelBoostFactor = 0
+	if force or global.egcombat.loadTick == nil then
+		global.egcombat.loadTick = false
 	end
+	if force or global.egcombat.placed_turrets == nil then
+		global.egcombat.placed_turrets = {}
+	end
+	if force or global.egcombat.robot_defence == nil then
+		global.egcombat.robot_defence = {}
+	end
+	if force or global.egcombat.chunk_cache == nil then
+		global.egcombat.chunk_cache = {}
+	end
+	if force or global.egcombat.fleshToDeconstruct == nil then
+		global.egcombat.fleshToDeconstruct = {}
+	end
+end
+
+initGlobal(true)
+
+script.on_init(function()
+	initGlobal(true)
 end)
 
-script.on_event(defines.events.on_research_finished, function(event)
-	if event.research.name == "logistic-defence" then
-		global.EndgameCombatVars.robotDefenceLevelBoostFactor = 1
-	end
-	if event.research.name == "logistic-defence-2" then
-		global.EndgameCombatVars.robotDefenceLevelBoostFactor = 1.5
-	end
+script.on_configuration_changed(function()
+	initGlobal(true)
 end)
---]]
 
 script.on_event(defines.events.on_trigger_created_entity, function(event)
 	if event.entity.name == "fire-area-spawner" then
 		spawnFireArea(event.entity)
 	end
+	if event.entity.name == "radiation-area-spawner" then
+		spawnRadiationArea(event.entity)
+	end
 end)
 
-script.on_event(defines.events.on_built_entity, function(event)
-    if event.created_entity.type == "electric-turret" or event.created_entity.type == "ammo-turret" then
-        track_entity(--[[global.EndgameCombatVars.--]]placed_turrets[event.created_entity.force.name], event.created_entity)
-    end
-	--game.print(event.created_entity.type .. " " .. #--[[global.EndgameCombatVars.--]]placed_turrets[event.created_entity.force.name])
-end)
-
-script.on_event(defines.events.on_robot_built_entity, function(event)
-    if event.created_entity.type == "electric-turret" or event.created_entity.type == "ammo-turret" then
-        track_entity(--[[global.EndgameCombatVars.--]]placed_turrets[event.created_entity.force.name], event.created_entity)
-    end
-end)
+local function trackNewTurret(turret)
+	local force = turret.force
+	if force ~= game.forces.enemy then
+		if global.egcombat.placed_turrets[force.name] == nil then
+			global.egcombat.placed_turrets[force.name] = {}
+		end
+		if turret.force.technologies["turret-range-1"].researched then
+			turret = convertTurretForRange(turret, getTurretRangeResearch(turret.force))
+		end
+		track_entity(global.egcombat.placed_turrets[force.name], turret)
+		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #global.egcombat.placed_turrets[force.name])
+	end
+end
 
 script.on_event(defines.events.on_tick, function(event)
-	if not loadTick then
-	--[[
-		if global.EndgameCombatVars == nil then
-			global.EndgameCombatVars = {}
-		end
-		if global.EndgameCombatVars.placed_turrets == nil then
-			global.EndgameCombatVars.placed_turrets = {}
-		end
-		--]]
-		
-		--[[
-		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret"})
-		for k,turret in pairs(turrets) do
-			local force = turret.force
-			if --]]--[[global.EndgameCombatVars.--]]--[[placed_turrets[force.name] == nil then--]]
-				--[[global.EndgameCombatVars.--]]--[[placed_turrets[force.name] = {}
-			end
-			track_entity(--]]--[[global.EndgameCombatVars.--]]--[[placed_turrets[force.name], turret)
-		end
-		--]]
-		
+	initGlobal(false)
+	if not global.egcombat.loadTick then		
 		for chunk in game.surfaces["nauvis"].get_chunks() do
-			table.insert(chunk_cache, chunk)
+			table.insert(global.egcombat.chunk_cache, chunk)
 		end
 		
 		for k,force in pairs(game.forces) do
-			if --[[global.EndgameCombatVars.--]]placed_turrets[force.name] == nil then
-				--[[global.EndgameCombatVars.--]]placed_turrets[force.name] = {}
+			if global.egcombat.placed_turrets[force.name] == nil then
+				global.egcombat.placed_turrets[force.name] = {}
+				--game.print("Adding force " .. force.name .. " to turret table")
 			end
 		end
 		
-		loadTick = true
+		global.egcombat.loadTick = true
 	end
 	
-	if --[[game.tick%4 == 0 and --]]#chunk_cache > 0 then
-		local chunksPerTick = 4
-		while chunksPerTick > 0 and #chunk_cache > 0 do
-			chunk = chunk_cache[1]
-			local x1 = chunk.x*32
-			local y1 = chunk.y*32
-			local x2 = x1+32
-			local y2 = y1+32
-			local turrets = game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "ammo-turret"})
-			for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "electric-turret"})) do 
-				table.insert(turrets, v)
-			end
-			for k,turret in pairs(turrets) do
-				local force = turret.force
-				if force ~= game.forces.enemy then
-					if --[[global.EndgameCombatVars.--]]placed_turrets[force.name] == nil then
-						--[[global.EndgameCombatVars.--]]placed_turrets[force.name] = {}
-					end
-					track_entity(--[[global.EndgameCombatVars.--]]placed_turrets[force.name], turret)
-					convertTurretForRange(turret, getTurretRangeResearch(turret.force))
+	if #global.egcombat.chunk_cache > 0 then
+		local ticksPerChunk = 1--4
+		if game.tick%ticksPerChunk == 0 then
+			local chunksPerTick = 16--1
+			while chunksPerTick > 0 and #global.egcombat.chunk_cache > 0 do
+				chunk = global.egcombat.chunk_cache[1]
+				local x1 = chunk.x*32
+				local y1 = chunk.y*32
+				local x2 = x1+32
+				local y2 = y1+32
+				local turrets = game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "ammo-turret"})
+				for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "electric-turret"})) do 
+					table.insert(turrets, v)
 				end
-			end
-			
-			if Config.deconstructFlesh then
-				local drops = game.surfaces["nauvis"].find_entities_filtered{area = {{x1, y1}, {x2, y2}}, type="item-entity"}
-				for _,item in pairs(drops) do
-					if item.stack and item.stack.name == "biter-flesh" then
-						table.insert(fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
-						--item.order_deconstruction(game.forces.player)
+				for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "fluid-turret"})) do 
+					table.insert(turrets, v)
+				end
+				for k,turret in pairs(turrets) do
+					trackNewTurret(turret)
+				end
+				
+				if Config.deconstructFlesh then
+					local drops = game.surfaces["nauvis"].find_entities_filtered{area = {{x1, y1}, {x2, y2}}, type="item-entity"}
+					for _,item in pairs(drops) do
+						if item.stack and item.stack.name == "biter-flesh" then
+							table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+							--item.order_deconstruction(game.forces.player)
+						end
 					end
 				end
+				
+				table.remove(global.egcombat.chunk_cache, 1)
+				chunksPerTick = chunksPerTick-1
 			end
-			
-			table.remove(chunk_cache, 1)
-			chunksPerTick = chunksPerTick-1
 		end
 	end
 	
-	--if global.EndgameCombatVars and global.EndgameCombatVars.placed_turrets then
+	if global.egcombat and global.egcombat.placed_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				if force.technologies["healing-alloys-1"].researched and --[[global.EndgameCombatVars.--]]placed_turrets[force.name] then
-					--game.print(force.name)
+				--game.print("Force " .. force.name .. ": " .. #global.egcombat.placed_turrets[force.name] .. " turrets placed.")
+				if force.technologies["healing-alloys-1"].researched and global.egcombat.placed_turrets[force.name] then
 					repairTurrets(game.surfaces["nauvis"], force)
 				end
 			end
 		end
-	--end
+	end
 	
-	if #fleshToDeconstruct > 0 then
-		for i = #fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
-			local items = fleshToDeconstruct[i]
+	if #global.egcombat.fleshToDeconstruct > 0 then
+		for i = #global.egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
+			local items = global.egcombat.fleshToDeconstruct[i]
 			local item = items[1]
 			local tick = items[2]
 			if game.tick >= tick or not item.valid then
 				if item.valid then
 					item.order_deconstruction(game.forces.player)
 				end
-				table.remove(fleshToDeconstruct, i)
+				table.remove(global.egcombat.fleshToDeconstruct, i)
 			end
 		end
 	end
@@ -173,8 +162,11 @@ function repairTurrets(surface, force)
 			break
 		end
 	end
-	--game.print(#--[[global.EndgameCombatVars.--]]placed_turrets[force.name])
-	for k,turret in pairs(--[[global.EndgameCombatVars.--]]placed_turrets[force.name]) do
+	--game.print(#global.egcombat.placed_turrets[force.name])
+	if global.egcombat.placed_turrets[force.name] == nil then
+		global.egcombat.placed_turrets[force.name] = {}
+	end
+	for k,turret in pairs(global.egcombat.placed_turrets[force.name]) do
 		if turret.valid and math.random() < REPAIR_CHANCES[level] then
 			repairTurret(turret, level)
 		end
@@ -182,11 +174,17 @@ function repairTurrets(surface, force)
 end
 
 local function onFinishedResearch(event)
+	initGlobal(false)
+	
 	local tech = event.research.name
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.sub(tech, -1))
-		for k,turret in pairs(--[[global.EndgameCombatVars.--]]placed_turrets[event.research.force.name]) do
+		if global.egcombat.placed_turrets[event.research.force.name] == nil then
+			global.egcombat.placed_turrets[event.research.force.name] = {}
+		end
+		for k,turret in pairs(global.egcombat.placed_turrets[event.research.force.name]) do
 			if turret.valid then
+				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
 				convertTurretForRange(turret, lvl)
 			end
 		end
@@ -194,23 +192,36 @@ local function onFinishedResearch(event)
 		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = event.research.force.name})) do 
 			table.insert(turrets, v)
 		end
+		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret", force = event.research.force.name})) do 
+			table.insert(turrets, v)
+		end
 		for _,turret in pairs(turrets) do
 			convertTurretForRange(turret, lvl)
 		end
 	end
+	if tech.name == "logistic-defence" then
+		global.egcombat.robot_defence[event.research.force.name] = 0.8
+	end
+	if tech.name == "logistic-defence-2" then
+		global.egcombat.robot_defence[event.research.force.name] = 1.5
+	end
 end
 
 local function onEntityAdded(event)
+	initGlobal(false)
+	
 	local entity = event.created_entity
-	if (entity.type == "ammo-turret" or entity.type == "electric-turret") and entity.force.technologies["turret-range-1"].researched then
-		convertTurretForRange(entity, getTurretRangeResearch(entity.force))
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
+		trackNewTurret(entity)
 		return
 	end
 end
 
 local function onEntityRemoved(event)
+	initGlobal(false)
+	
 	local entity = event.entity
-	if (entity.type == "ammo-turret" or entity.type == "electric-turret") and entity.force.technologies["turret-range-1"].researched then
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
 		deconvertTurretForRange(entity)
 		return
 	end
@@ -252,7 +263,7 @@ local function onEntityRemoved(event)
 				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
 				for _,item in pairs(drops) do
 					if item.stack and item.stack.name == "biter-flesh" then
-						table.insert(fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+						table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
 						--item.order_deconstruction(game.forces.player)
 					end
 				end

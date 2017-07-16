@@ -89,6 +89,7 @@ return
 end
 
 function addCategoryResistance(category, type_, reduce, percent)
+	if not data.raw[category] then error("No such category '" .. category .. "'!") end
 	for k,v in pairs(data.raw[category]) do
 		addResistance(category, k, type_, reduce, percent)
 	end
@@ -126,6 +127,21 @@ function Modify_Power(train, factor)
 	local endmult = string.sub(pow, -2, -1)
 	local newpow = num*factor
 	obj.max_power = newpow .. endmult
+end
+
+function spawnRadiationArea(entity)
+	local nfire = 1600
+	for i = 1, nfire do
+		local ang = math.random()*2*math.pi
+		local r = (math.random())^(2/3)*RADIATION_RADIUS
+		local dx = r*math.cos(ang)
+		local dy = r*math.sin(ang)
+		local fx = entity.position.x+dx
+		local fy = entity.position.y+dy
+		local lifevar = RADIATION_LIFES[math.random(1, #RADIATION_LIFES)]
+		--game.print("Selecting lifevar " .. lifevar)
+		entity.surface.create_entity{name = "radiation-fire-" .. lifevar, position = {x = fx, y = fy}, force = game.forces.neutral}
+	end
 end
 
 function spawnFireArea(entity)
@@ -173,33 +189,78 @@ function repairTurret(turret, tier)
 	end
 end
 
-function convertTurretForRange(turret, level)
-	if level == 0 then return end
-	if not turret.valid then return end
-	if not turret.surface.valid then return end
+local function replaceTurretKeepingContents(turret, newname)
 	local surf = turret.surface
 	local pos = {turret.position.x, turret.position.y}
 	local dir = turret.direction
 	local f = turret.force
-	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
 	local e = turret.energy
+	local dmg = turret.damage_dealt
+	local kills = turret.kills
+	local inv = turret.get_inventory(defines.inventory.turret_ammo)
+	local items = nil
+	if inv ~= nil then
+		items = {}
+		for i = 1,#inv do
+			local stack = inv[i]
+			if stack and stack.valid_for_read then
+				items[#items+1] = {item = stack.name, num = stack.count}
+			else
+				items[#items+1] = nil
+			end
+		end
+	end
+	local fluids = nil
+	local fbox = turret.fluidbox
+	if fbox ~= nil then
+		fluids = {}
+		for i = 1,#fbox do
+			local stack = fbox[i]
+			if stack then
+				fluids[#fluids+1] = {fluid = stack.type, amount = stack.amount, temp = stack.temperature}
+			else
+				fluids[#fluids+1] = nil
+			end
+		end
+	end
 	turret.destroy()
-	local repl = surf.create_entity{name=n, position=pos, direction=dir, force=f, fast_replace=true, spill=false}
+	local repl = surf.create_entity{name=newname, position=pos, direction=dir, force=f, fast_replace=true, spill=false}
 	repl.energy = e
+	repl.kills = kills
+	repl.damage_dealt = dmg
+	if items ~= nil then
+		for i = 1,#items do
+			local stack = items[i]
+			if stack ~= nil then
+				repl.insert({name = stack.item, count = stack.num})
+			end
+		end
+	end
+	if fluids ~= nil then
+		for i = 1,#fluids do
+			local stack = fluids[i]
+			if stack ~= nil then
+				repl.fluidbox[i] = {type = stack.fluid, amount = stack.amount, temperature = stack.temp}
+			end
+		end
+	end
+	return repl
+end
+
+function convertTurretForRange(turret, level)
+	if level == 0 then return turret end
+	if not turret.valid then return turret end
+	if not turret.surface.valid then return turret end
+	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
+	return replaceTurretKeepingContents(turret, n)
 end
 
 function deconvertTurretForRange(turret)
-	if not turret.valid then return end
-	if not turret.surface.valid then return end
+	if not turret.valid then return turret end
+	if not turret.surface.valid then return turret end
 	if string.find(turret.name, "-rangeboost-", 1, true) then
-		local surf = turret.surface
-		local pos = turret.position
-		local dir = turret.direction
-		local f = turret.force
 		local n = getTurretBaseName(turret)
-		local e = turret.energy
-		turret.destroy()
-		local repl = surf.create_entity{name=n, position=pos, direction=dir, force=f, fast_replace=true, spill=false}
-		repl.energy = e
+		return replaceTurretKeepingContents(turret, n)
 	end
+	return turret
 end

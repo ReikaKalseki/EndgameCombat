@@ -1,11 +1,11 @@
 {
   "name": "EndgameCombat",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "title": "Endgame Combat",
   "author": "Reika",
   "contact": "",
   "homepage": "",
   "factorio_version" : "0.15",
-  "description": "Adds more powerful endgame combat capability.",
-  "dependencies": ["base >= 0.14.0"]
+  "description": "Adds more powerful late and endgame combat capability to keep up with powerful enemies and huge biter bases.",
+  "dependencies": ["base >= 0.15.0"]
 }

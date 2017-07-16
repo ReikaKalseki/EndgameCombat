@@ -6,6 +6,9 @@ baseturrets = util.table.deepcopy(data.raw["ammo-turret"])
 for _,v in pairs(data.raw["electric-turret"]) do 
 	table.insert(baseturrets, v)
 end
+for _,v in pairs(data.raw["fluid-turret"]) do 
+	table.insert(baseturrets, v)
+end
 
 local turrets = {}
 for i = 1,#TURRET_RANGE_BOOSTS do
