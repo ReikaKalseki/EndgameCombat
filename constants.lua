@@ -9,21 +9,23 @@ REPAIR_FACTORS = {}
 REPAIR_LIMITS = {}
 
 local function addRepairTier(chance, factor, limit)
+	chance = chance/60 --seconds to ticks
+	factor = factor/100 --% to raw
 	REPAIR_CHANCES[#REPAIR_CHANCES+1] = chance
 	REPAIR_FACTORS[#REPAIR_FACTORS+1] = factor
 	REPAIR_LIMITS[#REPAIR_LIMITS+1] = limit
 end
 
-addRepairTier(1/2048, 0.03125, 1)
-addRepairTier(1/512, 0.0625, 2)
-addRepairTier(1/128, 0.125, 5)
-addRepairTier(1/64, 0.25, 10)
-addRepairTier(1/32, 0.5, 25)
-addRepairTier(1/16, 0.5, 40)
-addRepairTier(1/8, 0.5, 50)
-addRepairTier(1/6, 0.5, 100)
-addRepairTier(1/4, 0.75, 200)
-addRepairTier(1/2, 1, 250)
+addRepairTier(1/64, 1, 1) --was 1/2048
+addRepairTier(1/64, 2.5, 2) --was 1/512
+addRepairTier(1/32, 5, 5) --was 1/128
+addRepairTier(1/32, 10, 10) --was 1/64
+addRepairTier(1/16, 25, 25) --was 1/32
+addRepairTier(1/16, 25, 40) --was 1/16
+addRepairTier(1/8, 25, 50) --was 1/8
+addRepairTier(1/4, 40, 100) --was 1/6
+addRepairTier(1/2, 40, 200) --was 1/4
+addRepairTier(1, 50, 250) --was 1/2
 
 NAPALM_RADIUS = 36
 RADIATION_RADIUS = 80--60--45

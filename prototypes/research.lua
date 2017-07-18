@@ -1440,6 +1440,7 @@ data:extend(
     type = "technology",
     name = "healing-alloys-1",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},
     prerequisites =
     {
       "better-turrets",
@@ -1467,6 +1468,7 @@ data:extend(
     type = "technology",
     name = "healing-alloys-2",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},
     prerequisites =
     {
       "healing-alloys-1",
@@ -1493,6 +1495,7 @@ data:extend(
     type = "technology",
     name = "healing-alloys-3",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},
     prerequisites =
     {
       "healing-alloys-2",
@@ -1519,6 +1522,7 @@ data:extend(
     type = "technology",
     name = "healing-alloys-4",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},
     prerequisites =
     {
       "healing-alloys-3",
@@ -1545,6 +1549,7 @@ data:extend(
     type = "technology",
     name = "healing-alloys-5",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},
     prerequisites =
     {
       "healing-alloys-4",
@@ -1572,12 +1577,19 @@ data:extend(
 
 local i = 6
 while #REPAIR_CHANCES >= i do
+
+	--log("Level " .. i .. ":")
+	--log(REPAIR_CHANCES[i]*60*100 .. " R/s")
+	--log(REPAIR_FACTORS[i]*100 .. "%")
+	--log(REPAIR_LIMITS[i] .. " Limit")
+
 	data:extend(
 	{
 	  {
 		type = "technology",
 		name = "healing-alloys-" .. i,
 		icon = "__EndgameCombat__/graphics/technology/healalloy.png",
+		localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},
 		prerequisites =
 		{
 		  "healing-alloys-" .. (i-1),
@@ -1630,6 +1642,7 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 			type = "technology",
 			name = "turret-range-" .. l,
 			icon = "__EndgameCombat__/graphics/technology/turret-range.png",
+			localised_description = {"technology-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},
 			prerequisites =
 			l > 1 and {
 			  "turret-range-" .. (l-1),

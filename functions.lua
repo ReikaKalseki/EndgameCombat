@@ -140,7 +140,10 @@ function spawnRadiationArea(entity)
 		local fy = entity.position.y+dy
 		local lifevar = RADIATION_LIFES[math.random(1, #RADIATION_LIFES)]
 		--game.print("Selecting lifevar " .. lifevar)
-		entity.surface.create_entity{name = "radiation-fire-" .. lifevar, position = {x = fx, y = fy}, force = game.forces.neutral}
+		local neighbors = entity.surface.find_entities_filtered({area = {{fx-2, fy-2}, {fx+2, fy+2}}, type = "fire"})
+		if #neighbors <= 1 then
+			entity.surface.create_entity{name = "radiation-fire-" .. lifevar, position = {x = fx, y = fy}, force = game.forces.neutral}
+		end
 	end
 end
 

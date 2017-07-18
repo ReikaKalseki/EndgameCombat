@@ -35,15 +35,6 @@ script.on_configuration_changed(function()
 	initGlobal(true)
 end)
 
-script.on_event(defines.events.on_trigger_created_entity, function(event)
-	if event.entity.name == "fire-area-spawner" then
-		spawnFireArea(event.entity)
-	end
-	if event.entity.name == "radiation-area-spawner" then
-		spawnRadiationArea(event.entity)
-	end
-end)
-
 local function trackNewTurret(turret)
 	local force = turret.force
 	if force ~= game.forces.enemy then
@@ -57,6 +48,53 @@ local function trackNewTurret(turret)
 		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #global.egcombat.placed_turrets[force.name])
 	end
 end
+
+local function reloadRangeTech()
+	if global.egcombat and global.egcombat.placed_turrets then
+		for k,force in pairs(game.forces) do
+			if force ~= game.forces.enemy then
+				if global.egcombat.placed_turrets[force.name] then
+					for k,turret in pairs(global.egcombat.placed_turrets[force.name]) do
+						if turret.valid then
+							turret = deconvertTurretForRange(turret)
+							trackNewTurret(turret)
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret"})
+	for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret"})) do 
+		table.insert(turrets, v)
+	end
+	for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret"})) do 
+		table.insert(turrets, v)
+	end
+	for _,turret in pairs(turrets) do
+		if turret.force ~= game.forces.enemy then
+			turret = deconvertTurretForRange(turret)
+			trackNewTurret(turret)
+		end
+	end
+end
+
+script.on_event(defines.events.on_console_command, function(event)
+	if event.command == "c" and string.find(event.parameters, "technologies[\"turret-range", 1, true) and string.find(event.parameters, "].researched", 1, true) then
+		game.print("EndgameCombat: Reloading turret ranges.")
+		reloadRangeTech()
+	end
+end)
+
+script.on_event(defines.events.on_trigger_created_entity, function(event)
+	if event.entity.name == "fire-area-spawner" then
+		spawnFireArea(event.entity)
+	end
+	if event.entity.name == "radiation-area-spawner" then
+		spawnRadiationArea(event.entity)
+	end
+end)
 
 script.on_event(defines.events.on_tick, function(event)
 	initGlobal(false)
