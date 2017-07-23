@@ -40,15 +40,15 @@ function createPlasmaBeam()
 		working_sound =
 		{
 		  {
-			filename = "__Laser_Beam_Turrets__/laser-beam-01.ogg",
+			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-01.ogg",
 			volume = 0.9
 		  },
 		  {
-			filename = "__Laser_Beam_Turrets__/laser-beam-02.ogg",
+			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-02.ogg",
 			volume = 0.9
 		  },
 		  {
-			filename = "__Laser_Beam_Turrets__/laser-beam-03.ogg",
+			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-03.ogg",
 			volume = 0.9
 		  }
 		  

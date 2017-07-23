@@ -7,7 +7,7 @@ require "constants"
 
 local math3d = require "math3d"
 
-for lifevar = -30,60,5 do
+for lifevar = RADIATION_LIFE_VAR_MIN,RADIATION_LIFE_VAR_MAX,RADIATION_LIFE_VAR_STEP do
 	data:extend({
 	{
 	  type = "fire",

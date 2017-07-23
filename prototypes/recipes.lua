@@ -8,7 +8,7 @@
     ingredients =
     {
 	  {"stone-wall", 1},
-      {"stone-brick", 2},
+      {"concrete", 5},
       {"steel-plate", 1}
     },
 	category = "advanced-crafting",

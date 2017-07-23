@@ -80,6 +80,62 @@ local function reloadRangeTech()
 	end
 end
 
+local function roundToGridBitShift(position, shift)
+	position.x = bit32.lshift(bit32.rshift(position.x, shift), shift)
+	position.y = bit32.lshift(bit32.rshift(position.y, shift), shift)
+	return position
+end
+
+local function getPositionForBPEntity(entity)
+	local position = entity.position
+	
+	if (entity.has_flag("placeable-off-grid")) then
+		return position
+	end
+
+	local buildingGridBitShift = entity.building_grid_bit_shift
+	local tiledResult = position
+	tiledResult = roundToGridBitShift(tiledResult, buildingGridBitShift)
+	local result = {x=tiledResult.x, y=tiledResult.y}
+	result.x = result.x + bit32.lshift(1, buildingGridBitShift) * 0.5
+	result.y = result.y + bit32.lshift(1, buildingGridBitShift) * 0.5
+	return result
+end
+
+script.on_event(defines.events.on_player_setup_blueprint, function(event)
+	local player = game.players[event.player_index]
+	local surface = player.surface
+	local bp = player.cursor_stack
+	local flag = false
+	local entities = surface.find_entities_filtered({force = player.force, area = event.area})
+	local forbp = {}
+	local avgpos = {x=0, y=0}
+	for _,entity in pairs(entities) do
+		local ename = entity.name
+		local pos = entity.position
+		if string.find(entity.name, "rangeboost") then
+			flag = true
+			ename = getTurretBaseName(entity)
+			pos.x = pos.x+0.5
+			pos.y = pos.y+0.5
+		end
+		table.insert(forbp, {entity_number=#forbp, name=ename, position=pos, direction=entity.direction})
+		avgpos.x = avgpos.x+entity.position.x
+		avgpos.y = avgpos.y+entity.position.y
+	end
+	if not flag then return end
+	avgpos = {x=avgpos.x/#forbp, y=avgpos.y/#forbp}
+	for _,entry in pairs(forbp) do
+		entry.position.x = entry.position.x-avgpos.x
+		entry.position.y = entry.position.y-avgpos.y
+	end
+	bp.set_stack({name=event.item, count=1}) --since always invalid
+	game.print("BPing " .. #forbp .. " entities:")
+	for _,v in pairs(forbp) do game.print(v.name .. " @ " .. v.position.x .. ", " .. v.position.y) end
+	bp.clear_blueprint()
+	bp.set_blueprint_entities(forbp)
+end)
+
 script.on_event(defines.events.on_console_command, function(event)
 	if event.command == "c" and string.find(event.parameters, "technologies[\"turret-range", 1, true) and string.find(event.parameters, "].researched", 1, true) then
 		game.print("EndgameCombat: Reloading turret ranges.")

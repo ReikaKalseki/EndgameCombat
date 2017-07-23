@@ -44,6 +44,7 @@ data:extend(
     {
 	  "stone-walls",
 	  "steel-processing",
+	  "concrete",
       "military-2",
 	  "gates",
     },
@@ -1635,6 +1636,24 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 	if l >= 10 then
 		packs[#packs+1] = {"space-science-pack", 1}
 	end
+	
+	local prereq = {}
+	if l > 1 then
+		table.insert(prereq, "turret-range-" .. (l-1))
+	else
+		table.insert(prereq, "turrets")
+		table.insert(prereq, "military")
+	end
+	
+	if l == 3 then
+		table.insert(prereq, "military-2")
+	end
+	if l == 5 then
+		table.insert(prereq, "military-3")
+	end
+	if l == 7 then
+		table.insert(prereq, "military-4")
+	end
 		
 	data:extend(
 	{	
@@ -1643,10 +1662,7 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 			name = "turret-range-" .. l,
 			icon = "__EndgameCombat__/graphics/technology/turret-range.png",
 			localised_description = {"technology-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},
-			prerequisites =
-			l > 1 and {
-			  "turret-range-" .. (l-1),
-			} or nil,
+			prerequisites = prereq,
 			unit =
 			{
 			  count = math.ceil(100*(2^(l-1))),

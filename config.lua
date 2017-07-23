@@ -9,3 +9,5 @@ Config.deconstructFlesh = settings.startup["deconstruct-flesh"].value--false
 Config.deconstructFleshTimer = settings.startup["deconstruct-flesh-timer"].value--10
 
 Config.radiationTimer = settings.startup["radiation-timer"].value--15
+
+Config.cratedAmmoBoost = settings.startup["crated-ammo-boost"].value--10
