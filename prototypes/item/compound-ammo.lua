@@ -8,6 +8,7 @@ for name,base in pairs(data.raw.ammo) do
 		ammo = table.deepcopy(base)
 		ammo.name = name .. "-crate"
 		ammo.magazine_size = AMMO_CRATE_CAPACITY
+		ammo.stack_size = 100 --halve the total stack size, but still 5x as much ammo per slot
 		ammo.localised_name = {"ammo-crate.name", {"item-name." .. name}}
 		ammo.icons = {
 			{icon=ammo.icon}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png"}

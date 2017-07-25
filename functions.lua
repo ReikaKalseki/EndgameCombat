@@ -172,12 +172,15 @@ function getTurretRangeResearch(force)
 	return level
 end
 
-function getTurretBaseName(turret)
-	local basename = turret.name
-	if string.find(basename, "-rangeboost-") then
-		basename = string.sub(turret.name, 1, -string.len("-rangeboost-")-2) --aka Java substring(0, length()-"-rangeboost-".length()-1)
+function getTurretBaseNameByName(name)
+	if string.find(name, "-rangeboost-") then
+		name = string.sub(name, 1, -string.len("-rangeboost-")-2) --aka Java substring(0, length()-"-rangeboost-".length()-1)
 	end
-	return basename
+	return name
+end
+
+function getTurretBaseName(turret)
+	return getTurretBaseNameByName(turret.name)
 end
 
 function repairTurret(turret, tier)

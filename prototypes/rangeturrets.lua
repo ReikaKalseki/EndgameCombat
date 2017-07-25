@@ -1,7 +1,7 @@
 require "config"
 require "constants"
 
-local MAKE_ITEMS = false
+local MAKE_ITEMS = true--false
 
 local baseturrets = {}
 baseturrets = util.table.deepcopy(data.raw["ammo-turret"])
@@ -15,25 +15,25 @@ end
 local turrets = {}
 local items = {}
 for i = 1,#TURRET_RANGE_BOOSTS do
-	for name,base in pairs(baseturrets) do
+	for _,base in pairs(baseturrets) do
 		local turret = util.table.deepcopy(base)
 		turret.name = turret.name .. "-rangeboost-" .. i
 		turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 		turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
 		turret.order = "z"
-		if MAKE_ITEMS then
+		if MAKE_ITEMS and turret.minable and turret.minable then
 			turret.minable.result = turret.name
 		end
-		--log("Adding ranged L" .. i .. " for " .. name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
+		--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
 		table.insert(turrets, turret)
 		
-		if MAKE_ITEMS then
+		if MAKE_ITEMS and turret.minable then
 			local item = util.table.deepcopy(data.raw.item[base.minable.result])
 			item.name = turret.name
-			--item.localised_name = turret.localised_name
+			item.localised_name = base.localised_name--turret.localised_name
 			item.order = "z"
 			item.place_result = turret.name
-			--log("Adding ranged L" .. i .. " for " .. name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
+			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
 			table.insert(items, item)
 		end
 	end
@@ -45,6 +45,34 @@ for k,turret in pairs(turrets) do
 		turret
 	})
 end
+
+--[[
+for _,base in pairs(baseturrets) do
+	local turret = util.table.deepcopy(base)
+	turret.name = base.name .. "-range-blueprint"
+	turret.localised_name = base.localised_name
+	turret.order = "z"
+	log("Adding BP'ed clone for " .. base.name .. " > " .. turret.name)
+	data:extend(
+	{
+		turret
+	})
+	
+	data:extend({
+		{
+			type = "item",
+			name = turret.name,
+			localised_name = base.localised_name,
+			icon = "__base__/graphics/icons/radar.png", --temp
+			flags = {"goes-to-main-inventory"},
+			subgroup = "defensive-structure",
+			order = "z",
+			place_result = turret.name,
+			stack_size = 1
+		}
+	})
+end
+--]]
 
 if MAKE_ITEMS then
 	for k,item in pairs(items) do

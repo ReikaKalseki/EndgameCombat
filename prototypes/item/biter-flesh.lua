@@ -1,3 +1,5 @@
+require "config"
+
 data:extend(
 {
   {
@@ -9,7 +11,8 @@ data:extend(
     order = "b[biter-flesh]",
     stack_size = 250,
 	durability = 1,
-    durability_description_key = "Freshness"
+	localised_description = Config.rottingFlesh and {"item-description.biter-flesh-rotting"} or {"item-description.biter-flesh"},
+    durability_description_key = "description.biter-flesh-freshness"
   },
   {
     type = "capsule",

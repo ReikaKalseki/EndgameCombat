@@ -27,6 +27,13 @@ data:extend({
 			--localised_description = "Automatically marks drops from alien death for robot deconstruction after a configurable delay.",
         },
 		{
+            type = "bool-setting",
+            name = "flesh-unit-drops",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
+		{
             type = "int-setting",
             name = "deconstruct-flesh-timer",
             setting_type = "startup",
@@ -49,6 +56,13 @@ data:extend({
             name = "crated-ammo-boost",
             setting_type = "startup",
             default_value = 10,
+            order = "r",
+        },
+		{
+            type = "bool-setting",
+            name = "rotting-flesh",
+            setting_type = "startup",
+            default_value = true,
             order = "r",
         },
 })

@@ -101,7 +101,7 @@ local function getPositionForBPEntity(entity)
 	result.y = result.y + bit32.lshift(1, buildingGridBitShift) * 0.5
 	return result
 end
-
+--[[
 script.on_event(defines.events.on_player_setup_blueprint, function(event)
 	local player = game.players[event.player_index]
 	local surface = player.surface
@@ -116,15 +116,15 @@ script.on_event(defines.events.on_player_setup_blueprint, function(event)
 		if string.find(entity.name, "rangeboost") then
 			flag = true
 			ename = getTurretBaseName(entity)
-			pos.x = pos.x+0.5
-			pos.y = pos.y+0.5
+			--pos.x = pos.x+1
+			--pos.y = pos.y+1
 		end
 		table.insert(forbp, {entity_number=#forbp, name=ename, position=pos, direction=entity.direction})
-		avgpos.x = avgpos.x+entity.position.x
-		avgpos.y = avgpos.y+entity.position.y
+		avgpos.x = math.min(avgpos.x, pos.x)--avgpos.x+pos.x
+		avgpos.y = math.min(avgpos.y, pos.y)--avgpos.y+pos.y
 	end
 	if not flag then return end
-	avgpos = {x=avgpos.x/#forbp, y=avgpos.y/#forbp}
+	--avgpos = {x=avgpos.x/#forbp, y=avgpos.y/#forbp}
 	for _,entry in pairs(forbp) do
 		entry.position.x = entry.position.x-avgpos.x
 		entry.position.y = entry.position.y-avgpos.y
@@ -135,7 +135,7 @@ script.on_event(defines.events.on_player_setup_blueprint, function(event)
 	bp.clear_blueprint()
 	bp.set_blueprint_entities(forbp)
 end)
-
+--]]
 script.on_event(defines.events.on_console_command, function(event)
 	if event.command == "c" and string.find(event.parameters, "technologies[\"turret-range", 1, true) and string.find(event.parameters, "].researched", 1, true) then
 		game.print("EndgameCombat: Reloading turret ranges.")
@@ -230,6 +230,29 @@ script.on_event(defines.events.on_tick, function(event)
 			end
 		end
 	end
+	
+	if Config.rottingFlesh then
+		for _,player in pairs(game.players) do
+			if math.random() < 0.2 then
+				local invs = {defines.inventory.player_main, defines.inventory.player_quickbar, defines.inventory.player_tools, defines.inventory.player_vehicle}
+				--for _,inv in pairs(invs) do
+				local inv = invs[math.random(1, #invs)]
+					local iinv = player.get_inventory(inv)
+					if iinv then
+						local flesh = iinv.find_item_stack("biter-flesh")
+						local d = 0.001
+						if flesh and flesh.valid_for_read then
+							if flesh.durability-d > 0 then
+								flesh.durability = math.max(0, flesh.durability-d)
+							else
+								flesh.count = flesh.count-1
+							end
+						end
+					end
+				--end
+			end
+		end
+	end
 end)
 
 function track_entity(entity_list, entity)
@@ -305,9 +328,32 @@ local function onEntityAdded(event)
 	initGlobal(false)
 	
 	local entity = event.created_entity
+	if entity.type == "entity-ghost" then
+        if string.find(entity.ghost_name, "rangeboost") then
+			--game.print("Converting ghost")
+			local time = entity.time_to_live
+            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, inner_name = getTurretBaseNameByName(entity.ghost_name)})
+            entity.destroy()
+			new.time_to_live = time
+			return
+        end
+    end
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
 		trackNewTurret(entity)
 		return
+	end
+end
+
+local function onEntityMined(event)
+	initGlobal(false)
+	
+	local inv = event.buffer
+	local entity = event.entity
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
+		if string.find(entity.name, "rangeboost") and game.entity_prototypes[entity.name].mineable_properties and #game.entity_prototypes[entity.name].mineable_properties > 0 then
+			inv.remove({name=game.entity_prototypes[entity.name].mineable_properties.products[1].name})
+			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
+		end
 	end
 end
 
@@ -330,7 +376,7 @@ local function onEntityRemoved(event)
 		drops = math.random(2, 5)
 		range = 2
 	end
-	if entity.type == "unit" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
+	if entity.type == "unit" and Config.bitersDropFlesh and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
 		local size = 0
 		if string.find(entity.name, "small") then
 			size = 0.1
@@ -369,6 +415,9 @@ end
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
 --script.on_event(defines.events.on_preplayer_mined_item, onEntityRemoved)
 --script.on_event(defines.events.on_robot_pre_mined, onEntityRemoved)
+
+script.on_event(defines.events.on_player_mined_entity, onEntityMined)
+script.on_event(defines.events.on_robot_mined_entity, onEntityMined)
 
 script.on_event(defines.events.on_built_entity, onEntityAdded)
 script.on_event(defines.events.on_robot_built_entity, onEntityAdded)

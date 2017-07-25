@@ -17,7 +17,9 @@ Turret range upgrade research
 Turret regeneration research
 Logistic robot defenses research
 Power pole defenses research
+Adds crated ammo for giving ammo turrets longer time between reloads and a small DPS boost
 
 Secondary Features:
 Better train penetration through hordes of biters
 Contains integration with the Laser Beam mod
+Biters, worms, and spawners drop Alien Tissue, which has some uses in production in research
