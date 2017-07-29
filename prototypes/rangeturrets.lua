@@ -27,7 +27,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 		--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
 		table.insert(turrets, turret)
 		
-		if MAKE_ITEMS and turret.minable then
+		if MAKE_ITEMS and base.minable and base.minable.result then
 			local item = util.table.deepcopy(data.raw.item[base.minable.result])
 			item.name = turret.name
 			item.localised_name = base.localised_name--turret.localised_name

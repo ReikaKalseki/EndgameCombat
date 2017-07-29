@@ -349,8 +349,8 @@ local function onEntityMined(event)
 	
 	local inv = event.buffer
 	local entity = event.entity
-	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
-		if string.find(entity.name, "rangeboost") and game.entity_prototypes[entity.name].mineable_properties and #game.entity_prototypes[entity.name].mineable_properties > 0 then
+	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
+		if string.find(entity.name, "rangeboost") and game.entity_prototypes[entity.name].mineable_properties and #game.entity_prototypes[entity.name].mineable_properties.products > 0 then
 			inv.remove({name=game.entity_prototypes[entity.name].mineable_properties.products[1].name})
 			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
 		end
