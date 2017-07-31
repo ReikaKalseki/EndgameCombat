@@ -1,11 +1,23 @@
 require "config"
 
+--[[ gates it too late
+if data.raw.item["gilded-copper-cable"] then
+
+  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"gilded-copper-cable", 40})
+  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"copper-cable", 20})
+  table.insert(data.raw["technology"]["shockwave-turrets"].prerequisites,{"gold-processing", 20})
+else
+  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"copper-cable", 100})
+end
+--]]
+
 local turretArmorSteel = 10
 
 if data.raw.item["titanium-plate"] then
   --table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"titanium-plate", 25})
   table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"titanium-plate", 25})
   table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"titanium-plate", 50})
+  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"titanium-plate", 10})
   
   table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"titanium-plate", 25})
 else
@@ -17,6 +29,7 @@ end
 table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]25})
 table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"steel-plate", turretArmorSteel})
 table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"steel-plate", turretArmorSteel*2})
+table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"steel-plate", math.floor(turretArmorSteel/2)})
 
 if data.raw.item["speed-module-5"] then
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"speed-module-5", 10})

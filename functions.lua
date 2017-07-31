@@ -170,7 +170,10 @@ function tickShockwaveTurret(entry, tick)
 					entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
 					entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
 					--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
-					biter.damage(math.min(50, math.max(2, game.entity_prototypes[biter.name].max_health/20)), entry.turret.force, "electric")
+					local f = getShockwaveTurretDamageBoost(entry.turret.force)
+					local maxh = game.entity_prototypes[biter.name].max_health
+					local dmg = math.min(50*f, math.max(2, math.min(maxh/2, maxh*f/20)))
+					biter.damage(dmg, entry.turret.force, "electric")
 				end
 			end
 			entry.turret.energy = entry.turret.energy-SHOCKWAVE_TURRET_DISCHARGE_ENERGY
@@ -180,6 +183,18 @@ function tickShockwaveTurret(entry, tick)
 			entry.delay = math.min(90, entry.delay+10)
 		end
 	end
+end
+
+function getShockwaveTurretDamageBoost(force)
+	if not force.technologies["shockwave-turret-damage-1"].researched then return 0 end
+	local level = 1
+	for i = 5, 1, -1 do
+		if force.technologies["shockwave-turret-damage-" .. i].researched then
+			level = i
+			break
+		end
+	end
+	return 1+level*0.4
 end
 
 function getTurretRangeBoost(force)

@@ -1,7 +1,6 @@
 require("prototypes.category")
 
 require("prototypes.ammo")
-require("prototypes.research")
 require("prototypes.turrets")
 require("prototypes.projectiles")
 require("prototypes.radar")
@@ -22,4 +21,10 @@ require("prototypes.entity.radiationfire")
 
 require("prototypes.item.flamethrower2")
 require("prototypes.recipe.flamethrower2")
-require("prototypes.technology.flamethrower2")
+
+require("prototypes.research.flamethrower2")
+require("prototypes.research.ammo")
+require("prototypes.research.defense")
+require("prototypes.research.turrets")
+require("prototypes.research.equipment")
+require("prototypes.research.upgrades")

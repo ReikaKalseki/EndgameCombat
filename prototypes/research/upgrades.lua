@@ -3,715 +3,6 @@ require "constants"
 
 data:extend(
 {
---walls
-    {
-    type = "technology",
-    name = "spiked-walls",
-    icon = "__EndgameCombat__/graphics/technology/spiked-walls.png",
-    prerequisites =
-    {
-	  "stone-walls",
-	  "steel-processing",
-      "military-3",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "spiked-wall"
-      },
-    },
-    unit =
-    {
-      count = 50,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"military-science-pack", 1},
-      },
-      time = 20
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-      {
-    type = "technology",
-    name = "tough-walls",
-    icon = "__EndgameCombat__/graphics/technology/tough-walls.png",
-    prerequisites =
-    {
-	  "stone-walls",
-	  "steel-processing",
-	  "concrete",
-      "military-2",
-	  "gates",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "tough-wall"
-      },
-	  {
-        type = "unlock-recipe",
-        recipe = "tough-gate"
-      },
-    },
-    unit =
-    {
-      count = 75,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        --{"science-pack-3", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  {
-    type = "technology",
-    name = "tough-spiked-walls",
-    icon = "__EndgameCombat__/graphics/technology/tough-spiked-walls.png",
-    prerequisites =
-    {
-	  "tough-walls",
-	  "spiked-walls",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "tough-spiked-wall"
-      },
-    },
-    unit =
-    {
-      count = 125,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 40
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-
---misc
-    {
-    type = "technology",
-    name = "power-armor-3",
-    icon = "__EndgameCombat__/graphics/technology/armor.png",
-    prerequisites =
-    {
-      "military-4",
-      "power-armor-2",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "power-armor-3"
-      },
-    },
-    unit =
-    {
-      count = 600,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-      {
-    type = "technology",
-    name = "advanced-equipment",
-    icon = "__EndgameCombat__/graphics/technology/armor.png",
-    prerequisites =
-    {
-      "power-armor-3",
-	  "discharge-defense-equipment",
-	  "personal-laser-defense-equipment",
-	  "night-vision-equipment",
-	  "energy-shield-equipment",
-	  "battery-equipment",
-	  "solar-panel-equipment",
-	  "fusion-reactor-equipment",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "advanced-laser-defense-equipment"
-      },
-    },
-    unit =
-    {
-      count = 250,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-    {
-    type = "technology",
-    name = "better-tank",
-    icon = "__EndgameCombat__/graphics/technology/tank.png",
-    prerequisites =
-    {
-      "military-4",
-      "tanks",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "better-tank"
-      },
-    },
-    unit =
-    {
-      count = 500,
-      ingredients =
-      {
-        {"science-pack-1", 4},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 2},
-      },
-      time = 60
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-
-    {
-    type = "technology",
-    name = "big-radar",
-    icon = "__EndgameCombat__/graphics/technology/radar.png",
-    prerequisites =
-    {
-      "military-4",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },
-    },
-    unit =
-    {
-      count = 100,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 32,
-  },
-  
-  {
-    type = "technology",
-    name = "electric-defence",
-    icon = "__EndgameCombat__/graphics/technology/electric-defence.png",
-    prerequisites =
-    {
-      "military-3",
-      "advanced-electronics",
-      "electric-energy-distribution-2",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 150,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-      {
-    type = "technology",
-    name = "logistic-defence",
-    icon = "__EndgameCombat__/graphics/technology/logistic.png",
-    prerequisites =
-    {
-      "military-3",
-      "logistic-robotics",
-      "combat-robotics",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 200,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  {
-    type = "technology",
-    name = "logistic-defence-2",
-    icon = "__EndgameCombat__/graphics/technology/logistic.png",
-    prerequisites =
-    {
-      "logistic-defence",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 250,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-
---ammo
-  {
-    type = "technology",
-    name = "fire-ammo",
-    icon = "__EndgameCombat__/graphics/technology/fire-ammo.png",
-    prerequisites =
-    {
-	  "flammables",
-      "military-3",
-      "sulfur-processing",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "sulfur-bullet-magazine"
-      },
-	   {
-        type = "unlock-recipe",
-        recipe = "sulfur-heavy-bullet-magazine"
-      },
-	   {
-        type = "unlock-recipe",
-        recipe = "sulfur-heavy-bullet-magazine-conversion"
-      },
-    },
-    unit =
-    {
-      count = 200,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-      },
-      time = 40
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-    {
-    type = "technology",
-    name = "napalm-shells",
-    icon = "__EndgameCombat__/graphics/technology/napalm-shells.png",
-    prerequisites =
-    {
-	  "fire-ammo",
-      "military-4",
-	  "tanks"
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "napalm-shell"
-      }
-    },
-    unit =
-    {
-      count = 400,
-      ingredients =
-      {
-        {"science-pack-1", 4},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 60
-    },
-    order = "a-f",
-	icon_size = 32,
-  },
-      {
-    type = "technology",
-    name = "napalm-rockets",
-    icon = "__EndgameCombat__/graphics/technology/napalm-rockets.png",
-    prerequisites =
-    {
-	  "napalm-shells",
-	  "rocketry",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "napalm-rocket"
-      }
-    },
-    unit =
-    {
-      count = 400,
-      ingredients =
-      {
-        {"science-pack-1", 4},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 60
-    },
-    order = "a-f",
-	icon_size = 32,
-  },
-  
-  {
-    type = "technology",
-    name = "hi-ex-shells",
-    icon = "__EndgameCombat__/graphics/technology/hi-ex-shells.png",
-    prerequisites =
-    {
-	  "explosives",
-      "tanks",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "hiex-cannon-shell-big"
-      },
-    },
-    unit =
-    {
-      count = 100,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-      },
-      time = 40
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 32,
-  },
-    {
-    type = "technology",
-    name = "nuclear-shells",
-    icon = "__EndgameCombat__/graphics/technology/nuke-shells.png",
-    prerequisites =
-    {
-	  "military-4",
-      "hi-ex-shells",
-	  "rocketry",
-	  "atomic-bomb"
-    },
-	effects =
-    {
-	  {
-        type = "unlock-recipe",
-        recipe = "radiation-capsule"
-      },
-	        {
-        type = "unlock-recipe",
-        recipe = "neutron-shell"
-      },
-	  	        {
-        type = "unlock-recipe",
-        recipe = "neutron-rocket"
-      },
-    },
-    unit =
-    {
-      count = 800,
-      ingredients =
-      {
-        {"science-pack-1", 8},
-        {"science-pack-2", 4},
-        {"science-pack-3", 2},
-        {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
-      },
-      time = 240
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 32,
-  },
-      {
-    type = "technology",
-    name = "capsules",
-    icon = "__EndgameCombat__/graphics/technology/capsules.png",
-    prerequisites =
-    {
-	  "military-4",
-      "advanced-oil-processing",
-    },
-	effects =
-    {
-	    {
-        type = "unlock-recipe",
-        recipe = "acid-capsule"
-      },
-    },
-    unit =
-    {
-      count = 100,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-      },
-      time = 40
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 32,
-  },
-
---turrets
-  {
-    type = "technology",
-    name = "better-turrets",
-    icon = "__EndgameCombat__/graphics/technology/turrets.png",
-    prerequisites =
-    {
-	  "military-2",
-      "advanced-electronics",
-      "turrets",
-    },
-	effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "concussion-turret"
-      },
-    },
-    unit =
-    {
-      count = 100,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        --{"science-pack-3", 1},
-		{"military-science-pack", 1},
-		--{"high-tech-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-    {
-    type = "technology",
-    name = "plasma-turrets",
-    icon = "__EndgameCombat__/graphics/technology/plasma-turrets.png",
-    effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "plasma-turret"
-      },
-    },
-    prerequisites =
-    {
-      "laser-turrets",
-	  "better-turrets",
-	  "military-4",
-    },
-    unit =
-    {
-      count = 200,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-		{"high-tech-science-pack", 1},
-		{"military-science-pack", 1},
-      },
-      time = 45
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-    {
-    type = "technology",
-    name = "cannon-turrets",
-    icon = "__EndgameCombat__/graphics/technology/cannon-turrets.png",
-    effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "cannon-turret"
-      },
-	  {
-        type = "unlock-recipe",
-        recipe = "cannon-shell-magazine"
-      },
-	  {
-        type = "unlock-recipe",
-        recipe = "explosive-cannon-shell-magazine"
-      },
-	  {
-        type = "unlock-recipe",
-        recipe = "uranium-cannon-shell-magazine"
-      },
-	  {
-        type = "unlock-recipe",
-        recipe = "explosive-uranium-cannon-shell-magazine"
-      },
-    },
-    prerequisites =
-    {
-      "explosives",
-	  "better-turrets",
-	  "military-3",
-	  "tanks",
-    },
-    unit =
-    {
-      count = 200,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 45
-    },
-    upgrade = false,
-    order = "a-f",
-	icon_size = 128,
-  },
-    
-    {
-    type = "technology",
-    name = "shockwave-turrets",
-    icon = "__EndgameCombat__/graphics/technology/shockwave-turrets.png",
-    effects =
-    {
-      {
-        type = "unlock-recipe",
-        recipe = "shockwave-turret"
-      },
-    },
-    prerequisites =
-    {
-      "electric-discharge-defense",
-	  "better-turrets",
-	  "military-3",
-	  "electric-energy-distribution-2",
-    },
-    unit =
-    {
-      count = 120,
-      ingredients =
-      {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = false,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-  --upgrades
     {
     type = "technology",
     name = "concussion-turret-damage-1",
@@ -1606,6 +897,129 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
+	icon_size = 128,
+  },
+      {
+    type = "technology",
+    name = "shockwave-turret-damage-1",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
+    effects =
+    {
+	
+    },
+    prerequisites = {"shockwave-turrets"},
+    unit =
+    {
+      count = 50,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1}
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "e-n-a",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
+    name = "shockwave-turret-damage-2",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
+    effects =
+    {
+	
+    },
+    prerequisites = {"shockwave-turret-damage-1"},
+    unit =
+    {
+      count = 100,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1}
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "e-n-b",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
+    name = "shockwave-turret-damage-3",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
+    effects =
+    {
+	
+    },
+    prerequisites = {"shockwave-turret-damage-2"},
+    unit =
+    {
+      count = 200,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1}
+      },
+      time = 60
+    },
+    upgrade = true,
+    order = "e-n-c",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
+    name = "shockwave-turret-damage-4",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
+    effects =
+    {
+	
+    },
+    prerequisites = {"shockwave-turret-damage-3"},
+    unit =
+    {
+      count = 300,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1}
+      },
+      time = 60
+    },
+    upgrade = true,
+    order = "e-n-d",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
+    name = "shockwave-turret-damage-5",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
+    effects =
+    {
+	
+    },
+    prerequisites = {"shockwave-turret-damage-4"},
+    unit =
+    {
+      count = 500,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+      },
+      time = 60
+    },
+    upgrade = true,
+    order = "e-n-e",
 	icon_size = 128,
   },
 }
