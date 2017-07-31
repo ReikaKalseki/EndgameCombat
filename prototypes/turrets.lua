@@ -433,7 +433,7 @@ data:extend(
     max_health = 500,
     corpse = "big-remnants",
 	dying_explosion = "medium-explosion",
-    collision_box = {{-1.35, -1.35}, {1.35, 1.35}},
+    collision_box = {{-1.3, -1.3}, {1.3, 1.3}},
     selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
 	folding_animation = createEmptyAnimation(),
 	folded_animation = createEmptyAnimation(),
