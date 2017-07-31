@@ -671,7 +671,42 @@ data:extend(
       },
       time = 45
     },
-    upgrade = true,
+    upgrade = false,
+    order = "a-f",
+	icon_size = 128,
+  },
+    
+    {
+    type = "technology",
+    name = "shockwave-turrets",
+    icon = "__EndgameCombat__/graphics/technology/shockwave-turrets.png",
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "shockwave-turret"
+      },
+    },
+    prerequisites =
+    {
+      "electric-discharge-defense",
+	  "better-turrets",
+	  "military-3",
+	  "electric-energy-distribution-2",
+    },
+    unit =
+    {
+      count = 120,
+      ingredients =
+      {
+        {"science-pack-1", 2},
+        {"science-pack-2", 2},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+      },
+      time = 30
+    },
+    upgrade = false,
     order = "a-f",
 	icon_size = 128,
   },

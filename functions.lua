@@ -160,6 +160,33 @@ function spawnFireArea(entity)
 	end
 end
 
+function tickShockwaveTurret(entry, tick)
+	if game.tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
+		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, SHOCKWAVE_TURRET_RADIUS+getTurretRangeBoost(entry.turret.force), entry.turret.force)
+		if #enemies > 0 then
+			for _,biter in pairs(enemies) do
+				if biter.valid then
+					entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
+					entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
+					--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
+					biter.damage(math.min(50, math.max(2, game.entity_prototypes[biter.name].max_health/20)), entry.turret.force, "electric")
+				end
+			end
+			entry.turret.energy = entry.turret.energy-SHOCKWAVE_TURRET_DISCHARGE_ENERGY
+			entry.delay = math.max(10, entry.delay-10)
+			entry.turret.surface.create_entity({name="shockwave-turret-effect", position={entry.turret.position.x-2+math.random()*4, entry.turret.position.y-2+math.random()*4}, force=entry.turret.force})
+		else
+			entry.delay = math.min(90, entry.delay+10)
+		end
+	end
+end
+
+function getTurretRangeBoost(force)
+	local level = getTurretRangeResearch(force)
+	return level > 0 and TURRET_RANGE_BOOST_SUMS[level] or 0
+end
+
 function getTurretRangeResearch(force)
 	if not force.technologies["turret-range-1"].researched then return 0 end
 	local level = 1

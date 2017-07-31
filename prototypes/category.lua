@@ -16,6 +16,14 @@ data:extend(
     type = "ammo-category",
     name = "concussion-turret"
   },
+    {
+    type = "ammo-category",
+    name = "cannon-turret"
+  },
+    {
+    type = "ammo-category",
+    name = "shockwave-turret"
+  },
 }
 )
 

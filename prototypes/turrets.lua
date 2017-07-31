@@ -1,3 +1,5 @@
+require "constants"
+
 function cannon_turret_sheet(inputs)
 return
 {
@@ -50,6 +52,16 @@ data:extend(
     subgroup = "defensive-structure",
     order = "f[gun-turret]-f[cannon-turret-1-2]",
     place_result = "cannon-turret",
+    stack_size = 50
+  },
+    {
+    type = "item",
+    name = "shockwave-turret",
+    icon = "__EndgameCombat__/graphics/icons/shockwave-turret.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[shockwave-turret-1-2]",
+    place_result = "shockwave-turret",
     stack_size = 50
   }
 }
@@ -391,3 +403,209 @@ data:extend(
   },
 }
 )
+
+local function createEmptyAnimation()
+	local ret = {
+		filename = "__EndgameCombat__/graphics/entity/shockwave-turret-trans.png",
+        line_length = 1,
+		width = 258,
+		height = 186,
+        frame_count = 1,
+        axially_symmetrical = false,
+        direction_count = 1,
+        draw_as_shadow = false,
+        --shift = {1.5, 0}
+	}
+	
+	return ret
+end
+
+data:extend(
+{
+  {
+    type = "electric-turret",
+    name = "shockwave-turret",
+    render_layer = "object",
+    icon = "__EndgameCombat__/graphics/icons/shockwave-turret.png",
+    flags = {"placeable-player", "placeable-neutral", "player-creation"},
+    order = "s-e-w-f",
+    minable = {mining_time = 1, result = "shockwave-turret"},
+    max_health = 500,
+    corpse = "big-remnants",
+	dying_explosion = "medium-explosion",
+    collision_box = {{-1.35, -1.35}, {1.35, 1.35}},
+    selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+	folding_animation = createEmptyAnimation(),
+	folded_animation = createEmptyAnimation(),
+	prepared_animation = createEmptyAnimation(),
+	preparing_animation = createEmptyAnimation(),
+    base_picture =
+    {
+      filename = "__EndgameCombat__/graphics/entity/shockwave.png",
+      priority = "extra-high",
+      width = 258,
+      height = 186,
+	  scale = 0.5,
+      shift = {0.6, 0},
+      frame_count = 1,
+    },
+	call_for_help_radius = SHOCKWAVE_TURRET_RADIUS,
+    energy_source =
+    {
+      type = "electric",
+      buffer_capacity = "1MJ",
+      input_flow_limit = "2400kW",
+      drain = "10kW",
+      usage_priority = "primary-input"
+    },
+	attack_parameters =
+    {
+      type = "projectile",
+      ammo_category = "electric",
+      cooldown = 20,
+      projectile_center = {-0.09375, -0.2},
+      projectile_creation_distance = 1.4,
+      range = SHOCKWAVE_TURRET_RADIUS,
+      damage_modifier = 0,
+      ammo_type =
+      {
+        type = "projectile",
+        category = "shockwave-turret",
+        energy_consumption = "0kJ",
+        action =
+        {
+          {
+            type = "direct",
+            action_delivery =
+            {
+                type = "projectile",
+				projectile = "shockwave-dummy-projectile",
+                starting_speed = 100
+            }
+          }
+        }
+      },
+      sound = nil
+    },
+  },
+})
+
+data:extend({
+  {
+    type = "explosion",
+    name = "shockwave-turret-effect",
+    flags = {"not-on-map"},
+    animations =
+    {
+      {
+        filename = "__EndgameCombat__/graphics/entity/shockwave-effect.png",
+        priority = "extra-high",
+        flags = { "compressed" },
+        width = 197,
+        height = 245,
+        frame_count = 47,
+        line_length = 6,
+        axially_symmetrical = false,
+        direction_count = 1,
+        shift = {0.1875, -0.75},
+		scale = 1.0,
+        animation_speed = 1,--0.5,
+		blend_mode = "additive",
+      }
+    },
+    light = {intensity = 1, size = 50, color = {r=0.72, g=1.0, b=1.0}},
+    sound =
+    {
+      aggregation =
+      {
+        max_count = 1,
+        remove = true
+      },
+      variations =
+      {
+        {
+          filename = "__EndgameCombat__/sounds/shockwave-turret.ogg",
+          volume = 0.8
+        },
+      }
+    },
+    created_effect = nil,--[[
+    {
+      type = "direct",
+      action_delivery =
+      {
+        type = "instant",
+        target_effects =
+        {
+          {
+            type = "create-particle",
+            repeat_count = 20,
+            entity_name = "explosion-remnants-particle",
+            initial_height = 0.5,
+            speed_from_center = 0.08,
+            speed_from_center_deviation = 0.15,
+            initial_vertical_speed = 0.08,
+            initial_vertical_speed_deviation = 0.15,
+            offset_deviation = {{-0.2, -0.2}, {0.2, 0.2}}
+          }
+        }
+      }
+    }--]]
+  },
+  {
+      type = "explosion",
+      name = "shockwave-beam",
+      flags = {"not-on-map", "placeable-off-grid"},
+      animation_speed = 1,
+      rotate = true,
+      beam = true,
+      animations =
+      {
+        {
+        filename = "__EndgameCombat__/graphics/entity/shockwave-beam.png",
+        priority = "extra-high",
+        width = 10,
+        height = 180,
+        frame_count = 6,
+		blend_mode = "additive",
+        }
+      },
+      light = {intensity = 0.1, size = 2},
+      smoke = "smoke-fast",
+      smoke_count = 1,
+      smoke_slow_down_factor = 1
+    },
+	  {
+    type = "projectile",
+    name = "shockwave-dummy-projectile",
+    flags = {"not-on-map"},
+    acceleration = 0,
+    action =
+    {
+      type = "direct",
+      action_delivery =
+      {
+        type = "instant",
+        target_effects =
+        {
+          {
+            type = "damage",
+            damage = { amount = 0, type = "laser"}
+          }
+        }
+      }
+    },
+    light = nil,--{intensity = 0.5, size = 10},
+    animation =
+    {
+      filename = "__EndgameCombat__/graphics/entity/dummy-projectile.png",
+      tint = {r=1.0, g=1.0, b=1.0},
+      frame_count = 1,
+      width = 12,
+      height = 33,
+      priority = "high",
+      blend_mode = "additive"
+    },
+    speed = 0
+  }
+})
