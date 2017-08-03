@@ -430,7 +430,7 @@ data:extend(
     flags = {"placeable-player", "placeable-neutral", "player-creation"},
     order = "s-e-w-f",
     minable = {mining_time = 1, result = "shockwave-turret"},
-    max_health = 500,
+    max_health = 1500,
     corpse = "big-remnants",
 	dying_explosion = "medium-explosion",
     collision_box = {{-1.3, -1.3}, {1.3, 1.3}},

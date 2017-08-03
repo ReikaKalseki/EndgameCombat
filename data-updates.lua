@@ -1,4 +1,4 @@
-require("prototypes.recipe-updates")
+require("prototypes.recipe.recipe-updates")
 
 require("prototypes.overrides")
 

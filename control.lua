@@ -53,7 +53,7 @@ local function trackNewTurret(turret)
 			if global.egcombat.shockwave_turrets[force.name] == nil then
 				global.egcombat.shockwave_turrets[force.name] = {}
 			end
-			table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=90})
+			table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
 			--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
 		end
 		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #global.egcombat.placed_turrets[force.name])
@@ -393,7 +393,7 @@ local function onEntityMined(event)
 	
 	local inv = event.buffer
 	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
-		if string.find(entity.name, "rangeboost") and game.entity_prototypes[entity.name].mineable_properties and #game.entity_prototypes[entity.name].mineable_properties.products > 0 then
+		if string.find(entity.name, "rangeboost") and game.entity_prototypes[getTurretBaseName(entity)].mineable_properties and #game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products > 0 then
 			inv.remove({name=game.entity_prototypes[entity.name].mineable_properties.products[1].name})
 			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
 		end

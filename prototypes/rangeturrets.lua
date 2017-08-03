@@ -1,5 +1,6 @@
 require "config"
 require "constants"
+require "functions"
 
 local MAKE_ITEMS = true--false
 
@@ -21,7 +22,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 		turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 		turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
 		turret.order = "z"
-		if MAKE_ITEMS and turret.minable and turret.minable then
+		if MAKE_ITEMS and turret.minable and turret.minable.result then
 			turret.minable.result = turret.name
 		end
 		--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])

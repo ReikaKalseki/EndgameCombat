@@ -160,27 +160,40 @@ function spawnFireArea(entity)
 	end
 end
 
+local function getDistance(e1, e2)
+	local dx = e1.position.x-e2.position.x
+	local dy = e1.position.y-e2.position.y
+	return math.sqrt(dx*dx+dy*dy)
+end
+
 function tickShockwaveTurret(entry, tick)
+	if entry.delay > 60 then entry.delay = 60 end
 	if game.tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
-		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, SHOCKWAVE_TURRET_RADIUS+getTurretRangeBoost(entry.turret.force), entry.turret.force)
+		local scan = entry.delay >= 40
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
 		if #enemies > 0 then
+			local flag = false
+			local f = getShockwaveTurretDamageFactor(entry.turret.force)
+			--game.print(#enemies .. " @ " .. entry.delay .. " > " .. (scan and "true" or "false"))
 			for _,biter in pairs(enemies) do
-				if biter.valid then
+				if biter.valid and ((not scan) or getDistance(biter, entry.turret) <= SHOCKWAVE_TURRET_RADIUS) then
+					flag = true
 					entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
 					entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
 					--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
-					local f = getShockwaveTurretDamageFactor(entry.turret.force)
 					local maxh = game.entity_prototypes[biter.name].max_health
-					local dmg = math.min(50*f, math.max(2, math.min(maxh/2, maxh*f/20)))
+					local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(50*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
 					biter.damage(dmg, entry.turret.force, "electric")
 				end
 			end
-			entry.turret.energy = entry.turret.energy-SHOCKWAVE_TURRET_DISCHARGE_ENERGY
 			entry.delay = math.max(10, entry.delay-10)
-			entry.turret.surface.create_entity({name="shockwave-turret-effect", position={entry.turret.position.x-2+math.random()*4, entry.turret.position.y-2+math.random()*4}, force=entry.turret.force})
+			if flag then
+				entry.turret.energy = entry.turret.energy-SHOCKWAVE_TURRET_DISCHARGE_ENERGY
+				entry.turret.surface.create_entity({name="shockwave-turret-effect", position={entry.turret.position.x-2+math.random()*4, entry.turret.position.y-2+math.random()*4}, force=entry.turret.force})
+			end
 		else
-			entry.delay = math.min(90, entry.delay+10)
+			entry.delay = math.min(60, entry.delay+5)
 		end
 	end
 end
@@ -300,7 +313,7 @@ function convertTurretForRange(turret, level)
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
 	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
-	return replaceTurretKeepingContents(turret, n)
+	return game.entity_prototypes[n] and replaceTurretKeepingContents(turret, n) or turret --if does not have a counterpart (technical entity), just return the original
 end
 
 function deconvertTurretForRange(turret)

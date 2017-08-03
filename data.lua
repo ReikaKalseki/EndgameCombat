@@ -8,8 +8,6 @@ require("prototypes.walls")
 require("prototypes.tank")
 require("prototypes.armor")
 
-require("prototypes.recipes")
-
 require("prototypes.item.cannon-turret-ammo")
 
 require("prototypes.item.biter-flesh")
@@ -20,7 +18,12 @@ require("prototypes.entity.fire2")
 require("prototypes.entity.radiationfire")
 
 require("prototypes.item.flamethrower2")
+
 require("prototypes.recipe.flamethrower2")
+require("prototypes.recipe.ammo")
+require("prototypes.recipe.turrets")
+require("prototypes.recipe.defence")
+require("prototypes.recipe.misc")
 
 require("prototypes.research.flamethrower2")
 require("prototypes.research.ammo")

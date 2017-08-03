@@ -19,6 +19,10 @@ data:extend(
         type = "unlock-recipe",
         recipe = "sulfur-bullet-magazine"
       },
+      {
+        type = "unlock-recipe",
+        recipe = "sulfur-bullet-magazine-conversion"
+      },
 	   {
         type = "unlock-recipe",
         recipe = "sulfur-heavy-bullet-magazine"

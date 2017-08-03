@@ -45,7 +45,19 @@ for _,ammo in pairs(ammos) do
 			  {"iron-plate", 1},
 			},
 			result = ammo.item.name
-	  },
+		},
+		{
+			type = "recipe",
+			name = ammo.item.name .. "-unpacking",
+			enabled = "true",
+			energy_required = 0.05,
+			ingredients =
+			{
+			  {ammo.item.name, 1},
+			},
+			result = ammo.original.name, 
+			result_count = AMMO_CRATE_CAPACITY/ammo.original.magazine_size,
+		},
 	})
 end
 
@@ -64,7 +76,9 @@ for _,tech in pairs(data.raw.technology) do
 					if output then
 						if ammo.original.name == output then
 							table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name})
+							table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name .. "-unpacking"})
 							data.raw.recipe[ammo.item.name].enabled = "false"
+							data.raw.recipe[ammo.item.name .. "-unpacking"].enabled = "false"
 							--log("Adding ammo '" .. ammo.original.name .. "' crate unlock to tech " .. tech.name)
 							break
 						end
