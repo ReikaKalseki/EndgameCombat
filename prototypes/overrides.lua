@@ -80,9 +80,11 @@ else
 	data.raw["electric-pole"]["big-electric-pole"].attack_reaction = Electric_Pole_Defence(1)
 end
 
+--[[
 for k,radar in pairs(data.raw["radar"]) do
 	radar.attack_reaction = Radar_Defence(1)
 end
+--]]
 
 
 --increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
