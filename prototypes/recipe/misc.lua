@@ -65,7 +65,7 @@
       {"big-radar", 1},
       {"beacon", 10},
       {"processing-unit", 50},
-      {"big-power-pole", 10},
+      {"big-electric-pole", 10},
       {"concrete", 200},
     },
     result= "orbital-destroyer"

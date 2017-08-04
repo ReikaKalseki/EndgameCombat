@@ -147,7 +147,8 @@ data:extend(
       "military-4",
 	  "rocket-silo",
 	  "plasma-turrets",
-	  "uranium-processing",
+	  "nuclear-power",
+	  "fusion-reactor-equipment",
     },
 	effects =
     {
@@ -169,14 +170,14 @@ data:extend(
         {"science-pack-2", 1},
         {"science-pack-3", 1},
         {"military-science-pack", 1},
-        {"hightech-science-pack", 1},
+        {"high-tech-science-pack", 1},
         {"space-science-pack", 10},
       },
       time = 90
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 32,
+	icon_size = 128,
   },
   
   {

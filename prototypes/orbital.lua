@@ -3,7 +3,7 @@ data:extend(
   {
     type = "item",
     name = "orbital-destroyer",
-    icon = "__EndgameCombat__/graphics/icons/radar.png",
+    icon = "__EndgameCombat__/graphics/icons/orbital-destroyer.png",
     flags = {"goes-to-quickbar"},
     subgroup = "defensive-structure",
     order = "f[plasma-turret]-f[orbital-destroyer-1-2]",
