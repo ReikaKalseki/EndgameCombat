@@ -19,21 +19,6 @@ data:extend(
     order = "q[satellite]",
     stack_size = 1
   },
-  {
-    type = "recipe",
-    name = "destroyer-satellite",
-    energy_required = 60,
-    enabled = false,
-    category = "advanced-crafting",
-    ingredients =
-    {
-      {"satellite", 1},
-      {"solar-panel", 200},
-      {"plasma-turret", 50},
-      {"fusion-reactor-equipment", 1},
-    },
-    result= "destroyer-satellite"
-  },
 }
 )
 

@@ -39,6 +39,37 @@
     },
     result = "better-tank"
   },
+  {
+    type = "recipe",
+    name = "destroyer-satellite",
+    energy_required = 60,
+    enabled = false,
+    category = "advanced-crafting",
+    ingredients =
+    {
+      {"satellite", 1},
+      {"solar-panel", 200},
+      {"plasma-turret", 50},
+      {"fusion-reactor-equipment", 1},
+    },
+    result= "destroyer-satellite"
+  },
+  {
+    type = "recipe",
+    name = "orbital-destroyer",
+    energy_required = 60,
+    enabled = false,
+    category = "advanced-crafting",
+    ingredients =
+    {
+      {"big-radar", 1},
+      {"beacon", 10},
+      {"processing-unit", 50},
+      {"big-power-pole", 10},
+      {"concrete", 200},
+    },
+    result= "orbital-destroyer"
+  },
 }
 )
 

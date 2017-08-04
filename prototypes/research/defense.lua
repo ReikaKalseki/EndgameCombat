@@ -137,6 +137,47 @@ data:extend(
     order = "a-f",
 	icon_size = 32,
   },
+
+    {
+    type = "technology",
+    name = "orbital-destroyer",
+    icon = "__EndgameCombat__/graphics/technology/orbital.png",
+    prerequisites =
+    {
+      "military-4",
+	  "rocket-silo",
+	  "plasma-turrets",
+	  "uranium-processing",
+    },
+	effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "orbital-destroyer"
+      },
+      {
+        type = "unlock-recipe",
+        recipe = "destroyer-satellite"
+      },
+    },
+    unit =
+    {
+      count = 2500,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+        {"hightech-science-pack", 1},
+        {"space-science-pack", 10},
+      },
+      time = 90
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 32,
+  },
   
   {
     type = "technology",
