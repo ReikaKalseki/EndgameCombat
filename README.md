@@ -18,6 +18,8 @@ Turret regeneration research
 Logistic robot defenses research
 Power pole defenses research
 Adds crated ammo for giving ammo turrets longer time between reloads and a small DPS boost
+Adds shockwave turrets, which can attack all enemies in range simultaneously
+Orbital Bombardment technology and hardware, for automated destruction of biter nests
 
 Secondary Features:
 Better train penetration through hordes of biters

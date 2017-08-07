@@ -153,77 +153,7 @@ script.on_event(defines.events.on_sector_scanned, function(event)
 	
 	local force = event.radar.force
 	if event.radar.name == "orbital-destroyer" and force.get_item_launched("destroyer-satellite") > 0 then
-		local surface = event.radar.surface
-		local tries = 0
-		local scanned = false
-		while tries < 40 and not scanned do
-			tries = tries+1
-			local pos = {x=math.random(-40, 40), y=math.random(-40, 40)}--event.chunk_position
-			--game.print("Trying " .. pos.x .. "," .. pos.y .. " : " .. (force.is_chunk_charted(surface, pos) and "succeed" or "fail"))
-			if force.is_chunk_charted(surface, pos) then
-				scanned = true
-				--destroy spawners in area, send spawn + some to attack
-				--game.print(pos.x .. " , " .. pos.y)
-				pos.x = pos.x*32
-				pos.y = pos.y*32
-				local r = 2
-				local area = {{pos.x-r, pos.y-r}, {pos.x+32+r, pos.y+32+r}}
-				local enemies = surface.find_entities_filtered({type = "unit-spawner", area = area, force = game.forces.enemy})
-				local count = #enemies
-				--game.print("Checking " .. pos.x/32 .. "," .. pos.y/32 .. " : " .. count)
-				if count > 0 then
-					for _,spawner in pairs(enemies) do						
-						surface.create_entity({name = "orbital-bombardment-explosion", position = spawner.position, force = game.forces.neutral})
-						surface.create_entity({name = "orbital-bombardment-crater", position = spawner.position, force = game.forces.neutral})
-						
-						spawner.die() --not destroy; use this so have destroyed spawners, drops, evo factor, NauvisDay spawns, etc
-					end
-					event.radar.energy = 0 --drain all power for a "shot"
-					
-					--[[
-					for _,deadspawner in pairs(surface.find_entities_filtered({type = "corpse", area = area})) do
-						deadspawner.
-					end
-					--]]
-					
-					surface.create_entity({name = "orbital-bombardment-firing-sound", position = event.radar.position, force = game.forces.neutral})
-					--particles, sounds, maybe spawn some fire? (concern about forest fires)
-					--[[
-					surface.create_entity({name = "orbital-bombardment-crater", position = {math.random(pos.x+8, pos.x+24), math.random(pos.y+8, pos.y+24)}, force = game.forces.neutral})
-					for i = 0,4 do
-						surface.create_entity({name = "orbital-bombardment-explosion", position = {math.random(pos.x, pos.x+32), math.random(pos.y, pos.y+32)}, force = game.forces.neutral})
-					end
-					--]]
-					
-					--Hope your base is well defended... >:)
-					local retaliation = surface.create_unit_group({position={pos.x+16, pos.y+16}, force=game.forces.enemy})
-					local biters = surface.find_entities_filtered({type = "unit", area = area, force = game.forces.enemy})
-					for _,biter in pairs(biters) do
-						retaliation.add_member(biter)
-					end
-					local evo = game.forces.enemy.evolution_factor+math.random()*0.25
-					local size = (1+((count-1)/2))*(10+math.ceil(15*evo))*(0.8+math.random()*0.7)
-					while #retaliation.members < size do
-						local biter = "small-biter"
-						if evo >= 0.35 and math.random() < 0.5 then
-							biter = "medium-biter"
-						end
-						if evo >= 0.6 and math.random() < 0.4 then
-							biter = "big-biter"
-						end
-						if evo >= 0.9 and math.random() < 0.3 then
-							biter = "behemoth-biter"
-						end
-						local spawn = surface.create_entity({name = biter, position = {math.random(pos.x, pos.x+32), math.random(pos.y, pos.y+32)}, force = game.forces.enemy})
-						retaliation.add_member(spawn)
-					end
-					retaliation.set_command({type = defines.command.attack, target = event.radar, distraction = defines.distraction.none})
-					surface.pollute({pos.x+16, pos.y+16}, 5000)
-					local rs = 16
-					force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+31+rs, pos.y+31+rs}})
-				end
-			end
-		end
+		fireOrbitalWeapon(force, event.radar)
 	end
 end)
 
@@ -401,33 +331,34 @@ local function onFinishedResearch(event)
 	initGlobal(false)
 	
 	local tech = event.research.name
+	local force = event.research.force.name
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.sub(tech, -1))
-		if global.egcombat.placed_turrets[event.research.force.name] == nil then
-			global.egcombat.placed_turrets[event.research.force.name] = {}
+		if global.egcombat.placed_turrets[force] == nil then
+			global.egcombat.placed_turrets[force] = {}
 		end
-		for k,turret in pairs(global.egcombat.placed_turrets[event.research.force.name]) do
+		for k,turret in pairs(global.egcombat.placed_turrets[force]) do
 			if turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
-				convertTurretForRange(turret, lvl)
+				convertTurretForRangeWhileKeepingShockwaves(turret, lvl)
 			end
 		end
-		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = event.research.force.name})
-		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = event.research.force.name})) do 
+		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = force})
+		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = force})) do 
 			table.insert(turrets, v)
 		end
-		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret", force = event.research.force.name})) do 
+		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret", force = force})) do 
 			table.insert(turrets, v)
 		end
 		for _,turret in pairs(turrets) do
-			convertTurretForRange(turret, lvl)
+			convertTurretForRangeWhileKeepingShockwaves(turret, lvl)
 		end
 	end
 	if tech.name == "logistic-defence" then
-		global.egcombat.robot_defence[event.research.force.name] = 0.8
+		global.egcombat.robot_defence[force] = 0.8
 	end
 	if tech.name == "logistic-defence-2" then
-		global.egcombat.robot_defence[event.research.force.name] = 1.5
+		global.egcombat.robot_defence[force] = 1.5
 	end
 end
 
@@ -440,7 +371,7 @@ local function onEntityAdded(event)
         if string.find(entity.ghost_name, "rangeboost") then
 			--game.print("Converting ghost")
 			local time = entity.time_to_live
-            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, inner_name = getTurretBaseNameByName(entity.ghost_name)})
+            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, inner_name = getTurretBaseNameByName(entity.ghost_name, getTurretRangeResearch(entity.force))})
             entity.destroy()
 			new.time_to_live = time
 			return

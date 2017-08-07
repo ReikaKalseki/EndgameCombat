@@ -34,6 +34,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			item.localised_name = base.localised_name--turret.localised_name
 			item.order = "z"
 			item.place_result = turret.name
+			item.hidden = true
 			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
 			table.insert(items, item)
 		end
