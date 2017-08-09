@@ -242,8 +242,40 @@ local function getDistance(e1, e2)
 	return math.sqrt(dx*dx+dy*dy)
 end
 
+function tickCannonTurret(entry, tick)
+	if game.tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
+		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
+		local scan = entry.delay >= 60
+		local search = CANNON_TURRET_RANGE+getTurretRangeBoost(entry.turret.force)
+		if scan then
+			search = search+5
+		end
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, search, entry.turret.force)
+		if #enemies > 0 then
+			--game.print(#enemies .. " @ " .. entry.delay .. " > " .. (scan and "scanning" or "acting"))
+			if not scan then
+				for _,biter in pairs(enemies) do
+					if biter.valid and biter.health > 0 then
+						local d = getDistance(biter, entry.turret)
+						if d <= CANNON_TURRET_RANGE and d >= CANNON_TURRET_INNER_RANGE then
+							if string.find(biter.name, "spitter", 1, true) then
+								local last = entry.turret.shooting_target
+								entry.turret.shooting_target = biter
+								--game.print("Locking on " .. biter.name .. --[[" @ " .. biter.position.x .. " , " .. biter.position.y .. --]]" ; last = " .. (last and (last.name --[[.. " @ " .. last.position.x .. " , " .. last.position.y--]]) or "nil"))
+								break
+							end
+						end
+					end
+				end
+			end
+			entry.delay = math.max(10, entry.delay-15)
+		else
+			entry.delay = math.min(90, entry.delay+10)
+		end
+	end
+end
+
 function tickShockwaveTurret(entry, tick)
-	if entry.delay > 60 then entry.delay = 60 end
 	if game.tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 40
@@ -253,14 +285,18 @@ function tickShockwaveTurret(entry, tick)
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)
 			--game.print(#enemies .. " @ " .. entry.delay .. " > " .. (scan and "true" or "false"))
 			for _,biter in pairs(enemies) do
-				if biter.valid and ((not scan) or getDistance(biter, entry.turret) <= SHOCKWAVE_TURRET_RADIUS) then
-					flag = true
-					entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
-					entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
-					--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
-					local maxh = game.entity_prototypes[biter.name].max_health
-					local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(50*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
-					biter.damage(dmg, entry.turret.force, "electric")
+				if biter.valid then
+					local d = getDistance(biter, entry.turret)
+					if ((not scan) or d <= SHOCKWAVE_TURRET_RADIUS) then
+						local cap = math.max(10, 50*math.min(1, 1-math.ceil((d-5)/5)))
+						flag = true
+						entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
+						entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
+						--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
+						local maxh = game.entity_prototypes[biter.name].max_health
+						local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(cap*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
+						biter.damage(dmg, entry.turret.force, "electric")
+					end
 				end
 			end
 			entry.delay = math.max(10, entry.delay-10)
@@ -393,15 +429,27 @@ function convertTurretForRange(turret, level)
 	return game.entity_prototypes[n] and replaceTurretKeepingContents(turret, n) or turret --if does not have a counterpart (technical entity), just return the original
 end
 
-function convertTurretForRangeWhileKeepingShockwaves(turret, level)
+function convertTurretForRangeWhileKeepingSpecialCaches(turret, level)
 	local ret = convertTurretForRange(turret, level)
 	local force = ret.force.name
-	if string.find(ret.name, "shockwave-turret", 1, true) then
+	checkAndCacheTurret(ret, force)
+end
+
+function checkAndCacheTurret(turret, force)
+	if string.find(turret.name, "shockwave-turret", 1, true) then
 		if global.egcombat.shockwave_turrets[force] == nil then
 			global.egcombat.shockwave_turrets[force] = {}
 		end
-		table.insert(global.egcombat.shockwave_turrets[force], {turret=ret, delay=60})
+		table.insert(global.egcombat.shockwave_turrets[force], {turret=turret, delay=60})
 		--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
+	end		
+	
+	if string.find(turret.name, "cannon-turret", 1, true) then
+		if global.egcombat.cannon_turrets[force] == nil then
+			global.egcombat.cannon_turrets[force] = {}
+		end
+		table.insert(global.egcombat.cannon_turrets[force], {turret=turret, delay=90})
+		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end
 

@@ -23,6 +23,9 @@ function initGlobal(force)
 	if force or global.egcombat.fleshToDeconstruct == nil then
 		global.egcombat.fleshToDeconstruct = {}
 	end
+	if force or global.egcombat.cannon_turrets == nil then
+		global.egcombat.cannon_turrets = {}
+	end
 	if force or global.egcombat.shockwave_turrets == nil then
 		global.egcombat.shockwave_turrets = {}
 	end
@@ -49,6 +52,8 @@ local function trackNewTurret(turret)
 		end
 		track_entity(global.egcombat.placed_turrets[force.name], turret)
 	
+		checkAndCacheTurret(turret, force.name)
+		--[[
 		if string.find(turret.name, "shockwave-turret", 1, true) then
 			if global.egcombat.shockwave_turrets[force.name] == nil then
 				global.egcombat.shockwave_turrets[force.name] = {}
@@ -56,6 +61,8 @@ local function trackNewTurret(turret)
 			table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
 			--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
 		end
+		--]]
+
 		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #global.egcombat.placed_turrets[force.name])
 	end
 end
@@ -254,6 +261,22 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
+	if global.egcombat and global.egcombat.cannon_turrets then
+		for k,force in pairs(game.forces) do
+			if force ~= game.forces.enemy then
+				if global.egcombat.cannon_turrets[force.name] then
+					for i, entry in ipairs(global.egcombat.cannon_turrets[force.name]) do
+						if entry.turret.valid then
+							tickCannonTurret(entry, game.tick)
+						else
+							table.remove(global.egcombat.cannon_turrets[force.name], i)
+						end
+					end
+				end
+			end
+		end
+	end
+	
 	if #global.egcombat.fleshToDeconstruct > 0 then
 		for i = #global.egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
 			local items = global.egcombat.fleshToDeconstruct[i]
@@ -340,7 +363,7 @@ local function onFinishedResearch(event)
 		for k,turret in pairs(global.egcombat.placed_turrets[force]) do
 			if turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
-				convertTurretForRangeWhileKeepingShockwaves(turret, lvl)
+				convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
 			end
 		end
 		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = force})
@@ -351,7 +374,7 @@ local function onFinishedResearch(event)
 			table.insert(turrets, v)
 		end
 		for _,turret in pairs(turrets) do
-			convertTurretForRangeWhileKeepingShockwaves(turret, lvl)
+			convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
 		end
 	end
 	if tech.name == "logistic-defence" then

@@ -389,8 +389,8 @@ data:extend(
         starting_frame_speed = 0.2,
         starting_frame_speed_deviation = 0.1
       },
-      range = 35,
-      min_range = 12,
+      range = CANNON_TURRET_RANGE,
+      min_range = CANNON_TURRET_INNER_RANGE,
       sound =
       {
         {
