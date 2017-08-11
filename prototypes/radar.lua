@@ -41,7 +41,7 @@ data:extend(
       type = "electric",
       usage_priority = "secondary-input"
     },
-    energy_usage = "2400kW",
+    energy_usage = "5000kW",
     pictures =
     {
       filename = "__EndgameCombat__/graphics/entity/radar/radar.png",

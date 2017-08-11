@@ -158,4 +158,38 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
+    
+    {
+    type = "technology",
+    name = "last-stand-turrets",
+    icon = "__EndgameCombat__/graphics/technology/last-stand-turrets-2.png",
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "last-stand-turret"
+      },
+    },
+    prerequisites =
+    {
+	  "better-turrets",
+	  "land-mine",
+	  "flammables",
+    },
+    unit =
+    {
+      count = 250,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+      },
+      time = 30
+    },
+    upgrade = false,
+    order = "a-f",
+	icon_size = 128,
+  },
 })

@@ -31,7 +31,7 @@ data:extend(
           starting_speed = 1,
           direction_deviation = 0.1,
           range_deviation = 0.1,
-          max_range = 30,
+          max_range = 60,
           source_effects =
           {
             type = "create-explosion",
@@ -65,7 +65,7 @@ data:extend(
           starting_speed = 1,
           direction_deviation = 0.1,
           range_deviation = 0.1,
-          max_range = 30,
+          max_range = 60,
           source_effects =
           {
             type = "create-explosion",
@@ -99,7 +99,7 @@ data:extend(
           starting_speed = 1,
           direction_deviation = 0.1,
           range_deviation = 0.1,
-          max_range = 30,
+          max_range = 60,
           source_effects =
           {
             type = "create-explosion",
@@ -133,7 +133,7 @@ data:extend(
           starting_speed = 1,
           direction_deviation = 0.1,
           range_deviation = 0.1,
-          max_range = 30,
+          max_range = 60,
           source_effects =
           {
             type = "create-explosion",

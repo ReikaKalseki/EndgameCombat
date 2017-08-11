@@ -29,6 +29,9 @@ function initGlobal(force)
 	if force or global.egcombat.shockwave_turrets == nil then
 		global.egcombat.shockwave_turrets = {}
 	end
+	if force or global.egcombat.orbital_indices == nil then
+		global.egcombat.orbital_indices = {}
+	end
 end
 
 initGlobal(true)
@@ -159,8 +162,12 @@ script.on_event(defines.events.on_sector_scanned, function(event)
 	initGlobal(false)
 	
 	local force = event.radar.force
-	if event.radar.name == "orbital-destroyer" and force.get_item_launched("destroyer-satellite") > 0 then
-		fireOrbitalWeapon(force, event.radar)
+	if event.radar.name == "orbital-destroyer" then
+		local index = getOrCreateIndexForOrbital(event.radar)
+		--game.print("Got index " .. index .. " for orbital # " .. event.radar.unit_number .. " @ " .. event.radar.position.x .. ", " .. event.radar.position.y .. "; is out of " .. force.get_item_launched("destroyer-satellite"))
+		if force.get_item_launched("destroyer-satellite") > index then
+			fireOrbitalWeapon(force, event.radar)
+		end
 	end
 end)
 
@@ -418,12 +425,24 @@ local function removeShockwaveTurret(entity)
 	end
 end
 
+local function removeCannonTurret(entity)
+	if string.find(entity.name, "cannon-turret", 1, true) and global.egcombat.cannon_turrets[entity.force.name] then
+		for i, entry in ipairs(global.egcombat.cannon_turrets[entity.force.name]) do
+			if entry.turret.position.x == entity.position.x and entry.turret.position.y == entity.position.y then
+				table.remove(global.egcombat.cannon_turrets[entity.force.name], i)
+				break
+			end
+		end
+	end
+end
+
 local function onEntityMined(event)
 	initGlobal(false)
 	
 	local entity = event.entity
 	
 	removeShockwaveTurret(entity)
+	removeCannonTurret(entity)
 	
 	local inv = event.buffer
 	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
@@ -440,6 +459,11 @@ local function onEntityRemoved(event)
 	local entity = event.entity
 	
 	removeShockwaveTurret(entity)
+	removeCannonTurret(entity)
+	
+	if entity.name == "last-stand-turret" then
+		doLastStandDestruction(entity)
+	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
 		deconvertTurretForRange(entity)
@@ -493,8 +517,6 @@ local function onEntityRemoved(event)
 end
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
---script.on_event(defines.events.on_preplayer_mined_item, onEntityRemoved)
---script.on_event(defines.events.on_robot_pre_mined, onEntityRemoved)
 
 script.on_event(defines.events.on_player_mined_entity, onEntityMined)
 script.on_event(defines.events.on_robot_mined_entity, onEntityMined)

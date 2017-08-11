@@ -184,7 +184,7 @@ data:extend(
         line_length = 6,
         axially_symmetrical = false,
         direction_count = 1,
-        shift = {0.1875, -0.75},
+        shift = {2, -10},
 		scale = 8.0,--2.0,
         animation_speed = 0.25,
 		--blend_mode = "additive",

@@ -1,6 +1,28 @@
 require "constants"
 
-function cannon_turret_sheet(inputs)
+local function laststand_turret_sheet()
+return
+{
+  layers = 
+  {
+    {
+      filename = "__EndgameCombat__/graphics/entity/last-stand-turret.png",
+      priority = "medium",
+      scale = 1.5,
+      width = 75,
+      height = 75,
+      direction_count = 1,
+      frame_count = 1,
+      line_length = 1,
+      axially_symmetrical = false,
+      run_mode = "forward",
+	  shift = { 0, 0 },
+    }
+  }
+}
+end
+
+local function cannon_turret_sheet(inputs)
 return
 {
   layers = 
@@ -63,6 +85,26 @@ data:extend(
     order = "f[gun-turret]-f[shockwave-turret-1-2]",
     place_result = "shockwave-turret",
     stack_size = 50
+  },--[[
+    {
+    type = "item",
+    name = "bomb-turret", --throws bombs, for AOE damage, but not great rate of fire?
+    icon = "__EndgameCombat__/graphics/icons/shockwave-turret.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[bomb-turret-1-2]",
+    place_result = "bomb-turret",
+    stack_size = 50
+  },--]]
+    {
+    type = "item",
+    name = "last-stand-turret",
+    icon = "__EndgameCombat__/graphics/icons/last-stand-turret-2.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[last-stand-turret-1-2]",
+    place_result = "last-stand-turret",
+    stack_size = 10
   }
 }
 )
@@ -394,12 +436,53 @@ data:extend(
       sound =
       {
         {
-            filename = "__base__/sound/fight/tank-cannon.ogg",
+            filename = "__EndgameCombat__/sounds/cannon-turret.ogg",
             volume = 1.0
         }
       },
     },
     call_for_help_radius = 46
+  },
+  
+    {
+    type = "ammo-turret",
+    name = "last-stand-turret",
+    icon = "__EndgameCombat__/graphics/icons/last-stand-turret-2.png",
+    flags = {"placeable-player", "player-creation"},
+    minable = {mining_time = 1, result = "last-stand-turret"},
+    max_health = 200,
+    corpse = "big-remnants",
+    collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
+    selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+    rotation_speed = 0.1,
+    preparing_speed = 0.1,
+    folding_speed = 0.1,
+    dying_explosion = "massive-explosion",
+    inventory_size = 0,
+    automated_ammo_count = 0,
+    attacking_speed = 0.1,
+    
+    folded_animation = laststand_turret_sheet(),
+    preparing_animation = laststand_turret_sheet(),
+    prepared_animation = laststand_turret_sheet(),
+    attacking_animation = laststand_turret_sheet(),
+    folding_animation = laststand_turret_sheet(),
+    
+    vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
+    
+    attack_parameters =
+    {
+      type = "projectile",
+      ammo_category = "bullet",
+      cooldown = 1,
+      projectile_creation_distance = 1.75,
+      projectile_center = {0, 0},
+      damage_modifier = 1,
+      shell_particle = nil,
+      range = 1,
+      sound = nil,
+    },
+    call_for_help_radius = 5
   },
 }
 )

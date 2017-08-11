@@ -53,5 +53,21 @@
     },
     result = "shockwave-turret"
   },
+ {
+    type = "recipe",
+    name = "last-stand-turret",
+    enabled = "false",
+    ingredients =
+    {
+      {type = "item", name = "storage-tank", amount=1},
+      {type = "item", name = "land-mine", amount=4},
+      {type = "item", name = "explosives", amount=100},
+      {type = "item", name = "flamethrower-ammo", amount=10},
+      {type = "item", name = "advanced-circuit", amount=2},
+      {type = "fluid", name = "sulfuric-acid", amount=1000},
+    },
+	category = "crafting-with-fluid",
+    result = "last-stand-turret"
+  },
 }
 )

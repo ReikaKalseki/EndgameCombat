@@ -83,7 +83,7 @@ data:extend(
     {
       type = "electric",
       usage_priority = "secondary-input",
-      buffer_capacity = "45kJ"
+      buffer_capacity = "400kJ"
     },
     categories = {"armor"},
     attack_parameters =
@@ -91,7 +91,7 @@ data:extend(
       type = "projectile",
       ammo_category = "electric",
       cooldown = 20,
-      damage_modifier = 6,
+      damage_modifier = 36,
       projectile_center = {0, 0},
       projectile_creation_distance = 0.6,
       range = 20,
@@ -100,7 +100,7 @@ data:extend(
       {
         type = "projectile",
         category = "electric",
-        energy_consumption = "20kJ",
+        energy_consumption = "300kJ",
         projectile = "laser",
         speed = 1,
         action =

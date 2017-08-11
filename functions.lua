@@ -129,6 +129,55 @@ function Modify_Power(train, factor)
 	obj.max_power = newpow .. endmult
 end
 
+function doLastStandDestruction(turret)
+	--game.print("Doing last stand @ " .. turret.position.x .. " , " .. turret.position.y)
+	local entities = turret.surface.find_entities_filtered({area = {{turret.position.x-20, turret.position.y-20}, {turret.position.x+20, turret.position.y+20}}})
+	for _,entity in pairs(entities) do
+		if entity.force == game.forces.enemy then
+			entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
+			entity.damage(5000, turret.force, "acid")
+			if entity.valid then entity.damage(5000, turret.force, "fire") end
+			if entity.valid then entity.damage(5000, turret.force, "explosion") end
+			turret.damage_dealt = turret.damage_dealt+15000
+			turret.kills = turret.kills+1
+		else
+			if entity.health then
+				entity.damage(entity.health*(0.4+math.random()*0.5), turret.force, "acid")
+			end
+		end
+	end
+	turret.surface.create_entity({name = "orbital-bombardment-explosion", position = turret.position, force = game.forces.neutral})
+end
+
+function getOrCreateIndexForOrbital(entity)
+	if not global.egcombat.orbital_indices[entity.unit_number] then
+		--game.print("Calculating")
+		local flag = false
+		local entities = {}
+		for _,entry in pairs(global.egcombat.orbital_indices) do
+			if entry.entity.valid then
+				table.insert(entities, entry.entity)
+			else
+				flag = true
+			end
+		end
+		if flag then
+			--game.print("Rebuilding list.")
+			for i = 1,#entities do
+				local val = entities[i]
+				local entry2 = {index=i-1, entity=val}
+				global.egcombat.orbital_indices[val.unit_number] = entry2
+				--game.print("Reassigning " .. entry2.index .. " to " .. val.unit_number)
+			end
+		end
+		--game.print("Assigning " .. #entities)
+		local entry = {index=#entities, entity=entity}
+		global.egcombat.orbital_indices[entity.unit_number] = entry
+	end
+	--game.print("Returning " .. global.egcombat.orbital_indices[entity.unit_number].index)
+	return global.egcombat.orbital_indices[entity.unit_number].index
+end
+
 function fireOrbitalWeapon(force, entity)
 	local surface = entity.surface
 	local tries = 0
@@ -244,6 +293,9 @@ end
 
 function tickCannonTurret(entry, tick)
 	if game.tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
+		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and string.find(entry.turret.shooting_target.name, "spitter", 1, true) then
+			return
+		end
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 60
 		local search = CANNON_TURRET_RANGE+getTurretRangeBoost(entry.turret.force)
@@ -279,7 +331,7 @@ function tickShockwaveTurret(entry, tick)
 	if game.tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 40
-		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+math.floor(getTurretRangeBoost(entry.turret.force)/2), entry.turret.force)
 		if #enemies > 0 then
 			local flag = false
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)
@@ -296,6 +348,10 @@ function tickShockwaveTurret(entry, tick)
 						local maxh = game.entity_prototypes[biter.name].max_health
 						local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(cap*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
 						biter.damage(dmg, entry.turret.force, "electric")
+						entry.turret.damage_dealt = entry.turret.damage_dealt+dmg
+						if not biter.valid or biter.health <= 0 then
+							entry.turret.kills = entry.turret.kills+1
+						end
 					end
 				end
 			end
@@ -367,6 +423,7 @@ local function replaceTurretKeepingContents(turret, newname)
 	local surf = turret.surface
 	local pos = {turret.position.x, turret.position.y}
 	local dir = turret.direction
+	local h = turret.health
 	local f = turret.force
 	local e = turret.energy
 	local dmg = turret.damage_dealt
@@ -402,6 +459,7 @@ local function replaceTurretKeepingContents(turret, newname)
 	repl.energy = e
 	repl.kills = kills
 	repl.damage_dealt = dmg
+	repl.health = h
 	if items ~= nil then
 		for i = 1,#items do
 			local stack = items[i]
@@ -417,6 +475,9 @@ local function replaceTurretKeepingContents(turret, newname)
 				repl.fluidbox[i] = {type = stack.fluid, amount = stack.amount, temperature = stack.temp}
 			end
 		end
+	end
+	if repl.health == 0 then --fixes a "replacement on death with base turret" bug
+		repl.die()
 	end
 	return repl
 end

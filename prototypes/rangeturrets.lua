@@ -17,26 +17,31 @@ local turrets = {}
 local items = {}
 for i = 1,#TURRET_RANGE_BOOSTS do
 	for _,base in pairs(baseturrets) do
-		local turret = util.table.deepcopy(base)
-		turret.name = turret.name .. "-rangeboost-" .. i
-		turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
-		turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
-		turret.order = "z"
-		if MAKE_ITEMS and turret.minable and turret.minable.result then
-			turret.minable.result = turret.name
-		end
-		--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
-		table.insert(turrets, turret)
-		
-		if MAKE_ITEMS and base.minable and base.minable.result then
-			local item = util.table.deepcopy(data.raw.item[base.minable.result])
-			item.name = turret.name
-			item.localised_name = base.localised_name--turret.localised_name
-			item.order = "z"
-			item.place_result = turret.name
-			item.hidden = true
+		if base.name ~= "last-stand-turret" and base.minable and base.minable.result then --skip technicals
+			local turret = util.table.deepcopy(base)
+			turret.name = turret.name .. "-rangeboost-" .. i
+			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
+			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
+			if base.name == "shockwave-turret" then
+				turret.attack_parameters.range = base.attack_parameters.range+math.floor(TURRET_RANGE_BOOST_SUMS[i]/2)
+			end
+			turret.order = "z"
+			if MAKE_ITEMS then
+				turret.minable.result = turret.name
+			end
 			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
-			table.insert(items, item)
+			table.insert(turrets, turret)
+			
+			if MAKE_ITEMS then
+				local item = util.table.deepcopy(data.raw.item[base.minable.result])
+				item.name = turret.name
+				item.localised_name = base.localised_name--turret.localised_name
+				item.order = "z"
+				item.place_result = turret.name
+				item.hidden = true
+				--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
+				table.insert(items, item)
+			end
 		end
 	end
 end
