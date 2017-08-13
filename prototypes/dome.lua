@@ -314,7 +314,7 @@ local function createShieldDome(name, params)
 				axially_symmetrical = false,
 				direction_count = 1,
 				shift = {0, -1},
-				scale = 4.0,--2.0,
+				scale = 4.0*params.radius/SHIELD_DOMES["small"].radius,--2.0,
 				animation_speed = 0.5,
 				blend_mode = "additive",
 			  }
