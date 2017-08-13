@@ -284,6 +284,38 @@ local function createShieldDome(name, params)
 			render_layer = "light-effect",
 			animation =
 			{
+			  filename = "__EndgameCombat__/graphics/entity/dome/bubble-" .. name .. ".png",
+			  priority = "high",
+			  width = 170,
+			  height = 140,
+			  apply_projection = false,
+			  frame_count = 36,
+			  line_length = 9,
+			  shift = {0, -1},
+			  scale = 3.875*params.radius/SHIELD_DOMES["small"].radius,
+			  animation_speed = 0.25,
+			  blend_mode = "additive"
+			},
+		},
+		{
+			type = "smoke",
+			name = "shield-dome-charging-effect-" .. name,
+			selectable_in_game = false,
+			--icon = "__EndgameCombat__/graphics/icons/.png",
+			flags = {"not-on-map", "placeable-off-grid"},
+			duration = 300,
+			fade_in_duration = 60,
+			fade_away_duration = 60,
+			spread_duration = 10,
+			start_scale = 1,
+			end_scale = 2,
+			cyclic = false,
+			affected_by_wind = false,
+			movement_slow_down_factor = 1,
+			color = {r=1,g=1,b=1},--params.color1,
+			render_layer = "light-effect",
+			animation =
+			{
 			  filename = "__EndgameCombat__/graphics/entity/dome/pulse-" .. name .. ".png",
 			  priority = "high",
 			  width = 192,

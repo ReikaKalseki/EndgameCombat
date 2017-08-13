@@ -402,35 +402,52 @@ function tickCannonTurret(entry, tick)
 end
 
 function tickShieldDome(entry, tick)
+	if not entry.delay then entry.delay = 60 end
 	if entry.current_shield > 0 and not entry.rebooting then
-		if tick%15 == 0 then
+		if tick%entry.delay == 0 then
+			local scan = entry.delay >= 30
 			--game.print("Ticking dome @ " .. entry.dome.position.x .. "," .. entry.dome.position.y)
-			local enemies = entry.dome.surface.find_enemy_units(entry.dome.position, game.entity_prototypes[entry.dome.name].turret_range, entry.dome.force)
+			local r = SHIELD_DOMES[entry.index].radius+1.5
+			if scan then
+				r = r+10
+			end
+			local enemies = entry.dome.surface.find_enemy_units(entry.dome.position, r, entry.dome.force)
 			if #enemies > 0 then
 				--game.print(#enemies .. " @ " .. entry.delay))
-				for _,biter in pairs(enemies) do
-					if biter.valid and biter.health > 0 then
-						local d = getDistance(biter, entry.dome)
-						if math.abs(d-SHIELD_DOMES[entry.index].radius) <= 3 then
-							if not entry.edges[biter.unit_number] or not entry.edges[biter.unit_number].entity.valid or entry.edges[biter.unit_number].entity.health <= 0 then
-								local ang = math.atan2(biter.position.y-entry.dome.position.y, biter.position.x-entry.dome.position.x) --y,x, not x,y
-								local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
-								local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
-								local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
-								local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
-								--game.print("Spawning edge entity for " .. biter.name)
-								local entry2 = {entity=edge, effect=fx, light=light, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
-								entry.edges[biter.unit_number] = entry2
-								global.egcombat.shield_dome_edges[biter.unit_number] = entry2
-								biter.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
+				if not scan then
+					for _,biter in pairs(enemies) do
+						if biter.valid and biter.health > 0 then
+							local d = getDistance(biter, entry.dome)
+							if math.abs(d-r) <= 3 then --only ones with targets inside? does not make so much sense, and hard to code
+								if not entry.edges[biter.unit_number] or not entry.edges[biter.unit_number].entity.valid or entry.edges[biter.unit_number].entity.health <= 0 then
+									local ang = math.atan2(biter.position.y-entry.dome.position.y, biter.position.x-entry.dome.position.x) --y,x, not x,y
+									local pos = {x=entry.dome.position.x+r*0.9*math.cos(ang), y=entry.dome.position.y+r*0.9*math.sin(ang)}
+									local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+									local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
+									local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
+									--game.print("Spawning edge entity for " .. biter.name)
+									local entry2 = {entity=edge, effect=fx, light=light, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
+									entry.edges[biter.unit_number] = entry2
+									global.egcombat.shield_dome_edges[biter.unit_number] = entry2
+									biter.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
+								end
 							end
 						end
 					end
 				end
+				entry.delay = 5
+			else
+				entry.delay = math.min(60, entry.delay+10)
 			end
 		end
 		if tick%30 == 0 then
-			entry.dome.surface.create_entity({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+			if entry.current_shield < SHIELD_DOMES[entry.index].strength then
+				entry.dome.surface.create_entity({name="shield-dome-charging-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+			else
+				if tick%120 == 0 then
+					entry.dome.surface.create_entity({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+				end
+			end
 			entry.dome.surface.create_entity({name="shield-dome-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 		end
 		if tick%5 == 0 then --spawn some edges to show radius, and to look cool
@@ -478,6 +495,7 @@ function tickShieldDome(entry, tick)
 end
 
 function getShieldDomeFromEdge(entity, destroy, killer)
+	if killer == nil then return end
 	local edge = global.egcombat.shield_dome_edges[killer.unit_number]
 	if edge then
 		if global.egcombat.shield_domes[edge.force] and global.egcombat.shield_domes[edge.force][edge.entry_key] then
@@ -721,7 +739,7 @@ function checkAndCacheTurret(turret, force)
 			global.egcombat.shield_domes[force] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
-		global.egcombat.shield_domes[force][turret.unit_number] = {dome=turret, index = idx, current_shield = 0, edges = {}}
+		global.egcombat.shield_domes[force][turret.unit_number] = {dome=turret, delay = 60, index = idx, current_shield = 0, edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end
