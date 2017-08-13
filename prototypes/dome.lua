@@ -318,8 +318,8 @@ local function createShieldDome(name, params)
 			{
 			  filename = "__EndgameCombat__/graphics/entity/dome/pulse-" .. name .. ".png",
 			  priority = "high",
-			  width = 192,
-			  height = 192,
+			  width = 146,
+			  height = 146,
 			  apply_projection = false,
 			  frame_count = 14,
 			  line_length = 14,
