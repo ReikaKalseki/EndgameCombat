@@ -240,6 +240,45 @@ local function createShieldDome(name, params)
 			  blend_mode = "additive"
 			},
 		},
+		{
+			type = "explosion",
+			name = "shield-dome-fail-effect-" .. name,
+			flags = {"not-on-map"},
+			animations =
+			{
+			  {
+				filename = "__EndgameCombat__/graphics/entity/dome/fail-" .. name .. ".png",
+				priority = "extra-high",
+				flags = { "compressed" },
+				width = 197,
+				height = 245,
+				frame_count = 47,
+				line_length = 6,
+				axially_symmetrical = false,
+				direction_count = 1,
+				shift = {2, -10},
+				scale = 2.0,--2.0,
+				animation_speed = 0.25,
+				blend_mode = "additive",
+			  }
+			},
+			--light = {intensity = 1.0, size = 10, color = {r=1.0, g=0.6, b=0.2}},
+			sound =
+			{
+			  aggregation =
+			  {
+				max_count = 10,
+				remove = true
+			  },
+			  variations =
+			  {
+				{
+				  filename = "__EndgameCombat__/sounds/shield-dome-fail.ogg",
+				  volume = 2.0
+				},
+			  }
+			},
+		},
 	})
 end
 

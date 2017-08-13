@@ -38,6 +38,9 @@ function initGlobal(force)
 	if force or global.egcombat.shield_domes == nil then
 		global.egcombat.shield_domes = {}
 	end
+	if force or global.egcombat.shield_dome_edges == nil then
+		global.egcombat.shield_dome_edges = {}
+	end
 end
 
 initGlobal(true)
@@ -294,7 +297,7 @@ script.on_event(defines.events.on_tick, function(event)
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
 				if global.egcombat.shield_domes[force.name] then
-					for i, entry in ipairs(global.egcombat.shield_domes[force.name]) do
+					for unit, entry in pairs(global.egcombat.shield_domes[force.name]) do
 						if entry.dome.valid then
 							tickShieldDome(entry, game.tick)
 						else
@@ -302,7 +305,7 @@ script.on_event(defines.events.on_tick, function(event)
 								edge.entity.destroy()
 								edge.effect.destroy()
 							end
-							table.remove(global.egcombat.shield_domes[force.name], i)
+							global.egcombat.shield_domes[force.name][unit] = nil
 						end
 					end
 				end
@@ -489,12 +492,11 @@ end
 
 local function removeShieldDome(entity)
 	if string.find(entity.name, "shield-dome", 1, true) and global.egcombat.shield_domes[entity.force.name] then
-		for i, entry in ipairs(global.egcombat.shield_domes[entity.force.name]) do
-			if entry.dome.position.x == entity.position.x and entry.dome.position.y == entity.position.y then
-				table.remove(global.egcombat.shield_domes[entity.force.name], i)
-				break
-			end
+		for biter,edge in pairs(global.egcombat.shield_domes[entity.force.name][entity.unit_number].edges) do
+			edge.entity.destroy()
+			edge.effect.destroy()
 		end
+		global.egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
 	end
 end
 
@@ -520,8 +522,6 @@ local function onEntityRemoved(event)
 	initGlobal(false)
 	
 	local entity = event.entity
-	
-	game.print(entity.name)
 	
 	removeShockwaveTurret(entity)
 	removeCannonTurret(entity)

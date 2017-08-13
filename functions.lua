@@ -417,8 +417,10 @@ function tickShieldDome(entry, tick)
 								local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
 								local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
 								local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
-								game.print("Spawning edge entity for " .. biter.name)
-								entry.edges[biter.unit_number] = {entity=edge, effect=fx, life=tick+60}
+								--game.print("Spawning edge entity for " .. biter.name)
+								local entry2 = {entity=edge, effect=fx, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
+								entry.edges[biter.unit_number] = entry2
+								global.egcombat.shield_dome_edges[biter.unit_number] = entry2
 								biter.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
 							end
 						end
@@ -427,14 +429,14 @@ function tickShieldDome(entry, tick)
 			end
 		end
 		if tick%15 == 0 then
-			entry.dome.surface.create_entity({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force})
+			entry.dome.surface.create_entity({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 		end
 		if tick%5 == 0 then --spawn some edges to show radius, and to look cool
 			local ang = math.random()*360
 			local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
 			local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
 			local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
-			table.insert(entry.edges, {entity=edge, effect=fx, life=tick+math.random(30, 90)})
+			table.insert(entry.edges, {entity=edge, effect=fx, life=tick+math.random(30, 90), force=entry.dome.force, entry_key=entry.dome.unit_number})
 		end
 	end
 	if entry.current_shield < SHIELD_DOMES[entry.index].strength then
@@ -443,13 +445,13 @@ function tickShieldDome(entry, tick)
 			entry.current_shield = entry.current_shield+1
 			if entry.rebooting and entry.current_shield >= SHIELD_REACTIVATE_FRACTION*SHIELD_DOMES[entry.index].strength then
 				entry.rebooting = false
-				game.print("Shields back online @ " .. entry.current_shield)
+				--game.print("Shields back online @ " .. entry.current_shield)
 			end
 		end
 	end
 	if entry.dome.energy == 0 then
 		entry.current_shield = math.max(0, math.floor(entry.current_shield*0.95)) --lose energy if empty buffer
-		game.print("Blackout! Shield depleting!")
+		--game.print("Blackout! Shield depleting!")
 	end
 	if #entry.edges > 0 then
 		for biter,edge in pairs(entry.edges) do
@@ -467,30 +469,30 @@ function tickShieldDome(entry, tick)
 end
 
 function getShieldDomeFromEdge(entity, destroy, killer)
-	--for _,entry in pairs(global.egcombat.shield_domes[force.name]) do --cannot be by force, since edge entities are neutral force
-	for _,force in pairs(game.forces) do if global.egcombat.shield_domes[force.name] then for _,entry in pairs(global.egcombat.shield_domes[force.name]) do
-		if #entry.edges > 0 then
-			for biter, edge in pairs(entry.edges) do
-				if edge.entity.valid then
-					if edge.entity.position.x == entity.position.x and edge.entity.position.y == entity.position.y then
-						if destroy then
-							entry.edges[biter] = nil
-							attackShieldDome(entry, game.entity_prototypes[entity.name].max_health)
-							edge.entity.destroy()
-							edge.effect.destroy()
-						end
-						return entry
-					end
-				else
-					entry.edges[biter] = nil --just remove, no effect
-					if edge.effect and edge.effect.valid then
-						edge.effect.destroy()
-					end
+	local edge = global.egcombat.shield_dome_edges[killer.unit_number]
+	if edge then
+		if global.egcombat.shield_domes[edge.force] and global.egcombat.shield_domes[edge.force][edge.entry_key] then
+			local entry = global.egcombat.shield_domes[edge.force][edge.entry_key]
+			if edge.entity.valid then
+				if destroy then
+					entry.edges[killer.unit_number] = nil
+					attackShieldDome(entry, game.entity_prototypes[entity.name].max_health)
+					edge.entity.destroy()
+					edge.effect.destroy()
+				end
+			else
+				entry.edges[killer.unit_number] = nil --just remove, no effect
+				if edge.effect and edge.effect.valid then
+					edge.effect.destroy()
 				end
 			end
+			return entry
+		else
+			error("A shield dome edge in table (killer=" .. killer.unit_number .. ") (force=" .. edge.force .. ", key=" .. edge.entry_key .. " without an entry!?")
+			return nil
 		end
-	--end end end
-	game.print("A shield dome edge without an entry!?")
+	end
+	error("A shield dome edge in table (killer=" .. killer.unit_number .. ") not in table!?")
 end
 
 function getShieldDomeFromEntity(entity)
@@ -504,10 +506,11 @@ end
 
 function attackShieldDome(entry, damage)
 	entry.current_shield = math.max(0, entry.current_shield-damage)
-	game.print("Destroying edge, subtracting " .. damage .. "health from shield. Shield health is now: " .. entry.current_shield)
+	--game.print("Destroying edge, subtracting " .. damage .. "health from shield. Shield health is now: " .. entry.current_shield)
 	if entry.current_shield == 0 then
 		entry.rebooting = true
-		game.print("Shield offline. Rebooting.")
+		entry.dome.surface.create_entity({name="shield-dome-fail-effect-" .. entry.index, position = entry.dome.position, force=game.forces.neutral})
+		--game.print("Shield offline. Rebooting.")
 	end
 end
 
@@ -702,7 +705,7 @@ function checkAndCacheTurret(turret, force)
 			global.egcombat.shield_domes[force] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
-		table.insert(global.egcombat.shield_domes[force], {dome=turret, index = idx, current_shield = 0, edges = {}})
+		global.egcombat.shield_domes[force][turret.unit_number] = {dome=turret, index = idx, current_shield = 0, edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end
