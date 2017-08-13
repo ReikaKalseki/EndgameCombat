@@ -35,7 +35,7 @@ function initGlobal(force)
 	if force or global.egcombat.sceduled_orbital == nil then
 		global.egcombat.sceduled_orbital = {}
 	end
-	if force or global.egcombat.shield_domes == nil then
+	if global.egcombat.shield_domes == nil then --do not clear existing, leaves entities
 		global.egcombat.shield_domes = {}
 	end
 	if force or global.egcombat.shield_dome_edges == nil then
@@ -304,6 +304,9 @@ script.on_event(defines.events.on_tick, function(event)
 							for biter,edge in pairs(entry.edges) do
 								edge.entity.destroy()
 								edge.effect.destroy()
+								if edge.light and edge.light.valid then
+									edge.light.destroy()
+								end
 							end
 							global.egcombat.shield_domes[force.name][unit] = nil
 						end
@@ -495,6 +498,9 @@ local function removeShieldDome(entity)
 		for biter,edge in pairs(global.egcombat.shield_domes[entity.force.name][entity.unit_number].edges) do
 			edge.entity.destroy()
 			edge.effect.destroy()
+			if edge.light and edge.light.valid then
+				edge.light.destroy()
+			end
 		end
 		global.egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
 	end

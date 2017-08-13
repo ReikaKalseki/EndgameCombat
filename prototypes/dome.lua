@@ -182,7 +182,7 @@ local function createShieldDome(name, params)
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 
-			duration = 300000,
+			duration = 180,
 			fade_in_duration = 30,
 			fade_away_duration = 30,
 			spread_duration = 10,
@@ -209,6 +209,63 @@ local function createShieldDome(name, params)
 			},
 		},
 		{
+			type = "explosion",
+			name = "shield-dome-effect-light-" .. name,
+			flags = {"not-on-map", "placeable-off-grid"},
+			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
+			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+			light = {intensity = 0.75, size = 75, color = {r=math.min(1, 0.4+params.color1.r*1.5), g=math.min(1, 0.4+params.color1.g*1.5), b=math.min(1, 0.4+params.color1.b*1.5)}},
+			animations =
+			{
+				{
+					filename = "__core__/graphics/empty.png",
+					priority = "extra-high",
+					width = 1,
+					height = 1,
+					frame_count = 1,
+					animation_speed = 1/60,
+				}
+			},
+		},
+		{
+			type = "explosion",
+			name = "shield-dome-edge-effect-light-" .. name,
+			flags = {"not-on-map", "placeable-off-grid"},
+			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
+			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+			light = {intensity = 0.375, size = 10, color = {r=math.min(1, 0.25+params.color2.r*1.5), g=math.min(1, 0.25+params.color2.g*1.5), b=math.min(1, 0.25+params.color2.b*1.5)}},
+			animations =
+			{
+				{
+					filename = "__core__/graphics/empty.png",
+					priority = "extra-high",
+					width = 1,
+					height = 1,
+					frame_count = 1,
+					animation_speed = 0.005,
+				}
+			},
+		},
+		{
+			type = "explosion",
+			name = "shield-dome-fail-effect-light-" .. name,
+			flags = {"not-on-map", "placeable-off-grid"},
+			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
+			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+			light = {intensity = 1, size = 50, color = {r=math.min(1, 0.4+params.color1.r*1.5), g=math.min(1, 0.4+params.color1.g*1.5), b=math.min(1, 0.4+params.color1.b*1.5)}},
+			animations =
+			{
+				{
+					filename = "__core__/graphics/empty.png",
+					priority = "extra-high",
+					width = 1,
+					height = 1,
+					frame_count = 1,
+					animation_speed = 1/40,
+				}
+			},
+		},
+		{
 			type = "smoke",
 			name = "shield-dome-effect-" .. name,
 			selectable_in_game = false,
@@ -227,15 +284,15 @@ local function createShieldDome(name, params)
 			render_layer = "light-effect",
 			animation =
 			{
-			  filename = "__EndgameCombat__/graphics/entity/dome/effect-" .. name .. ".png",
+			  filename = "__EndgameCombat__/graphics/entity/dome/pulse-" .. name .. ".png",
 			  priority = "high",
-			  width = 197,
-			  height = 245,
+			  width = 192,
+			  height = 192,
 			  apply_projection = false,
-			  frame_count = 12,
-			  line_length = 6,
+			  frame_count = 14,
+			  line_length = 14,
 			  shift = {0, -1},
-			  scale = 2*params.radius/SHIELD_DOMES["small"].radius,
+			  scale = 4*params.radius/SHIELD_DOMES["small"].radius,
 			  animation_speed = 0.25,
 			  blend_mode = "additive"
 			},
@@ -247,18 +304,18 @@ local function createShieldDome(name, params)
 			animations =
 			{
 			  {
-				filename = "__EndgameCombat__/graphics/entity/dome/fail-" .. name .. ".png",
+				filename = "__EndgameCombat__/graphics/entity/dome/effect-" .. name .. ".png",
 				priority = "extra-high",
 				flags = { "compressed" },
 				width = 197,
 				height = 245,
-				frame_count = 47,
+				frame_count = 12,
 				line_length = 6,
 				axially_symmetrical = false,
 				direction_count = 1,
-				shift = {2, -10},
-				scale = 2.0,--2.0,
-				animation_speed = 0.25,
+				shift = {0, -1},
+				scale = 4.0,--2.0,
+				animation_speed = 0.5,
 				blend_mode = "additive",
 			  }
 			},
