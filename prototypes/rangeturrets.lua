@@ -17,7 +17,7 @@ local turrets = {}
 local items = {}
 for i = 1,#TURRET_RANGE_BOOSTS do
 	for _,base in pairs(baseturrets) do
-		if base.name ~= "last-stand-turret" and base.minable and base.minable.result then --skip technicals
+		if base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result then --skip technicals
 			local turret = util.table.deepcopy(base)
 			turret.name = turret.name .. "-rangeboost-" .. i
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}

@@ -129,11 +129,17 @@ function Modify_Power(train, factor)
 	obj.max_power = newpow .. endmult
 end
 
+local function getDistance(e1, e2)
+	local dx = e1.position.x-e2.position.x
+	local dy = e1.position.y-e2.position.y
+	return math.sqrt(dx*dx+dy*dy)
+end
+
 function doLastStandDestruction(turret)
 	--game.print("Doing last stand @ " .. turret.position.x .. " , " .. turret.position.y)
 	local entities = turret.surface.find_entities_filtered({area = {{turret.position.x-20, turret.position.y-20}, {turret.position.x+20, turret.position.y+20}}})
 	for _,entity in pairs(entities) do
-		if entity.force == game.forces.enemy then
+		if entity.force == game.forces.enemy and getDistance(entity, turret) <= 22 then
 			entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
 			entity.damage(5000, turret.force, "acid")
 			if entity.valid then entity.damage(5000, turret.force, "fire") end
@@ -142,7 +148,7 @@ function doLastStandDestruction(turret)
 			turret.kills = turret.kills+1
 		else
 			if entity.health then
-				entity.damage(entity.health*(0.4+math.random()*0.5), turret.force, "acid")
+				entity.damage(entity.health*(0.25+math.random()*0.25), turret.force, "acid")
 			end
 		end
 	end
@@ -176,6 +182,79 @@ function getOrCreateIndexForOrbital(entity)
 	end
 	--game.print("Returning " .. global.egcombat.orbital_indices[entity.unit_number].index)
 	return global.egcombat.orbital_indices[entity.unit_number].index
+end
+
+function scheduleOrbitalStrike(placer, inv, target)
+	--inv.insert({name="orbital-manual-target", count=1})
+	if not global.egcombat.scheduled_orbital then
+		global.egcombat.scheduled_orbital = {}
+	end
+	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_charted(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-10, target.y-10},{target.x+10, target.y+10}}}) == 0 then
+		local entity = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force})
+		local loc = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force}) --just for location
+		local fx = placer.surface.create_entity{name = "orbital-manual-target-effect", position=target}
+		table.insert(global.egcombat.scheduled_orbital, {location = loc, next = entity, effect=fx, delay = 180, shots = 0})
+		for _,player in pairs (game.connected_players) do
+			player.add_custom_alert(entity, {type = "item", name = "orbital-manual-target"}, {"orbital-strike-incoming"}, true)
+		end
+		--game.print("Scheduling strike")
+	else
+		--target.destroy()
+	end
+end
+
+function tickOrbitalStrikeSchedule()
+	if global.egcombat.scheduled_orbital then
+		for i=#global.egcombat.scheduled_orbital,1,-1 do
+			local entry = global.egcombat.scheduled_orbital[i]
+			entry.delay = entry.delay-1
+			--game.print("Ticking strike @ " .. entry.location.position.x .. " , " .. entry.location.position.y .. " , tick = " .. entry.delay)
+			if entry.delay == 0 then
+				entry.shots = entry.shots+1
+				fireOrbitalWeaponManually(entry.next)
+				--game.print("Firing")
+				local loc = entry.location.position
+				if entry.shots < 10 and (math.random() < 0.4 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
+					entry.delay = math.random(5, 30)
+					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
+				else
+					table.remove(global.egcombat.scheduled_orbital, i)
+					entry.location.destroy()
+					entry.effect.destroy()
+				end
+			end
+		end
+	end
+end
+
+function fireOrbitalWeaponManually(target)
+	local surface = target.surface
+	local pos = target.position--player.selected and player.selected.position or ??
+	surface.create_entity({name = "orbital-bombardment-firing-sound", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-explosion", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-crater", position = pos, force = game.forces.neutral})
+	local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}})
+	for _,entity in pairs(entities) do
+		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game then
+			if getDistance(entity, target) <= 35 then
+				if entity.type ~= "tree" and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
+					if entity.type == "unit" or entity.type == "unit-spawner" then
+						entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
+					else
+						entity.surface.create_entity({name="explosion", position=entity.position, force=entity.force})
+					end
+					entity.die()
+				else
+					entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+				end
+			end
+		end
+	end
+	target.destroy()
+	for _,player in pairs (game.connected_players) do
+		surface.create_entity{name = "orbital-manual-target-sound-1", position = player.position}
+		surface.create_entity{name = "orbital-manual-target-sound-2", position = player.position}
+	end
 end
 
 function fireOrbitalWeapon(force, entity)
@@ -246,6 +325,7 @@ function fireOrbitalWeapon(force, entity)
 					retaliation.add_member(spawn)
 				end
 				retaliation.set_command({type = defines.command.attack, target = entity, distraction = defines.distraction.none})
+				
 				surface.pollute({pos.x+16, pos.y+16}, 5000)
 				local rs = 16
 				force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+31+rs, pos.y+31+rs}})
@@ -285,12 +365,6 @@ function spawnFireArea(entity)
 	end
 end
 
-local function getDistance(e1, e2)
-	local dx = e1.position.x-e2.position.x
-	local dy = e1.position.y-e2.position.y
-	return math.sqrt(dx*dx+dy*dy)
-end
-
 function tickCannonTurret(entry, tick)
 	if game.tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
 		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and string.find(entry.turret.shooting_target.name, "spitter", 1, true) then
@@ -324,6 +398,116 @@ function tickCannonTurret(entry, tick)
 		else
 			entry.delay = math.min(90, entry.delay+10)
 		end
+	end
+end
+
+function tickShieldDome(entry, tick)
+	if entry.current_shield > 0 and not entry.rebooting then
+		if tick%15 == 0 then
+			--game.print("Ticking dome @ " .. entry.dome.position.x .. "," .. entry.dome.position.y)
+			local enemies = entry.dome.surface.find_enemy_units(entry.dome.position, game.entity_prototypes[entry.dome.name].turret_range, entry.dome.force)
+			if #enemies > 0 then
+				--game.print(#enemies .. " @ " .. entry.delay))
+				for _,biter in pairs(enemies) do
+					if biter.valid and biter.health > 0 then
+						local d = getDistance(biter, entry.dome)
+						if math.abs(d-SHIELD_DOMES[entry.index].radius) <= 3 then
+							if not entry.edges[biter.unit_number] or not entry.edges[biter.unit_number].entity.valid or entry.edges[biter.unit_number].entity.health <= 0 then
+								local ang = math.atan2(biter.position.y-entry.dome.position.y, biter.position.x-entry.dome.position.x) --y,x, not x,y
+								local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
+								local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+								local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
+								game.print("Spawning edge entity for " .. biter.name)
+								entry.edges[biter.unit_number] = {entity=edge, effect=fx, life=tick+60}
+								biter.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
+							end
+						end
+					end
+				end
+			end
+		end
+		if tick%15 == 0 then
+			entry.dome.surface.create_entity({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force})
+		end
+		if tick%5 == 0 then --spawn some edges to show radius, and to look cool
+			local ang = math.random()*360
+			local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
+			local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+			local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
+			table.insert(entry.edges, {entity=edge, effect=fx, life=tick+math.random(30, 90)})
+		end
+	end
+	if entry.current_shield < SHIELD_DOMES[entry.index].strength then
+		if entry.dome.energy >= SHIELD_DOMES[entry.index].energy_per_point*1000 then
+			entry.dome.energy = entry.dome.energy-SHIELD_DOMES[entry.index].energy_per_point*1000
+			entry.current_shield = entry.current_shield+1
+			if entry.rebooting and entry.current_shield >= SHIELD_REACTIVATE_FRACTION*SHIELD_DOMES[entry.index].strength then
+				entry.rebooting = false
+				game.print("Shields back online @ " .. entry.current_shield)
+			end
+		end
+	end
+	if entry.dome.energy == 0 then
+		entry.current_shield = math.max(0, math.floor(entry.current_shield*0.95)) --lose energy if empty buffer
+		game.print("Blackout! Shield depleting!")
+	end
+	if #entry.edges > 0 then
+		for biter,edge in pairs(entry.edges) do
+			if tick >= edge.life then
+				if edge.entity.valid then
+					edge.entity.destroy()
+				end
+				if edge.effect.valid then
+					edge.effect.destroy()
+				end
+				entry.edges[biter] = nil
+			end
+		end
+	end
+end
+
+function getShieldDomeFromEdge(entity, destroy, killer)
+	--for _,entry in pairs(global.egcombat.shield_domes[force.name]) do --cannot be by force, since edge entities are neutral force
+	for _,force in pairs(game.forces) do if global.egcombat.shield_domes[force.name] then for _,entry in pairs(global.egcombat.shield_domes[force.name]) do
+		if #entry.edges > 0 then
+			for biter, edge in pairs(entry.edges) do
+				if edge.entity.valid then
+					if edge.entity.position.x == entity.position.x and edge.entity.position.y == entity.position.y then
+						if destroy then
+							entry.edges[biter] = nil
+							attackShieldDome(entry, game.entity_prototypes[entity.name].max_health)
+							edge.entity.destroy()
+							edge.effect.destroy()
+						end
+						return entry
+					end
+				else
+					entry.edges[biter] = nil --just remove, no effect
+					if edge.effect and edge.effect.valid then
+						edge.effect.destroy()
+					end
+				end
+			end
+		end
+	--end end end
+	game.print("A shield dome edge without an entry!?")
+end
+
+function getShieldDomeFromEntity(entity)
+	for _,entry in pairs(global.egcombat.shield_domes[entity.force.name]) do
+		if entry.dome.position.x == entity.position.x and entry.dome.position.y == entity.position.y then
+			return entry
+		end
+	end
+	error("A shield dome without an entry!?")
+end
+
+function attackShieldDome(entry, damage)
+	entry.current_shield = math.max(0, entry.current_shield-damage)
+	game.print("Destroying edge, subtracting " .. damage .. "health from shield. Shield health is now: " .. entry.current_shield)
+	if entry.current_shield == 0 then
+		entry.rebooting = true
+		game.print("Shield offline. Rebooting.")
 	end
 end
 
@@ -503,13 +687,22 @@ function checkAndCacheTurret(turret, force)
 		end
 		table.insert(global.egcombat.shockwave_turrets[force], {turret=turret, delay=60})
 		--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
-	end		
+	end
 	
 	if string.find(turret.name, "cannon-turret", 1, true) then
 		if global.egcombat.cannon_turrets[force] == nil then
 			global.egcombat.cannon_turrets[force] = {}
 		end
 		table.insert(global.egcombat.cannon_turrets[force], {turret=turret, delay=90})
+		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
+	end
+	
+	if string.find(turret.name, "shield-dome", 1, true) then
+		if global.egcombat.shield_domes[force] == nil then
+			global.egcombat.shield_domes[force] = {}
+		end
+		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
+		table.insert(global.egcombat.shield_domes[force], {dome=turret, index = idx, current_shield = 0, edges = {}})
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end

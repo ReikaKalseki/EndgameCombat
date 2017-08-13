@@ -1,0 +1,248 @@
+require "config"
+require "constants"
+
+--acts as a distractor of sorts, where biters will reach the "shield edge" (secretly entities) and attack those preferentially; if killed, they will move on to target the shield dome emitter itself(?); once down, they act as normal
+--so: scan biters in radius, redirect aggro; watch entity-died for shield-edge and use ref lookup for getting shield itself, decrement its shield energy by the health of that entity
+--try E:D shield mechanics:
+--if shield level reaches zero, shield deactivates (no effect, no visuals); stays offline until reaches some threshold (eg 25%); shield recharges slowly, consuming LOTS of power in the process
+
+data:extend({
+  {
+    type = "item",
+    name = "small-shield-dome",
+    icon = "__EndgameCombat__/graphics/icons/small-shield-dome.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[plasma-turret]-f[small-shield-dome-1-2]",
+    place_result = "small-shield-dome",	
+    stack_size = 2
+  },
+  {
+    type = "item",
+    name = "medium-shield-dome",
+    icon = "__EndgameCombat__/graphics/icons/medium-shield-dome.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[plasma-turret]-f[medium-shield-dome-1-2]",
+    place_result = "medium-shield-dome",	
+    stack_size = 2
+  },
+  {
+    type = "item",
+    name = "big-shield-dome",
+    icon = "__EndgameCombat__/graphics/icons/big-shield-dome.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[plasma-turret]-f[big-shield-dome-1-2]",
+    place_result = "big-shield-dome",	
+    stack_size = 2
+  },
+})
+
+local function createEmptyAnimation()
+	local ret = {
+		filename = "__EndgameCombat__/graphics/entity/dome/trans.png",
+        line_length = 1,
+		width = 258,
+		height = 186,
+        frame_count = 1,
+        axially_symmetrical = false,
+        direction_count = 1,
+        draw_as_shadow = false,
+        --shift = {1.5, 0}
+	}
+	return ret
+end
+
+local function createEdgeSprite(name, params)
+return
+  {
+    filename = "__EndgameCombat__/graphics/entity/dome/edge-" .. name .. ".png",
+    priority = "extra-high",
+    width = 80,
+    height = 80,
+	scale = 0.5,
+    frame_count = 16,
+	direction_count = 12,
+  }
+end
+
+local ending_patch_prototype =
+  {
+    sheet =
+    {
+        filename = "__base__/graphics/entity/transport-belt/hr-start-end-integration-patches.png",
+        width = 80,
+        height = 80,
+        priority = "extra-high",
+        scale = 0.5
+    }
+  }
+
+local function createShieldDome(name, params)
+	data:extend({
+		{
+			type = "electric-turret",
+			name = name .. "-shield-dome",
+			render_layer = "object",
+			icon = "__EndgameCombat__/graphics/icons/" .. name .. "-shield-dome.png",
+			flags = {"placeable-player", "placeable-neutral", "player-creation"},
+			order = "s-e-w-f",
+			minable = {mining_time = 2.5, result = name .. "-shield-dome"},
+			max_health = 400+params.strength/5,
+			corpse = "big-remnants",
+			dying_explosion = "massive-explosion",
+			collision_box = {{-1.3, -1.3}, {1.3, 1.3}},
+			selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+			folding_animation = createEmptyAnimation(),
+			folded_animation = createEmptyAnimation(),
+			prepared_animation = createEmptyAnimation(),
+			preparing_animation = createEmptyAnimation(),
+			base_picture =
+			{
+			  filename = "__EndgameCombat__/graphics/entity/dome/emitter-" .. name .. ".png",
+			  priority = "extra-high",
+			  width = 258,
+			  height = 186,
+			  scale = 1.5,
+			  shift = {4.25, -1.25},
+			  frame_count = 1,
+			},
+			call_for_help_radius = 5,
+			energy_source =
+			{
+			  type = "electric",
+			  buffer_capacity = params.energy_per_point*20 .. "kJ", --20 ticks worth of recharge
+			  input_flow_limit = params.max_recharge .. "MW",
+			  drain = params.idle_drain .. "MW",
+			  usage_priority = "primary-input"
+			},
+			attack_parameters =
+			{
+			  type = "projectile",
+			  ammo_category = "electric",
+			  cooldown = 20,
+			  projectile_center = {-0.09375, -0.2},
+			  projectile_creation_distance = 1.4,
+			  range = params.radius,
+			  damage_modifier = 0,
+			  ammo_type =
+			  {
+				type = "projectile",
+				category = "shockwave-turret",
+				energy_consumption = "0kJ",
+				action =
+				{
+				  {
+					type = "direct",
+					action_delivery =
+					{
+						type = "projectile",
+						projectile = "shockwave-dummy-projectile",
+						starting_speed = 100
+					}
+				  }
+				}
+			  },
+			  sound = nil
+			},
+		},
+		{
+			type = "simple-entity-with-force",
+			name = "shield-dome-edge-" .. name,
+			flags = {"not-on-map", "placeable-off-grid"},
+			render_layer = "lower-object",
+			--icon = "__base__/graphics/icons/steel-chest.png",
+			order = "s-e-w-f",
+			max_health = 50,
+			corpse = nil,
+			collision_mask = {},
+			--collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
+			selectable_in_game = false,
+			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+			picture =
+			{
+			  filename = "__EndgameCombat__/graphics/entity/dome/trans.png",
+			  priority = "high",
+			  width = 5,
+			  height = 5,
+			  apply_projection = false,
+			  frame_count = 1,
+			  line_length = 1,
+			  shift = {0, 0},
+			  scale = 1,
+			  animation_speed = 1,
+			  blend_mode = "additive"
+			},
+		},
+		{
+			type = "smoke",
+			name = "shield-dome-edge-effect-" .. name,
+			flags = {"not-on-map", "placeable-off-grid"},
+			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
+			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+
+			duration = 300000,
+			fade_in_duration = 30,
+			fade_away_duration = 30,
+			spread_duration = 10,
+			start_scale = 1,
+			end_scale = 1,
+			cyclic = true,
+			affected_by_wind = false,
+			movement_slow_down_factor = 1,
+			color = {r=1,g=1,b=1},--params.color2,
+			render_layer = "lower-object",
+			animation =
+			{
+			  filename = "__EndgameCombat__/graphics/entity/dome/edge-" .. name .. ".png",
+			  priority = "extra-high",
+			  width = 64,
+			  height = 50,
+			  apply_projection = false,
+			  frame_count = 19,
+			  line_length = 19,
+			  shift = {0, 0},
+			  scale = 2,
+			  animation_speed = 0.5,
+			  blend_mode = "additive"
+			},
+		},
+		{
+			type = "smoke",
+			name = "shield-dome-effect-" .. name,
+			selectable_in_game = false,
+			--icon = "__EndgameCombat__/graphics/icons/.png",
+			flags = {"not-on-map", "placeable-off-grid"},
+			duration = 300,
+			fade_in_duration = 60,
+			fade_away_duration = 60,
+			spread_duration = 10,
+			start_scale = 1,
+			end_scale = 2,
+			cyclic = false,
+			affected_by_wind = false,
+			movement_slow_down_factor = 1,
+			color = {r=1,g=1,b=1},--params.color1,
+			render_layer = "light-effect",
+			animation =
+			{
+			  filename = "__EndgameCombat__/graphics/entity/dome/effect-" .. name .. ".png",
+			  priority = "high",
+			  width = 197,
+			  height = 245,
+			  apply_projection = false,
+			  frame_count = 12,
+			  line_length = 6,
+			  shift = {0, -1},
+			  scale = 2*params.radius/SHIELD_DOMES["small"].radius,
+			  animation_speed = 0.25,
+			  blend_mode = "additive"
+			},
+		},
+	})
+end
+
+for name,params in pairs(SHIELD_DOMES) do
+	createShieldDome(name, params)
+end

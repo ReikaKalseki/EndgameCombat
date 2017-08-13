@@ -6,6 +6,7 @@ require("prototypes.projectiles")
 require("prototypes.radar")
 require("prototypes.orbital")
 require("prototypes.walls")
+require("prototypes.dome")
 require("prototypes.tank")
 require("prototypes.armor")
 

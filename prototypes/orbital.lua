@@ -19,6 +19,16 @@ data:extend(
     order = "q[satellite]",
     stack_size = 1
   },
+  {
+    type = "item",
+    name = "orbital-manual-target",
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[orbital-destroyer]-f[orbital-manual-target-1-2]",
+    place_result = "orbital-manual-target",	
+    stack_size = 1
+  },
 }
 )
 
@@ -72,6 +82,152 @@ data:extend(
         }
       },
       apparent_volume = 2,
+    }
+  },
+  {
+    type = "simple-entity-with-force",
+    name = "orbital-manual-target",
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
+    selectable_in_game = false,
+	destructible = false,
+	collision_mask = {},
+	order = "z",
+    render_layer = "object",
+    --collision_box = {{-2.4, -2.4}, {2.4, 2.4}},
+    --selection_box = {{-2.5, -2.5}, {2.5, 2.5}},
+    pictures =
+    {
+      filename = "__EndgameCombat__/graphics/entity/orbital/target.png",
+      priority = "high",
+      width = 512,
+      height = 400,
+      apply_projection = false,
+      frame_count = 16,
+      line_length = 4,
+      shift = {0, 0},
+	  scale = 2,
+      animation_speed = 1,
+	  blend_mode = "additive"
+    },
+  },
+  {
+    type = "simple-entity-with-force",
+    name = "orbital-manual-target-secondary",
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
+    selectable_in_game = false,
+	destructible = false,
+	collision_mask = {},
+	order = "z",
+    render_layer = "object",
+    --collision_box = {{-2.4, -2.4}, {2.4, 2.4}},
+    --selection_box = {{-2.5, -2.5}, {2.5, 2.5}},
+    pictures =
+    {
+      filename = "__EndgameCombat__/graphics/entity/orbital/target-secondary.png",
+      priority = "low",
+      width = 5,
+      height = 5,
+      apply_projection = false,
+      shift = {0, 0},
+	  scale = 1,
+	  blend_mode = "additive"
+    },
+  },
+  {
+    type = "smoke", --since simple entity cannot animate or play sound
+    name = "orbital-manual-target-effect",
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"not-on-map", "placeable-off-grid"},
+    duration = 60000,
+    fade_in_duration = 0,
+    fade_away_duration = 0,
+    spread_duration = 10,
+    start_scale = 1,
+    end_scale = 1,
+    cyclic = true,
+    affected_by_wind = false,
+    movement_slow_down_factor = 1,
+    color = {r = 1, g = 1, b = 1},
+    render_layer = "cursor",
+    animation =
+    {
+      filename = "__EndgameCombat__/graphics/entity/orbital/target.png",
+      priority = "high",
+      width = 512,
+      height = 400,
+      apply_projection = false,
+      frame_count = 16,
+      line_length = 4,
+      shift = {0, 1},
+	  scale = 2,
+      animation_speed = 0.5,
+	  blend_mode = "additive"
+    },
+  },
+  {
+    type = "explosion",
+    name = "orbital-manual-target-sound-1", --for playing the sound to players not nearby
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"not-on-map", "placeable-off-grid"},
+	animations =
+    {
+      {
+        filename = "__core__/graphics/empty.png",
+        priority = "extra-high",
+        width = 1,
+        height = 1,
+        frame_count = 1,
+        animation_speed = 1
+      }
+    },
+    sound =
+    {
+      aggregation =
+      {
+        max_count = 2,
+        remove = true
+      },
+      variations =
+      {
+        {
+          filename = "__EndgameCombat__/sounds/orbital-explosion.ogg",
+          volume = 1.0
+        }
+      }
+    }
+  },
+  {
+    type = "explosion",
+    name = "orbital-manual-target-sound-2",
+    icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+    flags = {"not-on-map", "placeable-off-grid"},
+	animations =
+    {
+      {
+        filename = "__core__/graphics/empty.png",
+        priority = "extra-high",
+        width = 1,
+        height = 1,
+        frame_count = 1,
+        animation_speed = 1
+      }
+    },
+    sound =
+    {
+      aggregation =
+      {
+        max_count = 10,
+        remove = true
+      },
+      variations =
+      {
+        {
+          filename = "__EndgameCombat__/sounds/orbital-firing.ogg",
+          volume = 2.0
+        }
+      }
     }
   },
 }

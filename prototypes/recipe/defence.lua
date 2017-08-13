@@ -54,7 +54,6 @@
 	category = "advanced-crafting",
     result = "tough-spiked-wall"
   },
-  
  {
     type = "recipe",
     name = "big-radar",
@@ -69,6 +68,45 @@
     },
 	energy_required = 30,
     result = "big-radar"
+  },
+ {
+    type = "recipe",
+    name = "small-shield-dome",
+    enabled = "false",
+    ingredients =
+    {
+	  {"beacon", 1},
+      {"energy-shield-equipment", 5},
+      {"processing-unit", 25},
+      {"steel-plate", 10},
+    },
+	energy_required = 10,
+    result = "small-shield-dome"
+  },
+ {
+    type = "recipe",
+    name = "medium-shield-dome",
+    enabled = "false",
+    ingredients =
+    {
+	  {"small-shield-dome", 1},
+      {"energy-shield-equipment", 20},
+      {"processing-unit", 40},
+    },
+	energy_required = 20,
+    result = "medium-shield-dome"
+  },
+ {
+    type = "recipe",
+    name = "big-shield-dome",
+    enabled = "false",
+    ingredients =
+    {
+	  {"medium-shield-dome", 1},
+      {"energy-shield-mk2-equipment", 25},
+    },
+	energy_required = 30,
+    result = "big-shield-dome"
   },
 }
 )

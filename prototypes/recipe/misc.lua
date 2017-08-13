@@ -70,6 +70,19 @@
     },
     result= "orbital-destroyer"
   },
+  {
+    type = "recipe",
+    name = "orbital-manual-target",
+    energy_required = 0.5,
+    enabled = false,
+    ingredients =
+    {
+		{"processing-unit", 25},
+		{"beacon", 1},
+		{"copper-cable", 200}
+    },
+    result= "orbital-manual-target"
+  },
 }
 )
 

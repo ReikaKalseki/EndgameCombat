@@ -499,7 +499,6 @@ local function createEmptyAnimation()
         draw_as_shadow = false,
         --shift = {1.5, 0}
 	}
-	
 	return ret
 end
 

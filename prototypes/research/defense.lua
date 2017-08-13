@@ -107,6 +107,7 @@ data:extend(
 	icon_size = 128,
   },
 
+  --others
     {
     type = "technology",
     name = "big-radar",
@@ -137,6 +138,48 @@ data:extend(
     order = "a-f",
 	icon_size = 32,
   },
+    {
+    type = "technology",
+    name = "shield-domes",
+    icon = "__EndgameCombat__/graphics/technology/domes.png",
+    prerequisites =
+    {
+      "military-4",
+      "energy-shield-mk2-equipment",
+      "effect-transmission",
+    },
+	effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "small-shield-dome"
+      },
+      {
+        type = "unlock-recipe",
+        recipe = "medium-shield-dome"
+      },
+      {
+        type = "unlock-recipe",
+        recipe = "big-shield-dome"
+      },
+    },
+    unit =
+    {
+      count = 1000,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+        {"high-tech-science-pack", 1},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
 
     {
     type = "technology",
@@ -159,6 +202,10 @@ data:extend(
       {
         type = "unlock-recipe",
         recipe = "destroyer-satellite"
+      },
+      {
+        type = "unlock-recipe",
+        recipe = "orbital-manual-target"
       },
     },
     unit =

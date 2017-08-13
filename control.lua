@@ -32,6 +32,12 @@ function initGlobal(force)
 	if force or global.egcombat.orbital_indices == nil then
 		global.egcombat.orbital_indices = {}
 	end
+	if force or global.egcombat.sceduled_orbital == nil then
+		global.egcombat.sceduled_orbital = {}
+	end
+	if force or global.egcombat.shield_domes == nil then
+		global.egcombat.shield_domes = {}
+	end
 end
 
 initGlobal(true)
@@ -284,6 +290,28 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
+	if global.egcombat and global.egcombat.shield_domes then
+		for k,force in pairs(game.forces) do
+			if force ~= game.forces.enemy then
+				if global.egcombat.shield_domes[force.name] then
+					for i, entry in ipairs(global.egcombat.shield_domes[force.name]) do
+						if entry.dome.valid then
+							tickShieldDome(entry, game.tick)
+						else
+							for biter,edge in pairs(entry.edges) do
+								edge.entity.destroy()
+								edge.effect.destroy()
+							end
+							table.remove(global.egcombat.shield_domes[force.name], i)
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	tickOrbitalStrikeSchedule()
+	
 	if #global.egcombat.fleshToDeconstruct > 0 then
 		for i = #global.egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
 			local items = global.egcombat.fleshToDeconstruct[i]
@@ -392,10 +420,33 @@ local function onFinishedResearch(event)
 	end
 end
 
+script.on_event(defines.events.on_put_item, function(event)
+	initGlobal(false)
+	
+	local player = game.players[event.player_index]
+	local stack = player.cursor_stack
+	
+	if not (stack.valid and stack.valid_for_read) then
+		return
+	end
+	
+	if stack.name == "orbital-manual-target" then
+		scheduleOrbitalStrike(player, player.get_inventory(defines.inventory_player_main), event.position)
+		return
+	end
+end)
+
 local function onEntityAdded(event)
 	initGlobal(false)
 	
 	local entity = event.created_entity
+	local placer = event.player_index and game.players[event.player_index] or event.robot
+	
+	if entity.name == "orbital-manual-target" then
+		game.players[event.player_index].insert{name = "orbital-manual-target"} --not placeable by robot, so can assume player
+		entity.destroy()
+		return
+	end
 	
 	if entity.type == "entity-ghost" then
         if string.find(entity.ghost_name, "rangeboost") then
@@ -436,6 +487,17 @@ local function removeCannonTurret(entity)
 	end
 end
 
+local function removeShieldDome(entity)
+	if string.find(entity.name, "shield-dome", 1, true) and global.egcombat.shield_domes[entity.force.name] then
+		for i, entry in ipairs(global.egcombat.shield_domes[entity.force.name]) do
+			if entry.dome.position.x == entity.position.x and entry.dome.position.y == entity.position.y then
+				table.remove(global.egcombat.shield_domes[entity.force.name], i)
+				break
+			end
+		end
+	end
+end
+
 local function onEntityMined(event)
 	initGlobal(false)
 	
@@ -443,6 +505,7 @@ local function onEntityMined(event)
 	
 	removeShockwaveTurret(entity)
 	removeCannonTurret(entity)
+	removeShieldDome(entity)
 	
 	local inv = event.buffer
 	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
@@ -458,11 +521,20 @@ local function onEntityRemoved(event)
 	
 	local entity = event.entity
 	
+	game.print(entity.name)
+	
 	removeShockwaveTurret(entity)
 	removeCannonTurret(entity)
+	removeShieldDome(entity)
 	
 	if entity.name == "last-stand-turret" then
 		doLastStandDestruction(entity)
+		return
+	end
+	
+	if string.find(entity.name, "shield-dome-edge", 1, true) then
+		getShieldDomeFromEdge(entity, true, event.cause)
+		return
 	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
