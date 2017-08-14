@@ -64,7 +64,7 @@ local function trackNewTurret(turret)
 		end
 		track_entity(global.egcombat.placed_turrets[force.name], turret)
 	
-		checkAndCacheTurret(turret, force.name)
+		checkAndCacheTurret(turret, force)
 		--[[
 		if string.find(turret.name, "shockwave-turret", 1, true) then
 			if global.egcombat.shockwave_turrets[force.name] == nil then
@@ -197,7 +197,9 @@ script.on_event(defines.events.on_trigger_created_entity, function(event)
 end)
 
 script.on_event(defines.events.on_tick, function(event)
-	initGlobal(false)
+	--initGlobal(false) --not necessary
+	
+	
 	if not global.egcombat.loadTick then		
 		for chunk in game.surfaces["nauvis"].get_chunks() do
 			table.insert(global.egcombat.chunk_cache, chunk)

@@ -401,6 +401,67 @@ function tickCannonTurret(entry, tick)
 	end
 end
 
+local function createAndAddEdgeForAttack(entry, r, tick, attacker)
+	if not attacker.unit_number or not entry.edges[attacker.unit_number] or not entry.edges[attacker.unit_number].entity.valid or (entry.edges[attacker.unit_number].entity.health and entry.edges[attacker.unit_number].entity.health <= 0) then
+		local ang = math.atan2(attacker.position.y-entry.dome.position.y, attacker.position.x-entry.dome.position.x) --y,x, not x,y
+		local pos = {x=entry.dome.position.x+r*0.9*math.cos(ang), y=entry.dome.position.y+r*0.9*math.sin(ang)}
+		local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+		local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
+		local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
+		--game.print("Spawning edge entity for " .. attacker.name)
+		local entry2 = {entity=edge, effect=fx, light=light, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
+		if attacker.type == "unit" then --only add to memory if a unit; projectiles have special handling
+			entry.edges[attacker.unit_number] = entry2
+			global.egcombat.shield_dome_edges[attacker.unit_number] = entry2
+			attacker.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
+		elseif attacker.type == "projectile" then
+			entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
+			attackShieldDome(entry, 25) --cannot get actual damage, so go for 25 (normally 10/20/30/50 for S/M/Bg/Bhm)
+			attacker.destroy()
+		end
+	end
+end
+
+function getCurrentDomeStrengthFactorByLevel(lvl)
+	return lvl == 100 and 50 or 1+0.04*lvl+math.floor(0.004*lvl*lvl * 100 + 0.5) / 100 --round quadratic part to nearest 0.01
+end
+
+function getCurrentDomeCostFactorByLevel(lvl)
+	return 1/math.min(500, 1+lvl*0.01+((1.25^lvl)-1)*0.075)
+end
+
+local function getCurrentDomeStrengthFactor(force)
+	local lvl = 1
+	while force.technologies["shield-dome-strength-" .. lvl].researched and lvl <= MAX_DOME_STRENGTH_TECH_LEVEL do
+		lvl = lvl+1
+	end
+	lvl = lvl-1
+	return getCurrentDomeStrengthFactorByLevel(lvl)
+end
+
+local function getCurrentDomeCostFactor(force)
+	local lvl = 1
+	while force.technologies["shield-dome-recharge-" .. lvl].researched and lvl <= MAX_DOME_RECHARGE_TECH_LEVEL do
+		lvl = lvl+1
+	end
+	lvl = lvl-1
+	return getCurrentDomeCostFactorByLevel(lvl)
+end
+
+local function getShieldDomeStrength(entry)
+	if not entry.strength_factor then
+		entry.strength_factor = getCurrentDomeStrengthFactor(entry.dome.force)
+	end
+	return math.floor(SHIELD_DOMES[entry.index].strength*entry.strength_factor)
+end
+
+local function getShieldDomeRechargeCost(entry)
+	if not entry.cost_factor then
+		entry.cost_factor = getCurrentDomeCostFactor(entry.dome.force)
+	end
+	return math.max(1, math.ceil(SHIELD_DOMES[entry.index].energy_per_point*entry.cost_factor))*1000
+end
+
 function tickShieldDome(entry, tick)
 	if not entry.delay then entry.delay = 60 end
 	if entry.current_shield > 0 and not entry.rebooting then
@@ -419,19 +480,19 @@ function tickShieldDome(entry, tick)
 						if biter.valid and biter.health > 0 then
 							local d = getDistance(biter, entry.dome)
 							if math.abs(d-r) <= 3 then --only ones with targets inside? does not make so much sense, and hard to code
-								if not entry.edges[biter.unit_number] or not entry.edges[biter.unit_number].entity.valid or entry.edges[biter.unit_number].entity.health <= 0 then
-									local ang = math.atan2(biter.position.y-entry.dome.position.y, biter.position.x-entry.dome.position.x) --y,x, not x,y
-									local pos = {x=entry.dome.position.x+r*0.9*math.cos(ang), y=entry.dome.position.y+r*0.9*math.sin(ang)}
-									local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
-									local fx = entry.dome.surface.create_entity({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
-									local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
-									--game.print("Spawning edge entity for " .. biter.name)
-									local entry2 = {entity=edge, effect=fx, light=light, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
-									entry.edges[biter.unit_number] = entry2
-									global.egcombat.shield_dome_edges[biter.unit_number] = entry2
-									biter.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
-								end
+								createAndAddEdgeForAttack(entry, r, tick, biter)
 							end
+						end
+					end
+					
+					--this is required for spitters to be able to damage the shield
+					local projs = entry.dome.surface.find_entities_filtered({area = {{entry.dome.position.x-r, entry.dome.position.y-r}, {entry.dome.position.x+r, entry.dome.position.y+r}}, type="projectile", name = "acid-projectile-purple"})
+					for _,proj in pairs(projs) do
+						local d = getDistance(proj, entry.dome)
+						if d < r*0.9 then
+							--entry.dome.surface.create_entity({name="acid-splash-purple", position = proj.position, force=game.forces.neutral})
+							--proj.destroy()
+							createAndAddEdgeForAttack(entry, r, tick, proj)
 						end
 					end
 				end
@@ -441,7 +502,7 @@ function tickShieldDome(entry, tick)
 			end
 		end
 		if tick%30 == 0 then
-			if entry.current_shield < SHIELD_DOMES[entry.index].strength then
+			if entry.current_shield < getShieldDomeStrength(entry) then
 				entry.dome.surface.create_entity({name="shield-dome-charging-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 			else
 				if tick%120 == 0 then
@@ -462,11 +523,13 @@ function tickShieldDome(entry, tick)
 			end
 		end
 	end
-	if entry.current_shield < SHIELD_DOMES[entry.index].strength then
-		if entry.dome.energy >= SHIELD_DOMES[entry.index].energy_per_point*1000 then
-			entry.dome.energy = entry.dome.energy-SHIELD_DOMES[entry.index].energy_per_point*1000
-			entry.current_shield = entry.current_shield+1
-			if entry.rebooting and entry.current_shield >= SHIELD_REACTIVATE_FRACTION*SHIELD_DOMES[entry.index].strength then
+	if entry.current_shield < getShieldDomeStrength(entry) then
+		local cost = getShieldDomeRechargeCost(entry)
+		local cycles = math.floor(entry.dome.energy/cost)
+		if cycles > 1 then
+			entry.dome.energy = entry.dome.energy-cost*cycles
+			entry.current_shield = entry.current_shield+cycles
+			if entry.rebooting and entry.current_shield >= SHIELD_REACTIVATE_FRACTION*getShieldDomeStrength(entry) then
 				entry.rebooting = false
 				--game.print("Shields back online @ " .. entry.current_shield)
 			end
@@ -713,33 +776,33 @@ end
 
 function convertTurretForRangeWhileKeepingSpecialCaches(turret, level)
 	local ret = convertTurretForRange(turret, level)
-	local force = ret.force.name
+	local force = ret.force
 	checkAndCacheTurret(ret, force)
 end
 
 function checkAndCacheTurret(turret, force)
 	if string.find(turret.name, "shockwave-turret", 1, true) then
-		if global.egcombat.shockwave_turrets[force] == nil then
-			global.egcombat.shockwave_turrets[force] = {}
+		if global.egcombat.shockwave_turrets[force.name] == nil then
+			global.egcombat.shockwave_turrets[force.name] = {}
 		end
-		table.insert(global.egcombat.shockwave_turrets[force], {turret=turret, delay=60})
+		table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
 		--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 	
 	if string.find(turret.name, "cannon-turret", 1, true) then
-		if global.egcombat.cannon_turrets[force] == nil then
-			global.egcombat.cannon_turrets[force] = {}
+		if global.egcombat.cannon_turrets[force.name] == nil then
+			global.egcombat.cannon_turrets[force.name] = {}
 		end
-		table.insert(global.egcombat.cannon_turrets[force], {turret=turret, delay=90})
+		table.insert(global.egcombat.cannon_turrets[force.name], {turret=turret, delay=90})
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 	
 	if string.find(turret.name, "shield-dome", 1, true) then
-		if global.egcombat.shield_domes[force] == nil then
-			global.egcombat.shield_domes[force] = {}
+		if global.egcombat.shield_domes[force.name] == nil then
+			global.egcombat.shield_domes[force.name] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
-		global.egcombat.shield_domes[force][turret.unit_number] = {dome=turret, delay = 60, index = idx, current_shield = 0, edges = {}}
+		global.egcombat.shield_domes[force.name][turret.unit_number] = {dome=turret, delay = 60, index = idx, current_shield = 0, strength_factor = getCurrentDomeStrengthFactor(force), cost_factor = getCurrentDomeCostFactor(force), edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end

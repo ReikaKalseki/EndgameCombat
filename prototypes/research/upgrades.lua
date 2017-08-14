@@ -1,5 +1,6 @@
 require "config"
 require "constants"
+require "functions"
 
 data:extend(
 {
@@ -1024,6 +1025,84 @@ data:extend(
   },
 }
 )
+
+for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
+	local ingredients = {
+			{"science-pack-1", 1},
+			{"science-pack-2", 1},
+			{"science-pack-3", 1},
+			{"military-science-pack", 1},
+			{"high-tech-science-pack", 1},
+	}
+	if i > 4 then
+		table.insert(ingredients, {"space-science-pack", 1})
+	end
+		  
+	data:extend({
+	  {
+		type = "technology",
+		name = "shield-dome-strength-" .. i,
+		icon = "__EndgameCombat__/graphics/technology/dome-strength.png",
+		localised_description = {"technology-description.shield-dome-strength", tostring(100*(getCurrentDomeStrengthFactorByLevel(i)-1))},
+		effects =
+		{
+		  {
+			type = "nothing",
+			effect_key = "shield-dome-strength"
+		  }
+		},
+		prerequisites = {i == 1 and "shield-domes" or "shield-dome-strength-" .. (i-1)},
+		unit =
+		{
+		  count = i <= 4 and 250*i or 1000*(i-3),
+		  ingredients = ingredients,
+		  time = 30
+		},
+		upgrade = true,
+		order = "e-n-e",
+		icon_size = 128,
+	  },
+	})
+end
+
+for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
+	local ingredients = {
+			{"science-pack-1", 1},
+			{"science-pack-2", 1},
+			{"science-pack-3", 1},
+			{"military-science-pack", 1},
+			{"high-tech-science-pack", 1},
+	}
+	if i > 10 then
+		table.insert(ingredients, {"space-science-pack", 1})
+	end
+		  
+	data:extend({
+	  {
+		type = "technology",
+		name = "shield-dome-recharge-" .. i,
+		icon = "__EndgameCombat__/graphics/technology/dome-recharge.png",
+		localised_description = {"technology-description.shield-dome-recharge", tostring(100*(1/getCurrentDomeCostFactorByLevel(i)-1))},
+		effects =
+		{
+		  {
+			type = "nothing",
+			effect_key = "shield-dome-recharge"
+		  }
+		},
+		prerequisites = {i == 1 and "shield-domes" or "shield-dome-recharge-" .. (i-1)},
+		unit =
+		{
+		  count = i <= 10 and 100*i or 1000*(i-9),
+		  ingredients = ingredients,
+		  time = 30
+		},
+		upgrade = true,
+		order = "e-n-e",
+		icon_size = 128,
+	  },
+	})
+end
 
 local i = 6
 while #REPAIR_CHANCES >= i do
