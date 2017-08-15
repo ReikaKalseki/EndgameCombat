@@ -6,37 +6,105 @@ require "constants"
 --try E:D shield mechanics:
 --if shield level reaches zero, shield deactivates (no effect, no visuals); stays offline until reaches some threshold (eg 25%); shield recharges slowly, consuming LOTS of power in the process
 
+local function createCircuitSprite()
+	local ret = {
+        filename = "__EndgameCombat__/graphics/entity/dome/circuit.png",
+        x = 0,
+        y = 0,
+        width = 61,
+        height = 50,
+        frame_count = 1,
+        shift = {0.140625, 0.140625},
+    }
+	return ret
+end
+
+local function createCircuitActivitySprite()
+	local ret = {
+        filename = "__base__/graphics/entity/combinator/activity-leds/combinator-led-constant-south.png",
+        width = 11,
+        height = 11,
+        frame_count = 1,
+        shift = {-0.296875, -0.078125},
+    }
+	return ret
+end
+
+local function createCircuitConnections()
+	local ret = {
+        shadow = {
+          red = {0.375, 0.5625},
+          green = {-0.125, 0.5625}
+        },
+        wire = {
+          red = {0.375, 0.15625},
+          green = {-0.125, 0.15625}
+        }
+    }
+	return ret
+end
+
 data:extend({
   {
-    type = "item",
-    name = "small-shield-dome",
-    icon = "__EndgameCombat__/graphics/icons/small-shield-dome.png",
-    flags = {"goes-to-quickbar"},
-    subgroup = "defensive-structure",
-    order = "f[plasma-turret]-f[small-shield-dome-1-2]",
-    place_result = "small-shield-dome",	
-    stack_size = 2
+    type = "virtual-signal",
+    name = "shield-level",
+    icon = "__EndgameCombat__/graphics/icons/shield-dome-level.png",
+    subgroup = "virtual-signal-special",
+    order = "shield",
   },
   {
-    type = "item",
-    name = "medium-shield-dome",
-    icon = "__EndgameCombat__/graphics/icons/medium-shield-dome.png",
-    flags = {"goes-to-quickbar"},
-    subgroup = "defensive-structure",
-    order = "f[plasma-turret]-f[medium-shield-dome-1-2]",
-    place_result = "medium-shield-dome",	
-    stack_size = 2
-  },
-  {
-    type = "item",
-    name = "big-shield-dome",
-    icon = "__EndgameCombat__/graphics/icons/big-shield-dome.png",
-    flags = {"goes-to-quickbar"},
-    subgroup = "defensive-structure",
-    order = "f[plasma-turret]-f[big-shield-dome-1-2]",
-    place_result = "big-shield-dome",	
-    stack_size = 2
-  },
+    type = "constant-combinator",
+    name = "dome-circuit-connection",
+    icon = "__base__/graphics/icons/constant-combinator.png",
+    flags = {"placeable-neutral", "player-creation", "not-on-map", "placeable-off-grid"},
+	order = "z",
+	max_health = 1000000000,
+	destructible = false,
+	--collision_mask = {},
+
+    --collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
+    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+
+    item_slot_count = 1,
+
+    sprites =
+    {
+      north = createCircuitSprite(),
+      west = createCircuitSprite(),
+      east = createCircuitSprite(),
+      south = createCircuitSprite(),
+    },
+
+    activity_led_sprites = {
+	  north = createCircuitActivitySprite(),
+      west = createCircuitActivitySprite(),
+      east = createCircuitActivitySprite(),
+      south = createCircuitActivitySprite(),
+    },
+
+    activity_led_light =
+    {
+      intensity = 0.8,
+      size = 1,
+    },
+
+    activity_led_light_offsets =
+    {
+      {-0.296875, -0.078125},
+      {-0.296875, -0.078125},
+      {-0.296875, -0.078125},
+      {-0.296875, -0.078125},
+    },
+
+    circuit_wire_connection_points = {
+      createCircuitConnections(),
+      createCircuitConnections(),
+      createCircuitConnections(),
+      createCircuitConnections(),
+    },
+
+    circuit_wire_max_distance = 7.5
+  }
 })
 
 local function createEmptyAnimation()
@@ -81,6 +149,17 @@ local ending_patch_prototype =
 
 local function createShieldDome(name, params)
 	data:extend({
+		{
+			type = "item",
+			name = name .. "-shield-dome",
+			icon = "__EndgameCombat__/graphics/icons/" .. name .. "-shield-dome.png",
+			flags = {"goes-to-quickbar"},
+			subgroup = "defensive-structure",
+			order = "f[plasma-turret]-f[" .. name .. "-shield-dome-1-2]",
+			place_result = name .. "-shield-dome",	
+			localised_description = {"item-description.shield-dome", params.radius, params.strength, math.floor(params.max_recharge*1000/params.energy_per_point * 1000 + 0.5) / 1000, params.idle_drain, params.max_recharge},
+			stack_size = 2
+		},
 		{
 			type = "electric-turret",
 			name = name .. "-shield-dome",
@@ -322,7 +401,7 @@ local function createShieldDome(name, params)
 			  height = 192,
 			  apply_projection = false,
 			  frame_count = 14,
-			  line_length = 14,
+			  line_length = 7,
 			  shift = {0, -1},
 			  scale = 4*params.radius/SHIELD_DOMES["small"].radius,
 			  animation_speed = 0.25,

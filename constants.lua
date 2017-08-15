@@ -44,8 +44,8 @@ MAX_DOME_RECHARGE_TECH_LEVEL = 40
 local f = 2 --not needed to be big anymore, since have techs
 SHIELD_DOMES = { --energy per point in kJ, max recharge and idle drain in MW
 	["small"]	=	{radius=16,	strength=500*f,	energy_per_point=450/f,		max_recharge=5.0,	idle_drain=1.0,		color1 = {r = 0.1412, g = 0.851, b = 0},	color2 = {r = 0.7098, g = 1, b = 0}},	--recharges 11.111 pt/sec = 45 sec for full recharge, 9s to reactivate
-	["medium"]	=	{radius=24,	strength=2000*f,energy_per_point=2250/f,	max_recharge=15.0,	idle_drain=5.0,		color1 = {r = 1, g = 0.6863, b = 0},		color2 = {r = 1, g = 1, b = 0}},		--recharges 6.667 pt/sec = 300 sec (5 min) for full recharge, 60s to reactivate
-	["big"]		=	{radius=36,	strength=5000*f,energy_per_point=9000/f,	max_recharge=50.0,	idle_drain=20.0,	color1 = {r = 0, g = 0.784, b = 1},			color2 = {r = 0.5, g = 1, b = 1}},		--recharges 5.555 pt/sec = 900 sec (15 min) for full recharge, 180s to reactivate
+	["medium"]	=	{radius=24,	strength=2000*f,energy_per_point=2250/f,	max_recharge=15.0,	idle_drain=4.0,		color1 = {r = 1, g = 0.6863, b = 0},		color2 = {r = 1, g = 1, b = 0}},		--recharges 6.667 pt/sec = 300 sec (5 min) for full recharge, 60s to reactivate
+	["big"]		=	{radius=36,	strength=5000*f,energy_per_point=9000/f,	max_recharge=50.0,	idle_drain=10.0,	color1 = {r = 0, g = 0.784, b = 1},			color2 = {r = 0.5, g = 1, b = 1}},		--recharges 5.555 pt/sec = 900 sec (15 min) for full recharge, 180s to reactivate
 }
 
 HEAVY_TRAIN_FACTOR = 25

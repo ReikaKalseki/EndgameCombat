@@ -310,6 +310,11 @@ script.on_event(defines.events.on_tick, function(event)
 									edge.light.destroy()
 								end
 							end
+							if entry.circuit then
+								entry.circuit.disconnect_neighbour(defines.wire_type.red)
+								entry.circuit.disconnect_neighbour(defines.wire_type.green)
+								entry.circuit.destroy()
+							end
 							global.egcombat.shield_domes[force.name][unit] = nil
 						end
 					end
@@ -399,7 +404,8 @@ local function onFinishedResearch(event)
 	local tech = event.research.name
 	local force = event.research.force.name
 	if string.find(tech, "turret-range", 1, true) then
-		local lvl = tonumber(string.sub(tech, -1))
+		local lvl = tonumber(string.match(tech, "%d+"))
+		--game.print("Turret range " .. lvl)
 		if global.egcombat.placed_turrets[force] == nil then
 			global.egcombat.placed_turrets[force] = {}
 		end
@@ -425,6 +431,26 @@ local function onFinishedResearch(event)
 	end
 	if tech.name == "logistic-defence-2" then
 		global.egcombat.robot_defence[force] = 1.5
+	end
+	if string.find(tech, "shield-dome-strength", 1, true) then
+		local lvl = tonumber(string.match(tech, "%d+"))
+		--game.print("Dome strength " .. lvl)
+		if global.egcombat.shield_domes[force] == nil then
+			global.egcombat.shield_domes[force] = {}
+		end
+		for _,entry in pairs(global.egcombat.shield_domes[force]) do
+			entry.strength_factor = getCurrentDomeStrengthFactorByLevel(lvl)
+		end
+	end
+	if string.find(tech, "shield-dome-recharge", 1, true) then
+		local lvl = tonumber(string.match(tech, "%d+"))
+		--game.print("Dome recharge " .. lvl)
+		if global.egcombat.shield_domes[force] == nil then
+			global.egcombat.shield_domes[force] = {}
+		end
+		for _,entry in pairs(global.egcombat.shield_domes[force]) do
+			entry.cost_factor = getCurrentDomeCostFactorByLevel(lvl)
+		end
 	end
 end
 
@@ -497,12 +523,18 @@ end
 
 local function removeShieldDome(entity)
 	if string.find(entity.name, "shield-dome", 1, true) and global.egcombat.shield_domes[entity.force.name] then
-		for biter,edge in pairs(global.egcombat.shield_domes[entity.force.name][entity.unit_number].edges) do
+		local entry = global.egcombat.shield_domes[entity.force.name][entity.unit_number]
+		for biter,edge in pairs(entry.edges) do
 			edge.entity.destroy()
 			edge.effect.destroy()
 			if edge.light and edge.light.valid then
 				edge.light.destroy()
 			end
+		end
+		if entry.circuit then
+			entry.circuit.disconnect_neighbour(defines.wire_type.red)
+			entry.circuit.disconnect_neighbour(defines.wire_type.green)
+			entry.circuit.destroy()
 		end
 		global.egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
 	end
