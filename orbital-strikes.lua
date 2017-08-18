@@ -1,11 +1,12 @@
 require "functions"
 
 function getOrCreateIndexForOrbital(entity)
-	if not global.egcombat.orbital_indices[entity.unit_number] then
+	local egcombat = global.egcombat
+	if not egcombat.orbital_indices[entity.unit_number] then
 		--game.print("Calculating")
 		local flag = false
 		local entities = {}
-		for _,entry in pairs(global.egcombat.orbital_indices) do
+		for _,entry in pairs(egcombat.orbital_indices) do
 			if entry.entity.valid then
 				table.insert(entities, entry.entity)
 			else
@@ -17,16 +18,16 @@ function getOrCreateIndexForOrbital(entity)
 			for i = 1,#entities do
 				local val = entities[i]
 				local entry2 = {index=i-1, entity=val}
-				global.egcombat.orbital_indices[val.unit_number] = entry2
+				egcombat.orbital_indices[val.unit_number] = entry2
 				--game.print("Reassigning " .. entry2.index .. " to " .. val.unit_number)
 			end
 		end
 		--game.print("Assigning " .. #entities)
 		local entry = {index=#entities, entity=entity}
-		global.egcombat.orbital_indices[entity.unit_number] = entry
+		egcombat.orbital_indices[entity.unit_number] = entry
 	end
-	--game.print("Returning " .. global.egcombat.orbital_indices[entity.unit_number].index)
-	return global.egcombat.orbital_indices[entity.unit_number].index
+	--game.print("Returning " .. egcombat.orbital_indices[entity.unit_number].index)
+	return egcombat.orbital_indices[entity.unit_number].index
 end
 
 function scheduleOrbitalStrike(placer, inv, target)
@@ -48,10 +49,10 @@ function scheduleOrbitalStrike(placer, inv, target)
 	end
 end
 
-function tickOrbitalStrikeSchedule()
-	if global.egcombat.scheduled_orbital then
-		for i=#global.egcombat.scheduled_orbital,1,-1 do
-			local entry = global.egcombat.scheduled_orbital[i]
+function tickOrbitalStrikeSchedule(egcombat)
+	if egcombat.scheduled_orbital then
+		for i=#egcombat.scheduled_orbital,1,-1 do
+			local entry = egcombat.scheduled_orbital[i]
 			entry.delay = entry.delay-1
 			--game.print("Ticking strike @ " .. entry.location.position.x .. " , " .. entry.location.position.y .. " , tick = " .. entry.delay)
 			if entry.delay == 0 then
@@ -63,7 +64,7 @@ function tickOrbitalStrikeSchedule()
 					entry.delay = math.random(5, 30)
 					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
 				else
-					table.remove(global.egcombat.scheduled_orbital, i)
+					table.remove(egcombat.scheduled_orbital, i)
 					entry.location.destroy()
 					entry.effect.destroy()
 				end

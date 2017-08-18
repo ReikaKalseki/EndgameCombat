@@ -1,6 +1,6 @@
 require "functions"
 
-local function createAndAddEdgeForAttack(entry, r, tick, attacker)
+local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 	if not attacker.unit_number or not entry.edges[attacker.unit_number] or not entry.edges[attacker.unit_number].entity.valid or (entry.edges[attacker.unit_number].entity.health and entry.edges[attacker.unit_number].entity.health <= 0) then
 		local ang = math.atan2(attacker.position.y-entry.dome.position.y, attacker.position.x-entry.dome.position.x) --y,x, not x,y
 		local pos = {x=entry.dome.position.x+r*0.9*math.cos(ang), y=entry.dome.position.y+r*0.9*math.sin(ang)}
@@ -11,7 +11,7 @@ local function createAndAddEdgeForAttack(entry, r, tick, attacker)
 		local entry2 = {entity=edge, effect=fx, light=light, life=tick+150, force=entry.dome.force.name, entry_key = entry.dome.unit_number}
 		if attacker.type == "unit" then --only add to memory if a unit; projectiles have special handling
 			entry.edges[attacker.unit_number] = entry2
-			global.egcombat.shield_dome_edges[attacker.unit_number] = entry2
+			egcombat.shield_dome_edges[attacker.unit_number] = entry2
 			attacker.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
 		elseif attacker.type == "projectile" then
 			entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
@@ -74,7 +74,7 @@ local function setDomeCircuitStatus(entry)
 	end
 end
 
-function tickShieldDome(entry, tick)
+function tickShieldDome(egcombat, entry, tick)
 	if not entry.delay then entry.delay = 60 end
 	if entry.current_shield > 0 and not entry.rebooting then
 		if tick%entry.delay == 0 then
@@ -92,7 +92,7 @@ function tickShieldDome(entry, tick)
 						if biter.valid and biter.health > 0 then
 							local d = getDistance(biter, entry.dome)
 							if math.abs(d-r) <= 3 then --only ones with targets inside? does not make so much sense, and hard to code
-								createAndAddEdgeForAttack(entry, r, tick, biter)
+								createAndAddEdgeForAttack(egcombat, entry, r, tick, biter)
 							end
 						end
 					end
@@ -104,7 +104,7 @@ function tickShieldDome(entry, tick)
 						if d < r*0.9 then
 							--entry.dome.surface.create_entity({name="acid-splash-purple", position = proj.position, force=game.forces.neutral})
 							--proj.destroy()
-							createAndAddEdgeForAttack(entry, r, tick, proj)
+							createAndAddEdgeForAttack(egcombat, entry, r, tick, proj)
 						end
 					end
 				end
@@ -170,12 +170,12 @@ function tickShieldDome(entry, tick)
 	end
 end
 
-function getShieldDomeFromEdge(entity, destroy, killer)
+function getShieldDomeFromEdge(egcombat, entity, destroy, killer)
 	if killer == nil then return end
-	local edge = global.egcombat.shield_dome_edges[killer.unit_number]
+	local edge = egcombat.shield_dome_edges[killer.unit_number]
 	if edge then
-		if global.egcombat.shield_domes[edge.force] and global.egcombat.shield_domes[edge.force][edge.entry_key] then
-			local entry = global.egcombat.shield_domes[edge.force][edge.entry_key]
+		if egcombat.shield_domes[edge.force] and egcombat.shield_domes[edge.force][edge.entry_key] then
+			local entry = egcombat.shield_domes[edge.force][edge.entry_key]
 			if edge.entity.valid then
 				if destroy then
 					entry.edges[killer.unit_number] = nil
@@ -202,8 +202,8 @@ function getShieldDomeFromEdge(entity, destroy, killer)
 	--error("A shield dome edge (killer=" .. killer.unit_number .. ") not in table!?") happens if killed by something else, like player flamethrower
 end
 
-function getShieldDomeFromEntity(entity)
-	for _,entry in pairs(global.egcombat.shield_domes[entity.force.name]) do
+function getShieldDomeFromEntity(egcombat, entity)
+	for _,entry in pairs(egcombat.shield_domes[entity.force.name]) do
 		if entry.dome.position.x == entity.position.x and entry.dome.position.y == entity.position.y then
 			return entry
 		end

@@ -7,46 +7,42 @@ require "constants"
 require "shield-domes"
 require "orbital-strikes"
 
-function initGlobal(force)
+function initGlobal(markDirty)
 	if not global.egcombat then
 		global.egcombat = {}
 	end
-	if force or global.egcombat.loadTick == nil then
-		global.egcombat.loadTick = false
-	end
-	if force or global.egcombat.placed_turrets == nil then
+	if global.egcombat.placed_turrets == nil then
 		global.egcombat.placed_turrets = {}
 	end
-	if force or global.egcombat.robot_defence == nil then
+	if global.egcombat.robot_defence == nil then
 		global.egcombat.robot_defence = {}
 	end
-	if force or global.egcombat.chunk_cache == nil then
+	if global.egcombat.chunk_cache == nil then
 		global.egcombat.chunk_cache = {}
 	end
-	if force or global.egcombat.fleshToDeconstruct == nil then
+	if global.egcombat.fleshToDeconstruct == nil then
 		global.egcombat.fleshToDeconstruct = {}
 	end
-	if force or global.egcombat.cannon_turrets == nil then
+	if global.egcombat.cannon_turrets == nil then
 		global.egcombat.cannon_turrets = {}
 	end
-	if force or global.egcombat.shockwave_turrets == nil then
+	if global.egcombat.shockwave_turrets == nil then
 		global.egcombat.shockwave_turrets = {}
 	end
-	if force or global.egcombat.orbital_indices == nil then
+	if global.egcombat.orbital_indices == nil then
 		global.egcombat.orbital_indices = {}
 	end
-	if force or global.egcombat.sceduled_orbital == nil then
-		global.egcombat.sceduled_orbital = {}
+	if global.egcombat.scheduled_orbital == nil then
+		global.egcombat.scheduled_orbital = {}
 	end
-	if global.egcombat.shield_domes == nil then --do not clear existing, leaves entities
+	if global.egcombat.shield_domes == nil then
 		global.egcombat.shield_domes = {}
 	end
-	if force or global.egcombat.shield_dome_edges == nil then
+	if global.egcombat.shield_dome_edges == nil then
 		global.egcombat.shield_dome_edges = {}
 	end
+	global.egcombat.dirty = markDirty
 end
-
-initGlobal(true)
 
 script.on_init(function()
 	initGlobal(true)
@@ -56,41 +52,42 @@ script.on_configuration_changed(function()
 	initGlobal(true)
 end)
 
-local function trackNewTurret(turret)
+local function trackNewTurret(egcombat, turret)
 	local force = turret.force
 	if force ~= game.forces.enemy then
-		if global.egcombat.placed_turrets[force.name] == nil then
-			global.egcombat.placed_turrets[force.name] = {}
+		if egcombat.placed_turrets[force.name] == nil then
+			egcombat.placed_turrets[force.name] = {}
 		end
 		if turret.force.technologies["turret-range-1"].researched then
 			turret = convertTurretForRange(turret, getTurretRangeResearch(turret.force))
 		end
-		track_entity(global.egcombat.placed_turrets[force.name], turret)
+		track_entity(egcombat.placed_turrets[force.name], turret)
 	
 		checkAndCacheTurret(turret, force)
 		--[[
 		if string.find(turret.name, "shockwave-turret", 1, true) then
-			if global.egcombat.shockwave_turrets[force.name] == nil then
-				global.egcombat.shockwave_turrets[force.name] = {}
+			if egcombat.shockwave_turrets[force.name] == nil then
+				egcombat.shockwave_turrets[force.name] = {}
 			end
-			table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
+			table.insert(egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
 			--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
 		end
 		--]]
 
-		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #global.egcombat.placed_turrets[force.name])
+		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #egcombat.placed_turrets[force.name])
 	end
 end
 
 local function reloadRangeTech()
-	if global.egcombat and global.egcombat.placed_turrets then
+	local egcombat = global.egcombat
+	if egcombat.placed_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				if global.egcombat.placed_turrets[force.name] then
-					for k,turret in pairs(global.egcombat.placed_turrets[force.name]) do
+				if egcombat.placed_turrets[force.name] then
+					for k,turret in pairs(egcombat.placed_turrets[force.name]) do
 						if turret.valid then
 							turret = deconvertTurretForRange(turret)
-							trackNewTurret(turret)
+							trackNewTurret(egcombat, turret)
 						end
 					end
 				end
@@ -108,7 +105,7 @@ local function reloadRangeTech()
 	for _,turret in pairs(turrets) do
 		if turret.force ~= game.forces.enemy then
 			turret = deconvertTurretForRange(turret)
-			trackNewTurret(turret)
+			trackNewTurret(egcombat, turret)
 		end
 	end
 end
@@ -134,45 +131,8 @@ local function getPositionForBPEntity(entity)
 	result.y = result.y + bit32.lshift(1, buildingGridBitShift) * 0.5
 	return result
 end
---[[
-script.on_event(defines.events.on_player_setup_blueprint, function(event)
-	local player = game.players[event.player_index]
-	local surface = player.surface
-	local bp = player.cursor_stack
-	local flag = false
-	local entities = surface.find_entities_filtered({force = player.force, area = event.area})
-	local forbp = {}
-	local avgpos = {x=0, y=0}
-	for _,entity in pairs(entities) do
-		local ename = entity.name
-		local pos = entity.position
-		if string.find(entity.name, "rangeboost") then
-			flag = true
-			ename = getTurretBaseName(entity)
-			--pos.x = pos.x+1
-			--pos.y = pos.y+1
-		end
-		table.insert(forbp, {entity_number=#forbp, name=ename, position=pos, direction=entity.direction})
-		avgpos.x = math.min(avgpos.x, pos.x)--avgpos.x+pos.x
-		avgpos.y = math.min(avgpos.y, pos.y)--avgpos.y+pos.y
-	end
-	if not flag then return end
-	--avgpos = {x=avgpos.x/#forbp, y=avgpos.y/#forbp}
-	for _,entry in pairs(forbp) do
-		entry.position.x = entry.position.x-avgpos.x
-		entry.position.y = entry.position.y-avgpos.y
-	end
-	bp.set_stack({name=event.item, count=1}) --since always invalid
-	game.print("BPing " .. #forbp .. " entities:")
-	for _,v in pairs(forbp) do game.print(v.name .. " @ " .. v.position.x .. ", " .. v.position.y) end
-	bp.clear_blueprint()
-	bp.set_blueprint_entities(forbp)
-end)
---]]
 
-script.on_event(defines.events.on_sector_scanned, function(event)
-	initGlobal(false)
-	
+script.on_event(defines.events.on_sector_scanned, function(event)	
 	local force = event.radar.force
 	if event.radar.name == "orbital-destroyer" then
 		local index = getOrCreateIndexForOrbital(event.radar)
@@ -200,30 +160,32 @@ script.on_event(defines.events.on_trigger_created_entity, function(event)
 end)
 
 script.on_event(defines.events.on_tick, function(event)
-	--initGlobal(false) --not necessary
+	local egcombat = global.egcombat
 	
-	
-	if not global.egcombat.loadTick then		
+	if egcombat.dirty then		
+		--[[
 		for chunk in game.surfaces["nauvis"].get_chunks() do
-			table.insert(global.egcombat.chunk_cache, chunk)
+			table.insert(egcombat.chunk_cache, chunk)
 		end
+		--]]
 		
 		for k,force in pairs(game.forces) do
-			if global.egcombat.placed_turrets[force.name] == nil then
-				global.egcombat.placed_turrets[force.name] = {}
+			if egcombat.placed_turrets[force.name] == nil then
+				egcombat.placed_turrets[force.name] = {}
 				--game.print("Adding force " .. force.name .. " to turret table")
 			end
 		end
 		
-		global.egcombat.loadTick = true
+		egcombat.dirty = false
 	end
 	
-	if #global.egcombat.chunk_cache > 0 then
+	--[[
+	if #egcombat.chunk_cache > 0 then
 		local ticksPerChunk = 1--4
 		if game.tick%ticksPerChunk == 0 then
 			local chunksPerTick = 16--1
-			while chunksPerTick > 0 and #global.egcombat.chunk_cache > 0 do
-				chunk = global.egcombat.chunk_cache[1]
+			while chunksPerTick > 0 and #egcombat.chunk_cache > 0 do
+				chunk = egcombat.chunk_cache[1]
 				local x1 = chunk.x*32
 				local y1 = chunk.y*32
 				local x2 = x1+32
@@ -236,45 +198,46 @@ script.on_event(defines.events.on_tick, function(event)
 					table.insert(turrets, v)
 				end
 				for k,turret in pairs(turrets) do
-					trackNewTurret(turret)
+					trackNewTurret(egcombat, turret)
 				end
 				
 				if Config.deconstructFlesh then
 					local drops = game.surfaces["nauvis"].find_entities_filtered{area = {{x1, y1}, {x2, y2}}, type="item-entity"}
 					for _,item in pairs(drops) do
 						if item.stack and item.stack.name == "biter-flesh" then
-							table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+							table.insert(egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
 							--item.order_deconstruction(game.forces.player)
 						end
 					end
 				end
 				
-				table.remove(global.egcombat.chunk_cache, 1)
+				table.remove(egcombat.chunk_cache, 1)
 				chunksPerTick = chunksPerTick-1
 			end
 		end
 	end
+	--]]
 	
-	if global.egcombat and global.egcombat.placed_turrets then
+	if egcombat.placed_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				--game.print("Force " .. force.name .. ": " .. #global.egcombat.placed_turrets[force.name] .. " turrets placed.")
-				if force.technologies["healing-alloys-1"].researched and global.egcombat.placed_turrets[force.name] then
-					repairTurrets(game.surfaces["nauvis"], force)
+				--game.print("Force " .. force.name .. ": " .. #egcombat.placed_turrets[force.name] .. " turrets placed.")
+				if force.technologies["healing-alloys-1"].researched and egcombat.placed_turrets[force.name] then
+					repairTurrets(egcombat, force)
 				end
 			end
 		end
 	end
 	
-	if global.egcombat and global.egcombat.shockwave_turrets then
+	if egcombat.shockwave_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				if global.egcombat.shockwave_turrets[force.name] then
-					for i, entry in ipairs(global.egcombat.shockwave_turrets[force.name]) do
+				if egcombat.shockwave_turrets[force.name] then
+					for i, entry in ipairs(egcombat.shockwave_turrets[force.name]) do
 						if entry.turret.valid then
 							tickShockwaveTurret(entry, game.tick)
 						else
-							table.remove(global.egcombat.shockwave_turrets[force.name], i)
+							table.remove(egcombat.shockwave_turrets[force.name], i)
 						end
 					end
 				end
@@ -282,15 +245,15 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
-	if global.egcombat and global.egcombat.cannon_turrets then
+	if egcombat.cannon_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				if global.egcombat.cannon_turrets[force.name] then
-					for i, entry in ipairs(global.egcombat.cannon_turrets[force.name]) do
+				if egcombat.cannon_turrets[force.name] then
+					for i, entry in ipairs(egcombat.cannon_turrets[force.name]) do
 						if entry.turret.valid then
 							tickCannonTurret(entry, game.tick)
 						else
-							table.remove(global.egcombat.cannon_turrets[force.name], i)
+							table.remove(egcombat.cannon_turrets[force.name], i)
 						end
 					end
 				end
@@ -298,13 +261,13 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
-	if global.egcombat and global.egcombat.shield_domes then
+	if egcombat.shield_domes then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
-				if global.egcombat.shield_domes[force.name] then
-					for unit, entry in pairs(global.egcombat.shield_domes[force.name]) do
+				if egcombat.shield_domes[force.name] then
+					for unit, entry in pairs(egcombat.shield_domes[force.name]) do
 						if entry.dome.valid then
-							tickShieldDome(entry, game.tick)
+							tickShieldDome(egcombat, entry, game.tick)
 						else
 							for biter,edge in pairs(entry.edges) do
 								edge.entity.destroy()
@@ -318,7 +281,7 @@ script.on_event(defines.events.on_tick, function(event)
 								entry.circuit.disconnect_neighbour(defines.wire_type.green)
 								entry.circuit.destroy()
 							end
-							global.egcombat.shield_domes[force.name][unit] = nil
+							egcombat.shield_domes[force.name][unit] = nil
 						end
 					end
 				end
@@ -326,23 +289,23 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
-	tickOrbitalStrikeSchedule()
+	tickOrbitalStrikeSchedule(egcombat)
 	
-	if #global.egcombat.fleshToDeconstruct > 0 then
-		for i = #global.egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
-			local items = global.egcombat.fleshToDeconstruct[i]
+	if #egcombat.fleshToDeconstruct > 0 then
+		for i = #egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
+			local items = egcombat.fleshToDeconstruct[i]
 			local item = items[1]
 			local tick = items[2]
 			if game.tick >= tick or not item.valid then
 				if item.valid then
 					item.order_deconstruction(game.forces.player)
 				end
-				table.remove(global.egcombat.fleshToDeconstruct, i)
+				table.remove(egcombat.fleshToDeconstruct, i)
 			end
 		end
 	end
 	
-	if Config.rottingFlesh then
+	if Config.rottingFlesh and math.random() < 0.1 then
 		for _,player in pairs(game.players) do
 			if math.random() < 0.2 then
 				local invs = {defines.inventory.player_main, defines.inventory.player_quickbar, defines.inventory.player_tools, defines.inventory.player_vehicle}
@@ -351,7 +314,7 @@ script.on_event(defines.events.on_tick, function(event)
 					local iinv = player.get_inventory(inv)
 					if iinv then
 						local flesh = iinv.find_item_stack("biter-flesh")
-						local d = 0.001
+						local d = 0.001*10 --to counteract the 0.1 above
 						if flesh and flesh.valid_for_read then
 							if flesh.durability-d > 0 then
 								flesh.durability = math.max(0, flesh.durability-d)
@@ -382,7 +345,7 @@ function track_entity(entity_list, entity)
     table.insert(entity_list, entity)
 end
 
-function repairTurrets(surface, force)
+function repairTurrets(egcombat, force)
 	local level = 1
 	for i = #REPAIR_CHANCES, 1, -1 do
 		if force.technologies["healing-alloys-" .. i].researched then
@@ -390,29 +353,28 @@ function repairTurrets(surface, force)
 			break
 		end
 	end
-	--game.print(#global.egcombat.placed_turrets[force.name])
-	if global.egcombat.placed_turrets[force.name] == nil then
-		global.egcombat.placed_turrets[force.name] = {}
+	--game.print(#egcombat.placed_turrets[force.name])
+	if egcombat.placed_turrets[force.name] == nil then
+		egcombat.placed_turrets[force.name] = {}
 	end
-	for k,turret in pairs(global.egcombat.placed_turrets[force.name]) do
+	for k,turret in pairs(egcombat.placed_turrets[force.name]) do
 		if turret.valid and math.random() < REPAIR_CHANCES[level] then
 			repairTurret(turret, level)
 		end
 	end
 end
 
-local function onFinishedResearch(event)
-	initGlobal(false)
-	
+local function onFinishedResearch(event)	
 	local tech = event.research.name
 	local force = event.research.force.name
+	local egcombat = global.egcombat
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
 		--game.print("Turret range " .. lvl)
-		if global.egcombat.placed_turrets[force] == nil then
-			global.egcombat.placed_turrets[force] = {}
+		if egcombat.placed_turrets[force] == nil then
+			egcombat.placed_turrets[force] = {}
 		end
-		for k,turret in pairs(global.egcombat.placed_turrets[force]) do
+		for k,turret in pairs(egcombat.placed_turrets[force]) do
 			if turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
 				convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
@@ -430,36 +392,34 @@ local function onFinishedResearch(event)
 		end
 	end
 	if tech.name == "logistic-defence" then
-		global.egcombat.robot_defence[force] = 0.8
+		egcombat.robot_defence[force] = 0.8
 	end
 	if tech.name == "logistic-defence-2" then
-		global.egcombat.robot_defence[force] = 1.5
+		egcombat.robot_defence[force] = 1.5
 	end
 	if string.find(tech, "shield-dome-strength", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
 		--game.print("Dome strength " .. lvl)
-		if global.egcombat.shield_domes[force] == nil then
-			global.egcombat.shield_domes[force] = {}
+		if egcombat.shield_domes[force] == nil then
+			egcombat.shield_domes[force] = {}
 		end
-		for _,entry in pairs(global.egcombat.shield_domes[force]) do
+		for _,entry in pairs(egcombat.shield_domes[force]) do
 			entry.strength_factor = getCurrentDomeStrengthFactorByLevel(lvl)
 		end
 	end
 	if string.find(tech, "shield-dome-recharge", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
 		--game.print("Dome recharge " .. lvl)
-		if global.egcombat.shield_domes[force] == nil then
-			global.egcombat.shield_domes[force] = {}
+		if egcombat.shield_domes[force] == nil then
+			egcombat.shield_domes[force] = {}
 		end
-		for _,entry in pairs(global.egcombat.shield_domes[force]) do
+		for _,entry in pairs(egcombat.shield_domes[force]) do
 			entry.cost_factor = getCurrentDomeCostFactorByLevel(lvl)
 		end
 	end
 end
 
-script.on_event(defines.events.on_put_item, function(event)
-	initGlobal(false)
-	
+script.on_event(defines.events.on_put_item, function(event)	
 	local player = game.players[event.player_index]
 	local stack = player.cursor_stack
 	
@@ -473,11 +433,10 @@ script.on_event(defines.events.on_put_item, function(event)
 	end
 end)
 
-local function onEntityAdded(event)
-	initGlobal(false)
-	
+local function onEntityAdded(event)	
 	local entity = event.created_entity
 	local placer = event.player_index and game.players[event.player_index] or event.robot
+	local egcombat = global.egcombat
 	
 	if entity.name == "orbital-manual-target" then
 		game.players[event.player_index].insert{name = "orbital-manual-target"} --not placeable by robot, so can assume player
@@ -497,60 +456,18 @@ local function onEntityAdded(event)
     end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
-		trackNewTurret(entity)
+		trackNewTurret(egcombat, entity)
 		return
 	end
 end
 
-local function removeShockwaveTurret(entity)
-	if string.find(entity.name, "shockwave-turret", 1, true) and global.egcombat.shockwave_turrets[entity.force.name] then
-		for i, entry in ipairs(global.egcombat.shockwave_turrets[entity.force.name]) do
-			if entry.turret.position.x == entity.position.x and entry.turret.position.y == entity.position.y then
-				table.remove(global.egcombat.shockwave_turrets[entity.force.name], i)
-				break
-			end
-		end
-	end
-end
-
-local function removeCannonTurret(entity)
-	if string.find(entity.name, "cannon-turret", 1, true) and global.egcombat.cannon_turrets[entity.force.name] then
-		for i, entry in ipairs(global.egcombat.cannon_turrets[entity.force.name]) do
-			if entry.turret.position.x == entity.position.x and entry.turret.position.y == entity.position.y then
-				table.remove(global.egcombat.cannon_turrets[entity.force.name], i)
-				break
-			end
-		end
-	end
-end
-
-local function removeShieldDome(entity)
-	if string.find(entity.name, "shield-dome", 1, true) and global.egcombat.shield_domes[entity.force.name] then
-		local entry = global.egcombat.shield_domes[entity.force.name][entity.unit_number]
-		for biter,edge in pairs(entry.edges) do
-			edge.entity.destroy()
-			edge.effect.destroy()
-			if edge.light and edge.light.valid then
-				edge.light.destroy()
-			end
-		end
-		if entry.circuit then
-			entry.circuit.disconnect_neighbour(defines.wire_type.red)
-			entry.circuit.disconnect_neighbour(defines.wire_type.green)
-			entry.circuit.destroy()
-		end
-		global.egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
-	end
-end
-
-local function onEntityMined(event)
-	initGlobal(false)
-	
+local function onEntityMined(event)	
 	local entity = event.entity
+	local egcombat = global.egcombat
 	
-	removeShockwaveTurret(entity)
-	removeCannonTurret(entity)
-	removeShieldDome(entity)
+	removeShockwaveTurret(egcombat, entity)
+	removeCannonTurret(egcombat, entity)
+	removeShieldDome(egcombat, entity)
 	
 	local inv = event.buffer
 	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
@@ -561,14 +478,13 @@ local function onEntityMined(event)
 	end
 end
 
-local function onEntityRemoved(event)
-	initGlobal(false)
-	
+local function onEntityRemoved(event)	
 	local entity = event.entity
+	local egcombat = global.egcombat
 	
-	removeShockwaveTurret(entity)
-	removeCannonTurret(entity)
-	removeShieldDome(entity)
+	removeShockwaveTurret(egcombat, entity)
+	removeCannonTurret(egcombat, entity)
+	removeShieldDome(egcombat, entity)
 	
 	if entity.name == "last-stand-turret" then
 		doLastStandDestruction(entity)
@@ -576,7 +492,7 @@ local function onEntityRemoved(event)
 	end
 	
 	if string.find(entity.name, "shield-dome-edge", 1, true) then
-		getShieldDomeFromEdge(entity, true, event.cause)
+		getShieldDomeFromEdge(egcombat, entity, true, event.cause)
 		return
 	end
 	
@@ -585,50 +501,7 @@ local function onEntityRemoved(event)
 		return
 	end
 	
-	local drops = 0
-	local range = 0
-	if entity.type == "unit-spawner" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
-		drops = math.random(5, 12)
-		range = 4
-	end
-	if entity.type == "worm-turret" and string.find(entity.name, "worm") then
-		drops = math.random(2, 5)
-		range = 2
-	end
-	if entity.type == "unit" and Config.bitersDropFlesh and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
-		local size = 0
-		if string.find(entity.name, "small") then
-			size = 0.1
-		end
-		if string.find(entity.name, "medium") then
-			size = 0.25
-		end
-		if string.find(entity.name, "big") then
-			size = 0.5
-		end
-		if string.find(entity.name, "behemoth") then
-			size = 1
-		end
-		drops = math.random() < size and (math.random() < 0.2 and math.random(1, 2) or math.random(0, 1)) or 0
-		range = 1
-	end
-	if drops > 0 then
-		for i = 1,drops do
-			local pos = {entity.position.x, entity.position.y}
-			pos[1] = pos[1]-range+math.random()*2*range
-			pos[2] = pos[2]-range+math.random()*2*range
-			entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
-			if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
-				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
-				for _,item in pairs(drops) do
-					if item.stack and item.stack.name == "biter-flesh" then
-						table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
-						--item.order_deconstruction(game.forces.player)
-					end
-				end
-			end
-		end
-	end
+	doTissueDrops(entity)
 end
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)

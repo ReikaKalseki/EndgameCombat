@@ -129,6 +129,53 @@ function Modify_Power(train, factor)
 	obj.max_power = newpow .. endmult
 end
 
+function doTissueDrops(entity)
+	local drops = 0
+	local range = 0
+	if entity.type == "unit-spawner" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
+		drops = math.random(5, 12)
+		range = 4
+	end
+	if entity.type == "worm-turret" and string.find(entity.name, "worm") then
+		drops = math.random(2, 5)
+		range = 2
+	end
+	if entity.type == "unit" and Config.bitersDropFlesh and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
+		local size = 0
+		if string.find(entity.name, "small") then
+			size = 0.1
+		end
+		if string.find(entity.name, "medium") then
+			size = 0.25
+		end
+		if string.find(entity.name, "big") then
+			size = 0.5
+		end
+		if string.find(entity.name, "behemoth") then
+			size = 1
+		end
+		drops = math.random() < size and (math.random() < 0.2 and math.random(1, 2) or math.random(0, 1)) or 0
+		range = 1
+	end
+	if drops > 0 then
+		for i = 1,drops do
+			local pos = {entity.position.x, entity.position.y}
+			pos[1] = pos[1]-range+math.random()*2*range
+			pos[2] = pos[2]-range+math.random()*2*range
+			entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
+			if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
+				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
+				for _,item in pairs(drops) do
+					if item.stack and item.stack.name == "biter-flesh" then
+						table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+						--item.order_deconstruction(game.forces.player)
+					end
+				end
+			end
+		end
+	end
+end
+
 function getDistance(e1, e2)
 	local dx = e1.position.x-e2.position.x
 	local dy = e1.position.y-e2.position.y
@@ -271,6 +318,47 @@ function getShockwaveTurretDamageFactor(force)
 		end
 	end
 	return 1+level*0.4
+end
+
+function removeShockwaveTurret(egcombat, entity)
+	if string.find(entity.name, "shockwave-turret", 1, true) and egcombat.shockwave_turrets[entity.force.name] then
+		for i, entry in ipairs(egcombat.shockwave_turrets[entity.force.name]) do
+			if entry.turret.position.x == entity.position.x and entry.turret.position.y == entity.position.y then
+				table.remove(egcombat.shockwave_turrets[entity.force.name], i)
+				break
+			end
+		end
+	end
+end
+
+function removeCannonTurret(egcombat, entity)
+	if string.find(entity.name, "cannon-turret", 1, true) and egcombat.cannon_turrets[entity.force.name] then
+		for i, entry in ipairs(egcombat.cannon_turrets[entity.force.name]) do
+			if entry.turret.position.x == entity.position.x and entry.turret.position.y == entity.position.y then
+				table.remove(egcombat.cannon_turrets[entity.force.name], i)
+				break
+			end
+		end
+	end
+end
+
+function removeShieldDome(egcombat, entity)
+	if string.find(entity.name, "shield-dome", 1, true) and egcombat.shield_domes[entity.force.name] then
+		local entry = egcombat.shield_domes[entity.force.name][entity.unit_number]
+		for biter,edge in pairs(entry.edges) do
+			edge.entity.destroy()
+			edge.effect.destroy()
+			if edge.light and edge.light.valid then
+				edge.light.destroy()
+			end
+		end
+		if entry.circuit then
+			entry.circuit.disconnect_neighbour(defines.wire_type.red)
+			entry.circuit.disconnect_neighbour(defines.wire_type.green)
+			entry.circuit.destroy()
+		end
+		egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
+	end
 end
 
 function getTurretRangeBoost(force)
