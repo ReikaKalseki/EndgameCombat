@@ -489,7 +489,7 @@ local function onEntityAdded(event)
         if string.find(entity.ghost_name, "rangeboost") then
 			--game.print("Converting ghost")
 			local time = entity.time_to_live
-            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, inner_name = getTurretBaseNameByName(entity.ghost_name, getTurretRangeResearch(entity.force))})
+            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, direction = entity.direction, inner_name = getTurretBaseNameByName(entity.ghost_name, getTurretRangeResearch(entity.force))})
             entity.destroy()
 			new.time_to_live = time
 			return
