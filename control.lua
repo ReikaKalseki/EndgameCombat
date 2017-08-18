@@ -4,6 +4,9 @@ require "functions"
 require "config"
 require "constants"
 
+require "shield-domes"
+require "orbital-strikes"
+
 function initGlobal(force)
 	if not global.egcombat then
 		global.egcombat = {}
@@ -460,7 +463,7 @@ script.on_event(defines.events.on_put_item, function(event)
 	local player = game.players[event.player_index]
 	local stack = player.cursor_stack
 	
-	if not (stack.valid and stack.valid_for_read) then
+	if not (stack.valid_for_read) then
 		return
 	end
 	

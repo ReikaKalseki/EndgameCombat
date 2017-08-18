@@ -1,7 +1,5 @@
 require "constants"
 require "plasmabeam"
-require "shield-domes"
-require "orbital-strikes"
 
 function Radar_Defence(factor)
 return
@@ -131,7 +129,7 @@ function Modify_Power(train, factor)
 	obj.max_power = newpow .. endmult
 end
 
-local function getDistance(e1, e2)
+function getDistance(e1, e2)
 	local dx = e1.position.x-e2.position.x
 	local dy = e1.position.y-e2.position.y
 	return math.sqrt(dx*dx+dy*dy)

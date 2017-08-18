@@ -1,6 +1,7 @@
 require "config"
 require "constants"
 require "functions"
+require "shield-domes"
 
 data:extend(
 {

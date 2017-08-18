@@ -1,3 +1,5 @@
+require "functions"
+
 local function createAndAddEdgeForAttack(entry, r, tick, attacker)
 	if not attacker.unit_number or not entry.edges[attacker.unit_number] or not entry.edges[attacker.unit_number].entity.valid or (entry.edges[attacker.unit_number].entity.health and entry.edges[attacker.unit_number].entity.health <= 0) then
 		local ang = math.atan2(attacker.position.y-entry.dome.position.y, attacker.position.x-entry.dome.position.x) --y,x, not x,y
@@ -29,7 +31,7 @@ end
 
 function getCurrentDomeStrengthFactor(force)
 	local lvl = 1
-	while force.technologies["shield-dome-strength-" .. lvl].researched and lvl <= MAX_DOME_STRENGTH_TECH_LEVEL do
+	while force.technologies["shield-dome-strength-" .. lvl].researched and lvl < MAX_DOME_STRENGTH_TECH_LEVEL do
 		lvl = lvl+1
 	end
 	lvl = lvl-1
@@ -38,7 +40,7 @@ end
 
 function getCurrentDomeCostFactor(force)
 	local lvl = 1
-	while force.technologies["shield-dome-recharge-" .. lvl].researched and lvl <= MAX_DOME_RECHARGE_TECH_LEVEL do
+	while force.technologies["shield-dome-recharge-" .. lvl].researched and lvl < MAX_DOME_RECHARGE_TECH_LEVEL do
 		lvl = lvl+1
 	end
 	lvl = lvl-1

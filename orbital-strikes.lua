@@ -1,3 +1,5 @@
+require "functions"
+
 function getOrCreateIndexForOrbital(entity)
 	if not global.egcombat.orbital_indices[entity.unit_number] then
 		--game.print("Calculating")

@@ -293,7 +293,7 @@ local function createShieldDome(name, params)
 			flags = {"not-on-map", "placeable-off-grid"},
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-			light = {intensity = 0.75, size = 75, color = {r=math.min(1, 0.4+params.color1.r*1.5), g=math.min(1, 0.4+params.color1.g*1.5), b=math.min(1, 0.4+params.color1.b*1.5)}},
+			light = {intensity = 0.75, size = 3*params.radius, color = {r=math.min(1, 0.4+params.color1.r*1.5), g=math.min(1, 0.4+params.color1.g*1.5), b=math.min(1, 0.4+params.color1.b*1.5)}},
 			animations =
 			{
 				{
