@@ -27,7 +27,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			end
 			turret.order = "z"
 			if MAKE_ITEMS then
-				turret.minable.result = turret.name
+				--turret.minable.result = turret.name can work without
 			end
 			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
 			table.insert(turrets, turret)

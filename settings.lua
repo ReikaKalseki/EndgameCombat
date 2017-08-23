@@ -65,4 +65,11 @@ data:extend({
             default_value = true,
             order = "r",
         },
+		{
+            type = "int-setting",
+            name = "render-quality",
+            setting_type = "runtime-per-user",
+            default_value = 3,
+            order = "r",
+        },
 })

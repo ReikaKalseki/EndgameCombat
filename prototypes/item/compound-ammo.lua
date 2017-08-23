@@ -44,7 +44,8 @@ for _,ammo in pairs(ammos) do
 			  {ammo.original.name, AMMO_CRATE_CAPACITY/ammo.original.magazine_size},
 			  {"iron-plate", 1},
 			},
-			result = ammo.item.name
+			result = ammo.item.name,
+			--allow_decomposition = false,
 		},
 		{
 			type = "recipe",
@@ -57,6 +58,7 @@ for _,ammo in pairs(ammos) do
 			},
 			result = ammo.original.name, 
 			result_count = AMMO_CRATE_CAPACITY/ammo.original.magazine_size,
+			allow_decomposition = false,
 		},
 	})
 end

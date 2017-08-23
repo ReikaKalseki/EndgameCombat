@@ -378,16 +378,16 @@ function getTurretRangeResearch(force)
 	return level
 end
 
-function getTurretBaseNameByName(name, level)
+function getTurretBaseNameByName(name)
 	if string.find(name, "-rangeboost-", 1, true) then
-		local n = level == 10 and 3 or 2
+		local n = string.find(name, "rangeboost-10", 1, true) and 3 or 2
 		name = string.sub(name, 1, -string.len("-rangeboost-")-n) --aka Java substring(0, length()-"-rangeboost-".length()-n)
 	end
 	return name
 end
 
 function getTurretBaseName(turret)
-	return getTurretBaseNameByName(turret.name, getTurretRangeResearch(turret.force))
+	return getTurretBaseNameByName(turret.name)
 end
 
 function repairTurret(turret, tier)

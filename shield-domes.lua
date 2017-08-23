@@ -123,7 +123,8 @@ function tickShieldDome(egcombat, entry, tick)
 			end
 			entry.dome.surface.create_entity({name="shield-dome-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 		end
-		if tick%5 == 0 then --spawn some edges to show radius, and to look cool
+		local step = 5*math.min(3, math.max(1, 4-entry.dome.last_user.mod_settings["render-quality"].value))
+		if tick%step == 0 then --spawn some edges to show radius, and to look cool
 			local num = entry.index == "small" and 1 or (entry.index == "medium" and 2 or 3)
 			for i = 1,num do
 				local ang = math.random()*360

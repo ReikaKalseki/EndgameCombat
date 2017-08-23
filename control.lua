@@ -448,7 +448,7 @@ local function onEntityAdded(event)
         if string.find(entity.ghost_name, "rangeboost") then
 			--game.print("Converting ghost")
 			local time = entity.time_to_live
-            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, direction = entity.direction, inner_name = getTurretBaseNameByName(entity.ghost_name, getTurretRangeResearch(entity.force))})
+            local new = entity.surface.create_entity({name = entity.name, position = entity.position, force = entity.force, direction = entity.direction, inner_name = getTurretBaseNameByName(entity.ghost_name)})
             entity.destroy()
 			new.time_to_live = time
 			return
@@ -468,14 +468,14 @@ local function onEntityMined(event)
 	removeShockwaveTurret(egcombat, entity)
 	removeCannonTurret(egcombat, entity)
 	removeShieldDome(egcombat, entity)
-	
+	--[[
 	local inv = event.buffer
 	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
 		if string.find(entity.name, "rangeboost") and game.entity_prototypes[getTurretBaseName(entity)].mineable_properties and #game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products > 0 then
 			inv.remove({name=game.entity_prototypes[entity.name].mineable_properties.products[1].name})
 			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
 		end
-	end
+	end--]]
 end
 
 local function onEntityRemoved(event)	
