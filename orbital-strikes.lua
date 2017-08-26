@@ -82,9 +82,9 @@ function fireOrbitalWeaponManually(target)
 	local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}})
 	for _,entity in pairs(entities) do
 		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game then
-			if getDistance(entity, target) <= 35 then
+			if getDistance(entity, target) <= math.random(30, 40) then
 				if entity.type ~= "tree" and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
-					if entity.type == "unit" or entity.type == "unit-spawner" then
+					if (entity.type == "unit" and math.random() < 0.125) or (string.find(entity.name, "worm") and math.random() < 0.625) or entity.type == "unit-spawner" then
 						entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
 					else
 						entity.surface.create_entity({name="explosion", position=entity.position, force=entity.force})

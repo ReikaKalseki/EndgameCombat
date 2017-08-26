@@ -350,12 +350,14 @@ function tickShockwaveTurret(entry, tick)
 					if ((not scan) or d <= SHOCKWAVE_TURRET_RADIUS) then
 						local cap = math.max(10, 50*math.min(1, 1-math.ceil((d-5)/5)))
 						flag = true
-						entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
 						entry.turret.surface.create_entity({name="shockwave-beam", position=entry.turret.position, force=entry.turret.force, target=biter, source=entry.turret})
 						--game.print("Attacking biter @ " .. biter.position.x .. "," .. biter.position.y)
 						local maxh = game.entity_prototypes[biter.name].max_health
 						local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(cap*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
 						biter.damage(dmg, entry.turret.force, "electric")
+						if scan or game.tick%(6*entry.delay) == 0 or (not biter.valid) or biter.health <= 0 then
+							entry.turret.surface.create_entity({name="blood-explosion-small", position=biter.position, force=biter.force})
+						end
 						entry.turret.damage_dealt = entry.turret.damage_dealt+dmg
 						if not biter.valid or biter.health <= 0 then
 							entry.turret.kills = entry.turret.kills+1
