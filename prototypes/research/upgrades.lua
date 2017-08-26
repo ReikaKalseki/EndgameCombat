@@ -7,6 +7,65 @@ data:extend(
 {
     {
     type = "technology",
+    name = "turret-logistics",
+    icon = "__EndgameCombat__/graphics/technology/turret-logistics.png",
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_key = "turret-logistic-capability",
+      }
+    },
+    prerequisites = {"better-turrets", "logistic-robotics", "logistics-3"},
+    unit =
+    {
+      count = 80,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1}
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "e-o-a",
+	icon_size = 128,
+  },
+    {
+    type = "technology",
+    name = "turret-auto-logistics",
+    icon = "__EndgameCombat__/graphics/technology/turret-logistics.png",
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_key = "turret-auto-logistic-capability",
+      }
+    },
+    prerequisites = {"turret-logistics", "logistic-system"},
+    unit =
+    {
+      count = 100,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"high-tech-science-pack", 1},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "e-o-a",
+	icon_size = 128,
+  },
+})
+
+data:extend(
+{
+    {
+    type = "technology",
     name = "concussion-turret-damage-1",
     icon = "__EndgameCombat__/graphics/technology/concussion-turret-damage.png",
     effects =
@@ -1036,7 +1095,14 @@ for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 			{"high-tech-science-pack", 1},
 	}
 	if i > 4 then
-		table.insert(ingredients, {"space-science-pack", 1})
+		ingredients = {
+			{"science-pack-1", 4},
+			{"science-pack-2", 4},
+			{"science-pack-3", 4},
+			{"military-science-pack", 4},
+			{"high-tech-science-pack", 4},
+			{"space-science-pack", 1}
+		}
 	end
 		  
 	data:extend({
@@ -1055,7 +1121,7 @@ for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 		prerequisites = {i == 1 and "shield-domes" or "shield-dome-strength-" .. (i-1)},
 		unit =
 		{
-		  count = i <= 4 and 250*i or 1000*(i-3),
+		  count = i <= 4 and 250*i or 250*(i-4),
 		  ingredients = ingredients,
 		  time = 30
 		},
@@ -1075,7 +1141,14 @@ for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 			{"high-tech-science-pack", 1},
 	}
 	if i > 10 then
-		table.insert(ingredients, {"space-science-pack", 1})
+		ingredients = {
+			{"science-pack-1", 4},
+			{"science-pack-2", 4},
+			{"science-pack-3", 4},
+			{"military-science-pack", 4},
+			{"high-tech-science-pack", 4},
+			{"space-science-pack", 1}
+		}
 	end
 		  
 	data:extend({
@@ -1094,7 +1167,7 @@ for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 		prerequisites = {i == 1 and "shield-domes" or "shield-dome-recharge-" .. (i-1)},
 		unit =
 		{
-		  count = i <= 10 and 100*i or 1000*(i-9),
+		  count = i <= 10 and 100*i or 250*(i-10),
 		  ingredients = ingredients,
 		  time = 30
 		},

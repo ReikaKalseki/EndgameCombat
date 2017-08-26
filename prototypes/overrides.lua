@@ -53,6 +53,10 @@ addCategoryResistance("logistic-container", "radiation", 0, 100)
 addCategoryResistance("mining-drill", "radiation", 0, 100)
 addCategoryResistance("lamp", "radiation", 0, 100)
 addCategoryResistance("storage-tank", "radiation", 0, 100)
+
+addCategoryResistance("constant-combinator", "radiation", 0, 100)
+addCategoryResistance("decider-combinator", "radiation", 0, 100)
+addCategoryResistance("arithmetic-combinator", "radiation", 0, 100)
 	
 if data.raw["construction-robot"]["bob-construction-robot-2"] then
 	data.raw["construction-robot"]["construction-robot"].attack_reaction = Robot_Defence(0.4)

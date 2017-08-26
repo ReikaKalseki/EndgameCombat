@@ -255,8 +255,8 @@ data:extend(
     energy_source =
     {
       type = "electric",
-      buffer_capacity = "1.2MJ",
-      input_flow_limit = "7200kW",
+      buffer_capacity = "1.6MJ",
+      input_flow_limit = "9.6MW",
       drain = "80kW",
       usage_priority = "primary-input"
     },

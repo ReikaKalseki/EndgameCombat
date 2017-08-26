@@ -182,8 +182,12 @@ function getShieldDomeFromEdge(egcombat, entity, destroy, killer)
 					entry.edges[killer.unit_number] = nil
 					attackShieldDome(entry, game.entity_prototypes[entity.name].max_health)
 					edge.entity.destroy()
-					edge.effect.destroy()
-					edge.light.destroy()
+					if edge.effect.valid then
+						edge.effect.destroy()
+					end
+					if edge.light.valid then
+						edge.light.destroy()
+					end
 				end
 			else
 				entry.edges[killer.unit_number] = nil --just remove, no effect

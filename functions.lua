@@ -88,6 +88,50 @@ return
     }
 end
 
+function createTotalResistance()
+--[[
+	resistances = {
+	  {
+        type = "fire",
+        percent = 100
+      },
+	  {
+        type = "physical",
+        percent = 100
+      },
+	  {
+        type = "acid",
+        percent = 100
+      },
+	  {
+        type = "impact",
+        percent = 100
+      },
+	  {
+        type = "piercing",
+        percent = 100
+      },
+	  {
+        type = "electric",
+        percent = 100
+      },
+	  {
+        type = "explosion",
+        percent = 100
+      },
+	  {
+        type = "poison",
+        percent = 100
+      },
+	}
+	--]]
+	local ret = {}
+	for name,damage in pairs(data.raw["damage-type"]) do
+		table.insert(ret, {type = name, percent = 100})
+	end
+	return ret
+end
+
 function addCategoryResistance(category, type_, reduce, percent)
 	if not data.raw[category] then error("No such category '" .. category .. "'!") end
 	for k,v in pairs(data.raw[category]) do
@@ -102,9 +146,9 @@ function addResistance(category, name, type_, reduce, percent)
 	end
 	local resistance = createResistance(type_, reduce, percent)
 	for k,v in pairs(obj.resistances) do
-		if v["type"] == type_ then --if resistance to that type already present, overwrite rather than have two for same type
-			v["decrease"] = reduce
-			v["percent"] = percent
+		if v.type == type_ then --if resistance to that type already present, overwrite-with-max rather than have two for same type
+			v.decrease = math.max(v.decrease, reduce)
+			v.percent = math.max(v.percent, percent)
 			return
 		end
 	end
@@ -121,12 +165,34 @@ return
 end
 
 function Modify_Power(train, factor)
-	local obj = data.raw["locomotive"][train]
+	local obj = data.raw.locomotive[train]
 	local pow = obj.max_power
 	local num = string.sub(pow, 1, -3)
 	local endmult = string.sub(pow, -2, -1)
 	local newpow = num*factor
 	obj.max_power = newpow .. endmult
+end
+
+local function roundToGridBitShift(position, shift)
+	position.x = bit32.lshift(bit32.rshift(position.x, shift), shift)
+	position.y = bit32.lshift(bit32.rshift(position.y, shift), shift)
+	return position
+end
+
+function getPositionForBPEntity(entity)
+	local position = entity.position
+	
+	if (entity.has_flag("placeable-off-grid")) then
+		return position
+	end
+
+	local buildingGridBitShift = entity.building_grid_bit_shift
+	local tiledResult = position
+	tiledResult = roundToGridBitShift(tiledResult, buildingGridBitShift)
+	local result = {x=tiledResult.x, y=tiledResult.y}
+	result.x = result.x + bit32.lshift(1, buildingGridBitShift) * 0.5
+	result.y = result.y + bit32.lshift(1, buildingGridBitShift) * 0.5
+	return result
 end
 
 function doTissueDrops(entity)
@@ -279,7 +345,7 @@ function tickShockwaveTurret(entry, tick)
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)
 			--game.print(#enemies .. " @ " .. entry.delay .. " > " .. (scan and "true" or "false"))
 			for _,biter in pairs(enemies) do
-				if biter.valid then
+				if biter.valid and biter.health > 0 then
 					local d = getDistance(biter, entry.turret)
 					if ((not scan) or d <= SHOCKWAVE_TURRET_RADIUS) then
 						local cap = math.max(10, 50*math.min(1, 1-math.ceil((d-5)/5)))
@@ -347,7 +413,9 @@ function removeShieldDome(egcombat, entity)
 		local entry = egcombat.shield_domes[entity.force.name][entity.unit_number]
 		for biter,edge in pairs(entry.edges) do
 			edge.entity.destroy()
-			edge.effect.destroy()
+			if edge.effect.valid then
+				edge.effect.destroy()
+			end
 			if edge.light and edge.light.valid then
 				edge.light.destroy()
 			end
@@ -516,4 +584,68 @@ function deconvertTurretForRange(turret)
 		return replaceTurretKeepingContents(turret, n)
 	end
 	return turret
+end
+
+function createLogisticInterface(turret)
+	local force = turret.force
+	if turret.type == "ammo-turret" and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
+		local pos = turret.position
+		local surface = turret.surface
+		local logi = surface.create_entity({name="turret-logistic-interface", position={pos.x+0.5, pos.y+0.5}, force=force})
+		return logi
+	end
+	return nil
+end
+
+function createTurretEntry(turret)
+	if not turret.valid then return nil end
+	local ret = {type = turret.type, turret=turret, logistic=createLogisticInterface(turret)}
+	return ret
+end
+
+function repairTurrets(egcombat, force)
+	local level = 1
+	for i = #REPAIR_CHANCES, 1, -1 do
+		if force.technologies["healing-alloys-" .. i].researched then
+			level = i
+			break
+		end
+	end
+	--game.print(#egcombat.placed_turrets[force.name])
+	if egcombat.placed_turrets[force.name] == nil then
+		egcombat.placed_turrets[force.name] = {}
+	end
+	for k,entry in pairs(egcombat.placed_turrets[force.name]) do
+		if entry.turret.valid and math.random() < REPAIR_CHANCES[level] then
+			repairTurret(entry.turret, level)
+		end
+	end
+end
+
+function handleTurretLogistics(egcombat, force)
+	local auto = force.technologies["turret-auto-logistics"].researched
+	--game.print(#egcombat.placed_turrets[force.name])
+	if egcombat.placed_turrets[force.name] == nil then
+		egcombat.placed_turrets[force.name] = {}
+	end
+	for k,entry in pairs(egcombat.placed_turrets[force.name]) do
+		if entry.turret.valid and entry.logistic then
+			local inv = entry.turret.get_inventory(defines.inventory.turret_ammo)
+			local logi = entry.logistic.get_inventory(defines.inventory.chest)
+			if auto then
+				if inv[1] and inv[1].valid_for_read then
+					entry.logistic.set_request_slot({name=inv[1].name, count=math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))}, 1)
+				else
+					entry.logistic.clear_request_slot(1)
+				end
+			end
+			if logi[1] and logi[1].valid_for_read and logi[1].prototype.magazine_size then --check if ammo
+				local n = logi[1].name
+				local add = inv.insert({name=n, count=logi[1].count, ammo=logi[1].ammo})
+				if add > 0 then
+					logi.remove({name=n, count=add})
+				end
+			end
+		end
+	end
 end

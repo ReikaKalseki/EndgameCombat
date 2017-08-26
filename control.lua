@@ -52,6 +52,46 @@ script.on_configuration_changed(function()
 	initGlobal(true)
 end)
 
+local function track_turret(entity_list, turret)
+	--game.print(#entity_list)
+    for i = #entity_list, 1, -1 do
+        local entry = entity_list[i]
+        if not entry.turret.valid then
+            table.remove(entity_list, i)
+        elseif entry.turret == turret then
+			--game.print("already in list?!")
+            return
+        end
+    end
+
+	--game.print("placing " .. entity.name)
+    table.insert(entity_list, createTurretEntry(turret))
+end
+
+local function removeTurretFromCache(egcombat, turret)
+	local entity_list = egcombat.placed_turrets[turret.force.name]
+	--game.print("Reading remove of " .. turret.name .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
+	if not entity_list then return end
+	--game.print(#entity_list)
+    for i = #entity_list, 1, -1 do
+        local entry = entity_list[i]
+        if (not entry.turret.valid) or entry.turret == turret or entry.turret.position == turret.position then
+            table.remove(entity_list, i)
+			if entry.logistic then
+				local inv = entry.logistic.get_inventory(defines.inventory.chest)
+				for name,count in pairs(inv.get_contents()) do
+					entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)
+				end
+				inv.clear()
+				entry.logistic.destroy()
+			end
+			--game.print("removing " .. entity.name)
+            return
+        end
+    end
+	--game.print("Could not find " .. entity.name)
+end
+
 local function trackNewTurret(egcombat, turret)
 	local force = turret.force
 	if force ~= game.forces.enemy then
@@ -61,7 +101,7 @@ local function trackNewTurret(egcombat, turret)
 		if turret.force.technologies["turret-range-1"].researched then
 			turret = convertTurretForRange(turret, getTurretRangeResearch(turret.force))
 		end
-		track_entity(egcombat.placed_turrets[force.name], turret)
+		track_turret(egcombat.placed_turrets[force.name], turret)
 	
 		checkAndCacheTurret(turret, force)
 		--[[
@@ -84,10 +124,10 @@ local function reloadRangeTech()
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
 				if egcombat.placed_turrets[force.name] then
-					for k,turret in pairs(egcombat.placed_turrets[force.name]) do
-						if turret.valid then
-							turret = deconvertTurretForRange(turret)
-							trackNewTurret(egcombat, turret)
+					for k,entry in pairs(egcombat.placed_turrets[force.name]) do
+						if entry.turret.valid then
+							entry.turret = deconvertTurretForRange(entry.turret)
+							trackNewTurret(egcombat, entry.turret)
 						end
 					end
 				end
@@ -95,6 +135,7 @@ local function reloadRangeTech()
 		end
 	end
 	
+	--[[
 	local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret"})
 	for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret"})) do 
 		table.insert(turrets, v)
@@ -108,28 +149,7 @@ local function reloadRangeTech()
 			trackNewTurret(egcombat, turret)
 		end
 	end
-end
-
-local function roundToGridBitShift(position, shift)
-	position.x = bit32.lshift(bit32.rshift(position.x, shift), shift)
-	position.y = bit32.lshift(bit32.rshift(position.y, shift), shift)
-	return position
-end
-
-local function getPositionForBPEntity(entity)
-	local position = entity.position
-	
-	if (entity.has_flag("placeable-off-grid")) then
-		return position
-	end
-
-	local buildingGridBitShift = entity.building_grid_bit_shift
-	local tiledResult = position
-	tiledResult = roundToGridBitShift(tiledResult, buildingGridBitShift)
-	local result = {x=tiledResult.x, y=tiledResult.y}
-	result.x = result.x + bit32.lshift(1, buildingGridBitShift) * 0.5
-	result.y = result.y + bit32.lshift(1, buildingGridBitShift) * 0.5
-	return result
+	--]]
 end
 
 script.on_event(defines.events.on_sector_scanned, function(event)	
@@ -173,6 +193,16 @@ script.on_event(defines.events.on_tick, function(event)
 			if egcombat.placed_turrets[force.name] == nil then
 				egcombat.placed_turrets[force.name] = {}
 				--game.print("Adding force " .. force.name .. " to turret table")
+			end
+			if #egcombat.placed_turrets[force.name] > 0 and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
+				local repl = {}
+				for _,turret in pairs(egcombat.placed_turrets[force.name]) do
+					local entry = createTurretEntry(turret)
+					if entry then
+						table.insert(repl, entry)
+					end
+				end
+				egcombat.placed_turrets[force.name] = repl
 			end
 		end
 		
@@ -222,8 +252,13 @@ script.on_event(defines.events.on_tick, function(event)
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
 				--game.print("Force " .. force.name .. ": " .. #egcombat.placed_turrets[force.name] .. " turrets placed.")
-				if force.technologies["healing-alloys-1"].researched and egcombat.placed_turrets[force.name] then
-					repairTurrets(egcombat, force)
+				if egcombat.placed_turrets[force.name] then
+					if force.technologies["healing-alloys-1"].researched then
+						repairTurrets(egcombat, force)
+					end
+					if force.technologies["turret-logistics"].researched and game.tick%120 == 0 then
+						handleTurretLogistics(egcombat, force)
+					end
 				end
 			end
 		end
@@ -329,41 +364,6 @@ script.on_event(defines.events.on_tick, function(event)
 	end
 end)
 
-function track_entity(entity_list, entity)
-	--game.print(#entity_list)
-    for i = #entity_list, 1, -1 do
-        local e = entity_list[i]
-        if not e.valid then
-            table.remove(entity_list, i)
-        elseif e == entity then
-			--game.print("already in list?!")
-            return
-        end
-    end
-
-	--game.print("placing " .. entity.name)
-    table.insert(entity_list, entity)
-end
-
-function repairTurrets(egcombat, force)
-	local level = 1
-	for i = #REPAIR_CHANCES, 1, -1 do
-		if force.technologies["healing-alloys-" .. i].researched then
-			level = i
-			break
-		end
-	end
-	--game.print(#egcombat.placed_turrets[force.name])
-	if egcombat.placed_turrets[force.name] == nil then
-		egcombat.placed_turrets[force.name] = {}
-	end
-	for k,turret in pairs(egcombat.placed_turrets[force.name]) do
-		if turret.valid and math.random() < REPAIR_CHANCES[level] then
-			repairTurret(turret, level)
-		end
-	end
-end
-
 local function onFinishedResearch(event)	
 	local tech = event.research.name
 	local force = event.research.force.name
@@ -374,12 +374,13 @@ local function onFinishedResearch(event)
 		if egcombat.placed_turrets[force] == nil then
 			egcombat.placed_turrets[force] = {}
 		end
-		for k,turret in pairs(egcombat.placed_turrets[force]) do
-			if turret.valid then
+		for k,entry in pairs(egcombat.placed_turrets[force]) do
+			if entry.turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
-				convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
+				convertTurretForRangeWhileKeepingSpecialCaches(entry.turret, lvl)
 			end
 		end
+		--[[
 		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = force})
 		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = force})) do 
 			table.insert(turrets, v)
@@ -390,11 +391,23 @@ local function onFinishedResearch(event)
 		for _,turret in pairs(turrets) do
 			convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
 		end
+		--]]
 	end
-	if tech.name == "logistic-defence" then
+	if tech == "turret-logistics" then
+		if egcombat.placed_turrets[force] == nil then
+			egcombat.placed_turrets[force] = {}
+		end
+		for k,entry in pairs(egcombat.placed_turrets[force]) do
+			if entry.turret.valid then
+				--game.print("Creating logistic interface for " .. entry.turret.name .. " @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y)
+				entry.logistic = createLogisticInterface(entry.turret)
+			end
+		end
+	end
+	if tech == "logistic-defence" then
 		egcombat.robot_defence[force] = 0.8
 	end
-	if tech.name == "logistic-defence-2" then
+	if tech == "logistic-defence-2" then
 		egcombat.robot_defence[force] = 1.5
 	end
 	if string.find(tech, "shield-dome-strength", 1, true) then
@@ -476,6 +489,8 @@ local function onEntityMined(event)
 			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
 		end
 	end--]]
+	
+	removeTurretFromCache(egcombat, entity)
 end
 
 local function onEntityRemoved(event)	
@@ -497,7 +512,8 @@ local function onEntityRemoved(event)
 	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
-		deconvertTurretForRange(entity)
+		entity = deconvertTurretForRange(entity)
+		removeTurretFromCache(egcombat, entity)
 		return
 	end
 	

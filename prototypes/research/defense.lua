@@ -218,7 +218,7 @@ data:extend(
         {"science-pack-3", 1},
         {"military-science-pack", 1},
         {"high-tech-science-pack", 1},
-        {"space-science-pack", 10},
+        {"space-science-pack", (Config.spacePlasma or Config.spaceNukes) and 10 or 1},
       },
       time = 90
     },

@@ -9,6 +9,7 @@ require("prototypes.walls")
 require("prototypes.dome")
 require("prototypes.tank")
 require("prototypes.armor")
+require("prototypes.misc")
 
 require("prototypes.item.cannon-turret-ammo")
 
