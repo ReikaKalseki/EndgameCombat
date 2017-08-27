@@ -385,5 +385,30 @@ data:extend(
       }
     },
   },
+	{
+    type = "explosion",
+    name = "orbital-bombardment-shockwave",
+    flags = {"not-on-map"},
+    animations =
+    {
+      {
+        filename = "__EndgameCombat__/graphics/entity/orbital/shockwave.png",
+        priority = "extra-high",
+        flags = { "compressed" },
+        width = 128,
+        height = 128,
+        frame_count = 16,
+        line_length = 4,
+        axially_symmetrical = false,
+        direction_count = 1,
+        shift = {0, 0},
+		scale = 12.0,
+        animation_speed = 0.75,
+		blend_mode = "additive",
+      }
+    },
+    --light = {intensity = 1.0, size = 10, color = {r=1.0, g=0.6, b=0.2}},
+    sound = nil,
+  },
 }
 )

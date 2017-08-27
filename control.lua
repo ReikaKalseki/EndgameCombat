@@ -35,6 +35,9 @@ function initGlobal(markDirty)
 	if global.egcombat.scheduled_orbital == nil then
 		global.egcombat.scheduled_orbital = {}
 	end
+	if global.egcombat.scheduled_orbital_kills == nil then
+		global.egcombat.scheduled_orbital_kills = {}
+	end
 	if global.egcombat.shield_domes == nil then
 		global.egcombat.shield_domes = {}
 	end

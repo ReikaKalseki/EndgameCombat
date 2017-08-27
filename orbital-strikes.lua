@@ -35,7 +35,7 @@ function scheduleOrbitalStrike(placer, inv, target)
 	if not global.egcombat.scheduled_orbital then
 		global.egcombat.scheduled_orbital = {}
 	end
-	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_charted(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-10, target.y-10},{target.x+10, target.y+10}}}) == 0 then
+	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_visible(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-10, target.y-10},{target.x+10, target.y+10}}}) == 0 then
 		local entity = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force})
 		local loc = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force}) --just for location
 		local fx = placer.surface.create_entity{name = "orbital-manual-target-effect", position=target}
@@ -49,6 +49,25 @@ function scheduleOrbitalStrike(placer, inv, target)
 	end
 end
 
+local function killEntity(egcombat, entity, distance, doKill)
+	local delay = doKill and nil or math.max(0, math.random(0, 30)+math.floor(distance-15))
+	if doKill or delay == 0 then
+		if entity.type == "unit" or string.find(entity.name, "worm") or entity.type == "unit-spawner" then
+			if (entity.type == "unit" and math.random() <= 0.125) or (string.find(entity.name, "worm") and math.random() <= 0.625) or entity.type == "unit-spawner" then
+				entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
+			end
+		else
+			entity.surface.create_entity({name="explosion", position=entity.position, force=entity.force})
+		end
+		entity.die()
+	else
+		if egcombat.scheduled_orbital_kills == nil then
+			egcombat.scheduled_orbital_kills = {}
+		end
+		table.insert(egcombat.scheduled_orbital_kills, {target=entity, time = game.tick+delay})
+	end
+end
+
 function tickOrbitalStrikeSchedule(egcombat)
 	if egcombat.scheduled_orbital then
 		for i=#egcombat.scheduled_orbital,1,-1 do
@@ -57,7 +76,7 @@ function tickOrbitalStrikeSchedule(egcombat)
 			--game.print("Ticking strike @ " .. entry.location.position.x .. " , " .. entry.location.position.y .. " , tick = " .. entry.delay)
 			if entry.delay == 0 then
 				entry.shots = entry.shots+1
-				fireOrbitalWeaponManually(entry.next)
+				fireOrbitalWeaponManually(egcombat, entry.next)
 				--game.print("Firing")
 				local loc = entry.location.position
 				if entry.shots < 10 and (math.random() < 0.4 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
@@ -71,25 +90,33 @@ function tickOrbitalStrikeSchedule(egcombat)
 			end
 		end
 	end
+	if egcombat.scheduled_orbital_kills and #egcombat.scheduled_orbital_kills > 0 then
+		for i = #egcombat.scheduled_orbital_kills,1,-1 do
+			local entry = egcombat.scheduled_orbital_kills[i]
+			if game.tick >= entry.time or (not entry.target.valid) then
+				if entry.target.valid then
+					killEntity(egcombat, entry.target, -1, true)
+				end
+				table.remove(egcombat.scheduled_orbital_kills, i)
+			end
+		end
+	end
 end
 
-function fireOrbitalWeaponManually(target)
+function fireOrbitalWeaponManually(egcombat, target)
 	local surface = target.surface
 	local pos = target.position--player.selected and player.selected.position or ??
 	surface.create_entity({name = "orbital-bombardment-firing-sound", position = pos, force = game.forces.neutral})
 	surface.create_entity({name = "orbital-bombardment-explosion", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-shockwave", position = pos, force = game.forces.neutral})
 	surface.create_entity({name = "orbital-bombardment-crater", position = pos, force = game.forces.neutral})
 	local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}})
 	for _,entity in pairs(entities) do
-		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game then
-			if getDistance(entity, target) <= math.random(30, 40) then
+		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
+			local dist = getDistance(entity, target)
+			if dist <= math.random(30, 40) then
 				if entity.type ~= "tree" and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
-					if (entity.type == "unit" and math.random() < 0.125) or (string.find(entity.name, "worm") and math.random() < 0.625) or entity.type == "unit-spawner" then
-						entity.surface.create_entity({name="blood-explosion-small", position=entity.position, force=entity.force})
-					else
-						entity.surface.create_entity({name="explosion", position=entity.position, force=entity.force})
-					end
-					entity.die()
+					killEntity(egcombat, entity, dist, false)
 				else
 					entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
 				end
@@ -127,6 +154,7 @@ function fireOrbitalWeapon(force, entity)
 			if count > 0 then
 				for _,spawner in pairs(enemies) do						
 					surface.create_entity({name = "orbital-bombardment-explosion", position = spawner.position, force = game.forces.neutral})
+					surface.create_entity({name = "orbital-bombardment-shockwave", position = spawner.position, force = game.forces.neutral})
 					surface.create_entity({name = "orbital-bombardment-crater", position = spawner.position, force = game.forces.neutral})
 					
 					spawner.die() --not destroy; use this so have destroyed spawners, drops, evo factor, NauvisDay spawns, etc
