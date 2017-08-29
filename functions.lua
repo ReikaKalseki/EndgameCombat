@@ -195,7 +195,18 @@ function getPositionForBPEntity(entity)
 	return result
 end
 
-function doTissueDrops(entity)
+function cleanTissueNearPlayer(egcombat, player)
+	local r = 32
+	local drops = player.surface.find_entities_filtered{area={{player.position.x-r, player.position.y-r}, {player.position.x+r, player.position.y+r}}, type="item-entity"}
+	for _,item in pairs(drops) do
+		if item.stack and item.stack.valid_for_read and item.stack.name == "biter-flesh" and not (item.to_be_deconstructed(game.forces.player)) then
+			table.insert(egcombat.fleshToDeconstruct, {entity=item, time=game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+			--item.order_deconstruction(game.forces.player)
+		end
+	end
+end
+
+function doTissueDrops(egcombat, entity)
 	local drops = 0
 	local range = 0
 	if entity.type == "unit-spawner" and (string.find(entity.name, "biter") or string.find(entity.name, "spitter")) then
@@ -232,8 +243,8 @@ function doTissueDrops(entity)
 			if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
 				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
 				for _,item in pairs(drops) do
-					if item.stack and item.stack.name == "biter-flesh" then
-						table.insert(global.egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+					if item.stack and item.stack.valid_for_read and item.stack.name == "biter-flesh" then
+						table.insert(egcombat.fleshToDeconstruct, {entity=item, time=game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
 						--item.order_deconstruction(game.forces.player)
 					end
 				end

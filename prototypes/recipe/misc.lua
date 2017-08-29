@@ -83,6 +83,19 @@
     },
     result= "orbital-manual-target"
   },
+  {
+    type = "recipe",
+    name = "orbital-scanner",
+    energy_required = 0.5,
+    enabled = false,
+    ingredients =
+    {
+		{"advanced-circuit", 20},
+		{"beacon", 1},
+		{"copper-cable", 100}
+    },
+    result= "orbital-scanner"
+  },
 }
 )
 

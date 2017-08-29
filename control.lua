@@ -331,9 +331,9 @@ script.on_event(defines.events.on_tick, function(event)
 	
 	if #egcombat.fleshToDeconstruct > 0 then
 		for i = #egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
-			local items = egcombat.fleshToDeconstruct[i]
-			local item = items[1]
-			local tick = items[2]
+			local entry = egcombat.fleshToDeconstruct[i]
+			local item = entry.entity ~= nil and entry.entity or entry[1]
+			local tick = entry.time ~= nil and entry.time or entry[2]
 			if game.tick >= tick or not item.valid then
 				if item.valid then
 					item.order_deconstruction(game.forces.player)
@@ -364,6 +364,11 @@ script.on_event(defines.events.on_tick, function(event)
 				--end
 			end
 		end
+	end
+	
+	if game.tick%60 == 0 then
+		local player = game.players[math.random(1, #game.players)]
+		cleanTissueNearPlayer(egcombat, player)
 	end
 end)
 
@@ -447,6 +452,11 @@ script.on_event(defines.events.on_put_item, function(event)
 		scheduleOrbitalStrike(player, player.get_inventory(defines.inventory_player_main), event.position)
 		return
 	end
+	
+	if stack.name == "orbital-scanner" then
+		scanAreaForStrike(player.surface, event.position, player.force)
+		return
+	end
 end)
 
 local function onEntityAdded(event)	
@@ -454,8 +464,8 @@ local function onEntityAdded(event)
 	local placer = event.player_index and game.players[event.player_index] or event.robot
 	local egcombat = global.egcombat
 	
-	if entity.name == "orbital-manual-target" then
-		game.players[event.player_index].insert{name = "orbital-manual-target"} --not placeable by robot, so can assume player
+	if entity.name == "orbital-manual-target" or entity.name == "orbital-scanner" then
+		game.players[event.player_index].insert{name = entity.name} --not placeable by robot, so can assume player
 		entity.destroy()
 		return
 	end
@@ -520,7 +530,7 @@ local function onEntityRemoved(event)
 		return
 	end
 	
-	doTissueDrops(entity)
+	doTissueDrops(egcombat, entity)
 end
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)

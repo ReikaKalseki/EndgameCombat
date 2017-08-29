@@ -79,13 +79,13 @@ function tickOrbitalStrikeSchedule(egcombat)
 				fireOrbitalWeaponManually(egcombat, entry.next)
 				--game.print("Firing")
 				local loc = entry.location.position
-				if entry.shots < 10 and (math.random() < 0.4 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
+				if entry.shots < 10 and (math.random() < 0.25 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
 					entry.delay = math.random(5, 30)
 					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
 				else
-					table.remove(egcombat.scheduled_orbital, i)
 					entry.location.destroy()
 					entry.effect.destroy()
+					table.remove(egcombat.scheduled_orbital, i)
 				end
 			end
 		end
@@ -103,6 +103,11 @@ function tickOrbitalStrikeSchedule(egcombat)
 	end
 end
 
+local function isRock(entity)
+	return entity.name == "small-rock" or entity.name == "stone-rock" or entity.name == "red-desert-rock-big-01" or entity.name == "red-desert-rock-huge-01" or entity.name == "red-desert-rock-huge-02" or
+	entity.name == "red-desert-rock-medium" or entity.name == "red-desert-rock-small" or entity.name == "red-desert-rock-tiny"
+end
+
 function fireOrbitalWeaponManually(egcombat, target)
 	local surface = target.surface
 	local pos = target.position--player.selected and player.selected.position or ??
@@ -115,18 +120,33 @@ function fireOrbitalWeaponManually(egcombat, target)
 		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
 			local dist = getDistance(entity, target)
 			if dist <= math.random(30, 40) then
-				if entity.type ~= "tree" and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
+				local rock = isRock(entity)
+				if entity.type ~= "tree" and (not rock) and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
 					killEntity(egcombat, entity, dist, false)
 				else
-					entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+					if not rock then
+						entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+					end
 				end
 			end
 		end
 	end
+	local rs = 32
+	target.force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}})
 	target.destroy()
 	for _,player in pairs (game.connected_players) do
 		surface.create_entity{name = "orbital-manual-target-sound-1", position = player.position}
 		surface.create_entity{name = "orbital-manual-target-sound-2", position = player.position}
+	end
+end
+
+function scanAreaForStrike(surface, pos, force)
+	if force.get_item_launched("destroyer-satellite") > 0 and force.is_chunk_charted(surface, {math.floor(pos.x/32), math.floor(pos.y/32)}) and #surface.find_entities_filtered({name="orbital-scanner", area={{pos.x-10, pos.y-10},{pos.x+10, pos.y+10}}}) == 0 then	
+		local rs = 24
+		force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}})
+		for _,player in pairs(game.players) do
+			surface.create_entity({name = "orbital-scan-sound", position = player.position, force = game.forces.neutral})
+		end
 	end
 end
 

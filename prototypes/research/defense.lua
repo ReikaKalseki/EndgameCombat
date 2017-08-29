@@ -207,6 +207,10 @@ data:extend(
         type = "unlock-recipe",
         recipe = "orbital-manual-target"
       },
+      {
+        type = "unlock-recipe",
+        recipe = "orbital-scanner"
+      },
     },
     unit =
     {

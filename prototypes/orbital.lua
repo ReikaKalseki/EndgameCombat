@@ -29,6 +29,16 @@ data:extend(
     place_result = "orbital-manual-target",	
     stack_size = 1
   },
+  {
+    type = "item",
+    name = "orbital-scanner",
+    icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[orbital-destroyer]-f[orbital-scanner-1-2]",
+    place_result = "orbital-scanner",	
+    stack_size = 1
+  },
 }
 )
 
@@ -83,6 +93,33 @@ data:extend(
       },
       apparent_volume = 2,
     }
+  },
+  {
+    type = "simple-entity-with-force",
+    name = "orbital-scanner",
+    icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+    flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
+    selectable_in_game = false,
+	destructible = false,
+	collision_mask = {},
+	order = "z",
+    render_layer = "object",
+    --collision_box = {{-2.4, -2.4}, {2.4, 2.4}},
+    --selection_box = {{-2.5, -2.5}, {2.5, 2.5}},
+    pictures =
+    {
+      filename = "__EndgameCombat__/graphics/entity/orbital/scanner.png",
+      priority = "high",
+      width = 512,
+      height = 400,
+      apply_projection = false,
+      frame_count = 16,
+      line_length = 4,
+      shift = {0, 0},
+	  scale = 2,
+      animation_speed = 1,
+	  blend_mode = "additive"
+    },
   },
   {
     type = "simple-entity-with-force",
@@ -226,6 +263,38 @@ data:extend(
         {
           filename = "__EndgameCombat__/sounds/orbital-firing.ogg",
           volume = 2.0
+        }
+      }
+    }
+  },
+  {
+    type = "explosion",
+    name = "orbital-scan-sound",
+    icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+    flags = {"not-on-map", "placeable-off-grid"},
+	animations =
+    {
+      {
+        filename = "__core__/graphics/empty.png",
+        priority = "extra-high",
+        width = 1,
+        height = 1,
+        frame_count = 1,
+        animation_speed = 1
+      }
+    },
+    sound =
+    {
+      aggregation =
+      {
+        max_count = 10,
+        remove = true
+      },
+      variations =
+      {
+        {
+          filename = "__EndgameCombat__/sounds/orbital-scan.ogg",
+          volume = 1.0
         }
       }
     }
