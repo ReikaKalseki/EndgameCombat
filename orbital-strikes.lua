@@ -130,28 +130,35 @@ function fireOrbitalWeaponManually(egcombat, target)
 	for forceName, force in pairs(game.forces) do
 		if forceName ~= "neutral" then
 			local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}, force = force})
-			for _,entity in pairs(entities) do
-				if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
-					local dist = getDistance(entity, target)
-					if dist <= math.random(30, 40) then
-						if entity.type ~= "tree" and (not notAllowedEntityNames[entity.name]) and (allowedEntityTypes[entity.type] or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
-							killEntity(egcombat, entity, dist, false)
-						else
-							if not rock then
-								entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
-							end
-						end
-					end
-				end
-			end
+			fireOrbitalOnEntities(egcombat, target, entities)
 		end
 	end
+	local trees = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}, type = "tree"})
+	fireOrbitalOnEntities(egcombat, target, trees)
+	
 	local rs = 32
 	target.force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}})
 	target.destroy()
 	for _,player in pairs (game.connected_players) do
 		surface.create_entity{name = "orbital-manual-target-sound-1", position = player.position}
 		surface.create_entity{name = "orbital-manual-target-sound-2", position = player.position}
+	end
+end
+
+function fireOrbitalOnEntities(egcombat, target, entities)
+	for _,entity in pairs(entities) do
+		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
+			local dist = getDistance(entity, target)
+			if dist <= math.random(30, 40) then
+				if entity.type ~= "tree" and (not notAllowedEntityNames[entity.name]) and (allowedEntityTypes[entity.type] or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
+					killEntity(egcombat, entity, dist, false)
+				else
+					if not rock then
+						entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+					end
+				end
+			end
+		end
 	end
 end
 
