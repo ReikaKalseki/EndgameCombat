@@ -79,7 +79,7 @@ function tickOrbitalStrikeSchedule(egcombat)
 				fireOrbitalWeaponManually(egcombat, entry.next)
 				--game.print("Firing")
 				local loc = entry.location.position
-				if entry.shots < 10 and (math.random() < 0.25 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
+				if entry.shots < 10 and (math.random() < 0.25 or entry.location.surface.count_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
 					entry.delay = math.random(5, 30)
 					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
 				else
@@ -103,10 +103,22 @@ function tickOrbitalStrikeSchedule(egcombat)
 	end
 end
 
-local function isRock(entity)
-	return entity.name == "small-rock" or entity.name == "stone-rock" or entity.name == "red-desert-rock-big-01" or entity.name == "red-desert-rock-huge-01" or entity.name == "red-desert-rock-huge-02" or
-	entity.name == "red-desert-rock-medium" or entity.name == "red-desert-rock-small" or entity.name == "red-desert-rock-tiny"
-end
+local notAllowedEntityNames = {
+	["small-rock"] = true,
+	["stone-rock"] = true,
+	["red-desert-rock-big-01"] = true,
+	["red-desert-rock-huge-01"] = true,
+	["red-desert-rock-huge-02"] = true,
+	["red-desert-rock-medium"] = true,
+	["red-desert-rock-small"] = true,
+	["red-desert-rock-tiny"] = true,
+}
+
+local allowedEntityTypes = {
+	["player"] = true,
+	["logistic-robot"] = true,
+	["construction-robot"] = true,
+}
 
 function fireOrbitalWeaponManually(egcombat, target)
 	local surface = target.surface
@@ -115,17 +127,20 @@ function fireOrbitalWeaponManually(egcombat, target)
 	surface.create_entity({name = "orbital-bombardment-explosion", position = pos, force = game.forces.neutral})
 	surface.create_entity({name = "orbital-bombardment-shockwave", position = pos, force = game.forces.neutral})
 	surface.create_entity({name = "orbital-bombardment-crater", position = pos, force = game.forces.neutral})
-	local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}})
-	for _,entity in pairs(entities) do
-		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
-			local dist = getDistance(entity, target)
-			if dist <= math.random(30, 40) then
-				local rock = isRock(entity)
-				if entity.type ~= "tree" and (not rock) and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
-					killEntity(egcombat, entity, dist, false)
-				else
-					if not rock then
-						entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+	for forceName, force in pairs(game.forces) do
+		if forceName ~= "neutral" then
+			local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}, force = force})
+			for _,entity in pairs(entities) do
+				if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
+					local dist = getDistance(entity, target)
+					if dist <= math.random(30, 40) then
+						if entity.type ~= "tree" and (not notAllowedEntityNames[entity.name]) and (allowedEntityTypes[entity.type] or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
+							killEntity(egcombat, entity, dist, false)
+						else
+							if not rock then
+								entity.damage(entity.health*(0.8+math.random()*0.15), target.force, "explosion")
+							end
+						end
 					end
 				end
 			end
