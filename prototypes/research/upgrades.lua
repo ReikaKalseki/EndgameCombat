@@ -13,7 +13,7 @@ data:extend(
     {
       {
         type = "nothing",
-        effect_key = "turret-logistic-capability",
+        effect_description = "turret-logistic-capability",
       }
     },
     prerequisites = {"better-turrets", "logistic-robotics", "logistics-3"},
@@ -40,7 +40,7 @@ data:extend(
     {
       {
         type = "nothing",
-        effect_key = "turret-auto-logistic-capability",
+        effect_description = "turret-auto-logistic-capability",
       }
     },
     prerequisites = {"turret-logistics", "logistic-system"},
@@ -828,7 +828,14 @@ data:extend(
     type = "technology",
     name = "healing-alloys-1",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},
+	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},	
+      }
+    },
     prerequisites =
     {
       "better-turrets",
@@ -856,7 +863,14 @@ data:extend(
     type = "technology",
     name = "healing-alloys-2",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},
+	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},	
+      }
+    },
     prerequisites =
     {
       "healing-alloys-1",
@@ -883,7 +897,14 @@ data:extend(
     type = "technology",
     name = "healing-alloys-3",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},
+	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},	
+      }
+    },
     prerequisites =
     {
       "healing-alloys-2",
@@ -910,7 +931,14 @@ data:extend(
     type = "technology",
     name = "healing-alloys-4",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},
+	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},	
+      }
+    },
     prerequisites =
     {
       "healing-alloys-3",
@@ -937,7 +965,14 @@ data:extend(
     type = "technology",
     name = "healing-alloys-5",
     icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-	localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},
+	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},	
+      }
+    },
     prerequisites =
     {
       "healing-alloys-4",
@@ -1110,12 +1145,12 @@ for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 		type = "technology",
 		name = "shield-dome-strength-" .. i,
 		icon = "__EndgameCombat__/graphics/technology/dome-strength.png",
-		localised_description = {"technology-description.shield-dome-strength", tostring(100*(getCurrentDomeStrengthFactorByLevel(i)-1))},
+		--localised_description = {"technology-description.shield-dome-strength", tostring(100*(getCurrentDomeStrengthFactorByLevel(i)-1))},
 		effects =
 		{
 		  {
 			type = "nothing",
-			effect_key = "shield-dome-strength"
+			effect_description = {"modifier-description.shield-dome-strength", tostring(100*(getCurrentDomeStrengthFactorByLevel(i)-1)), tostring(100*(getTotalDomeStrengthFactorByLevel(i)-1))}
 		  }
 		},
 		prerequisites = {i == 1 and "shield-domes" or "shield-dome-strength-" .. (i-1)},
@@ -1156,12 +1191,12 @@ for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 		type = "technology",
 		name = "shield-dome-recharge-" .. i,
 		icon = "__EndgameCombat__/graphics/technology/dome-recharge.png",
-		localised_description = {"technology-description.shield-dome-recharge", tostring(100*(1/getCurrentDomeCostFactorByLevel(i)-1))},
+		--localised_description = {"technology-description.shield-dome-recharge", tostring(100*(1/getCurrentDomeCostFactorByLevel(i)-1))},
 		effects =
 		{
 		  {
 			type = "nothing",
-			effect_key = "shield-dome-recharge"
+			effect_description = {"modifier-description.shield-dome-recharge", tostring(100*(1/getCurrentDomeCostFactorByLevel(i)-1)), tostring(100*math.floor((1/getTotalDomeCostFactorByLevel(i)-1)*10000+0.5)/10000)}
 		  }
 		},
 		prerequisites = {i == 1 and "shield-domes" or "shield-dome-recharge-" .. (i-1)},
@@ -1192,7 +1227,14 @@ while #REPAIR_CHANCES >= i do
 		type = "technology",
 		name = "healing-alloys-" .. i,
 		icon = "__EndgameCombat__/graphics/technology/healalloy.png",
-		localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},
+		--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},
+		effects =
+		{
+		  {
+			type = "nothing",
+			effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},	
+		  }
+		},
 		prerequisites =
 		{
 		  "healing-alloys-" .. (i-1),
@@ -1263,7 +1305,14 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 			type = "technology",
 			name = "turret-range-" .. l,
 			icon = "__EndgameCombat__/graphics/technology/turret-range.png",
-			localised_description = {"technology-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},
+			--localised_description = {"technology-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},
+			effects =
+			{
+			  {
+				type = "nothing",
+				effect_description = {"modifier-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},	
+			  }
+			},
 			prerequisites = prereq,
 			unit =
 			{
@@ -1278,3 +1327,16 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 	})
 	i = i+1
 end
+
+local function make_modifier_icon(name)
+  return
+  {
+    filename = "__EndgameCombat__/graphics/icons/" .. name .. ".png",
+    priority = "medium",
+    width = 32,
+    height = 32,
+    flags = {"icon"}
+  }
+end
+
+data.raw["utility-sprites"]["default"].turret_range_modifier_icon = make_modifier_icon("turret-range-modifier")

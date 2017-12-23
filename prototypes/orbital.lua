@@ -4,6 +4,7 @@ data:extend(
     type = "item",
     name = "orbital-destroyer",
     icon = "__EndgameCombat__/graphics/icons/orbital-destroyer.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     subgroup = "defensive-structure",
     order = "f[plasma-turret]-f[orbital-destroyer-1-2]",
@@ -14,6 +15,7 @@ data:extend(
     type = "item",
     name = "destroyer-satellite",
     icon = "__EndgameCombat__/graphics/icons/satellite.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     subgroup = "intermediate-product",
     order = "q[satellite]",
@@ -23,6 +25,7 @@ data:extend(
     type = "item",
     name = "orbital-manual-target",
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     subgroup = "defensive-structure",
     order = "f[orbital-destroyer]-f[orbital-manual-target-1-2]",
@@ -33,6 +36,7 @@ data:extend(
     type = "item",
     name = "orbital-scanner",
     icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     subgroup = "defensive-structure",
     order = "f[orbital-destroyer]-f[orbital-scanner-1-2]",
@@ -48,6 +52,7 @@ data:extend(
     type = "radar",
     name = "orbital-destroyer",
     icon = "__EndgameCombat__/graphics/icons/orbital-destroyer.png",
+	icon_size = 32,
     flags = {"placeable-player", "player-creation"},
     minable = {hardness = 0.2, mining_time = 0.5, result = "orbital-destroyer"},
     max_health = 5000,
@@ -98,6 +103,7 @@ data:extend(
     type = "simple-entity-with-force",
     name = "orbital-scanner",
     icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+	icon_size = 32,
     flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
     selectable_in_game = false,
 	destructible = false,
@@ -125,6 +131,7 @@ data:extend(
     type = "simple-entity-with-force",
     name = "orbital-manual-target",
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
     selectable_in_game = false,
 	destructible = false,
@@ -152,6 +159,7 @@ data:extend(
     type = "simple-entity-with-force",
     name = "orbital-manual-target-secondary",
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
     selectable_in_game = false,
 	destructible = false,
@@ -173,11 +181,12 @@ data:extend(
     },
   },
   {
-    type = "smoke", --since simple entity cannot animate or play sound
+    type = "trivial-smoke", --since simple entity cannot animate or play sound (and as of 0.16, trivial smoke is more performant)
     name = "orbital-manual-target-effect",
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"not-on-map", "placeable-off-grid"},
-    duration = 60000,
+    duration = 255,
     fade_in_duration = 0,
     fade_away_duration = 0,
     spread_duration = 10,
@@ -207,6 +216,7 @@ data:extend(
     type = "explosion",
     name = "orbital-manual-target-sound-1", --for playing the sound to players not nearby
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"not-on-map", "placeable-off-grid"},
 	animations =
     {
@@ -239,6 +249,7 @@ data:extend(
     type = "explosion",
     name = "orbital-manual-target-sound-2",
     icon = "__EndgameCombat__/graphics/icons/orbital-manual-target.png",
+	icon_size = 32,
     flags = {"not-on-map", "placeable-off-grid"},
 	animations =
     {
@@ -271,6 +282,7 @@ data:extend(
     type = "explosion",
     name = "orbital-scan-sound",
     icon = "__EndgameCombat__/graphics/icons/orbital-scanner.png",
+	icon_size = 32,
     flags = {"not-on-map", "placeable-off-grid"},
 	animations =
     {
@@ -308,6 +320,7 @@ data:extend(
     type = "corpse",
     name = "orbital-bombardment-crater",
     icon = "__EndgameCombat__/graphics/icons/orbital-crater.png",
+	icon_size = 32,
     flags = {"placeable-neutral", "not-on-map", "placeable-off-grid"},
     collision_box = {{-7.5, -7.5}, {7.5, 7.5}},
     collision_mask = {"doodad-layer", "not-colliding-with-itself"},
@@ -356,6 +369,7 @@ data:extend(
 	{
     type = "explosion",
     name = "orbital-bombardment-firing-sound",
+	icon_size = 32,
     flags = {"not-on-map"},
     animations =
     {
@@ -396,6 +410,7 @@ data:extend(
 	{
     type = "explosion",
     name = "orbital-bombardment-explosion",
+	icon_size = 32,
     flags = {"not-on-map"},
     animations =
     {
@@ -457,6 +472,7 @@ data:extend(
 	{
     type = "explosion",
     name = "orbital-bombardment-shockwave",
+	icon_size = 32,
     flags = {"not-on-map"},
     animations =
     {

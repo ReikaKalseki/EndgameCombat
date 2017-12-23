@@ -21,7 +21,7 @@ end
 
 local function createCircuitActivitySprite()
 	local ret = {
-        filename = "__base__/graphics/entity/combinator/activity-leds/combinator-led-constant-south.png",
+        filename = "__base__/graphics/entity/combinator/activity-leds/constant-combinator-LED-S.png",
         width = 11,
         height = 11,
         frame_count = 1,
@@ -49,6 +49,7 @@ data:extend({
     type = "virtual-signal",
     name = "shield-level",
     icon = "__EndgameCombat__/graphics/icons/shield-dome-level.png",
+	icon_size = 32,
     subgroup = "virtual-signal-special",
     order = "shield",
   },
@@ -56,6 +57,7 @@ data:extend({
     type = "constant-combinator",
     name = "dome-circuit-connection",
     icon = "__base__/graphics/icons/constant-combinator.png",
+	icon_size = 32,
     flags = {"placeable-neutral", "player-creation", "not-on-map", "placeable-off-grid"},
 	order = "z",
 	max_health = 100,
@@ -153,6 +155,7 @@ local function createShieldDome(name, params)
 			type = "item",
 			name = name .. "-shield-dome",
 			icon = "__EndgameCombat__/graphics/icons/" .. name .. "-shield-dome.png",
+			icon_size = 32,
 			flags = {"goes-to-quickbar"},
 			subgroup = "defensive-structure",
 			order = "f[plasma-turret]-f[" .. name .. "-shield-dome-1-2]",
@@ -165,6 +168,7 @@ local function createShieldDome(name, params)
 			name = name .. "-shield-dome",
 			render_layer = "object",
 			icon = "__EndgameCombat__/graphics/icons/" .. name .. "-shield-dome.png",
+			icon_size = 32,
 			flags = {"placeable-player", "placeable-neutral", "player-creation"},
 			order = "s-e-w-f",
 			minable = {mining_time = 2.5, result = name .. "-shield-dome"},
@@ -233,6 +237,7 @@ local function createShieldDome(name, params)
 			flags = {"not-on-map", "placeable-off-grid"},
 			render_layer = "lower-object",
 			--icon = "__base__/graphics/icons/steel-chest.png",
+			icon_size = 32,
 			order = "s-e-w-f",
 			max_health = 50,
 			corpse = nil,
@@ -256,12 +261,12 @@ local function createShieldDome(name, params)
 			},
 		},
 		{
-			type = "smoke",
+			type = "trivial-smoke",
 			name = "shield-dome-edge-effect-" .. name,
 			flags = {"not-on-map", "placeable-off-grid"},
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-
+			icon_size = 32,
 			duration = 180,
 			fade_in_duration = 30,
 			fade_away_duration = 30,
@@ -291,6 +296,7 @@ local function createShieldDome(name, params)
 		{
 			type = "explosion",
 			name = "shield-dome-effect-light-" .. name,
+			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
@@ -310,6 +316,7 @@ local function createShieldDome(name, params)
 		{
 			type = "explosion",
 			name = "shield-dome-edge-effect-light-" .. name,
+			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
@@ -329,6 +336,7 @@ local function createShieldDome(name, params)
 		{
 			type = "explosion",
 			name = "shield-dome-fail-effect-light-" .. name,
+			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
 			--collision_box = {{-0.1, -0.1}, {0.1, 0.1}},
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
@@ -346,10 +354,11 @@ local function createShieldDome(name, params)
 			},
 		},
 		{
-			type = "smoke",
+			type = "trivial-smoke",
 			name = "shield-dome-effect-" .. name,
 			selectable_in_game = false,
 			--icon = "__EndgameCombat__/graphics/icons/.png",
+			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
 			duration = 300,
 			fade_in_duration = 60,
@@ -378,10 +387,11 @@ local function createShieldDome(name, params)
 			},
 		},
 		{
-			type = "smoke",
+			type = "trivial-smoke",
 			name = "shield-dome-charging-effect-" .. name,
 			selectable_in_game = false,
 			--icon = "__EndgameCombat__/graphics/icons/.png",
+			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
 			duration = 300,
 			fade_in_duration = 60,
@@ -412,6 +422,7 @@ local function createShieldDome(name, params)
 		{
 			type = "explosion",
 			name = "shield-dome-fail-effect-" .. name,
+			icon_size = 32,
 			flags = {"not-on-map"},
 			animations =
 			{

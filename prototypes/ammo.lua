@@ -4,6 +4,7 @@ data:extend(
     type = "ammo",
     name = "sulfur-bullet-magazine",
     icon = "__EndgameCombat__/graphics/icons/sulfur-bullet-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -46,6 +47,7 @@ data:extend(
     type = "ammo",
     name = "sulfur-heavy-bullet-magazine",
     icon = "__EndgameCombat__/graphics/icons/sulfur-heavy-bullet-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -93,6 +95,7 @@ data:extend(
     type = "ammo",
     name = "hiex-cannon-shell-big",
     icon = "__EndgameCombat__/graphics/icons/cannon-shell-hiex.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -125,6 +128,7 @@ data:extend(
     type = "ammo",
     name = "nuke-shell",
     icon = "__EndgameCombat__/graphics/icons/nuke-shell.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -157,6 +161,7 @@ data:extend(
     type = "ammo",
     name = "neutron-shell",
     icon = "__EndgameCombat__/graphics/icons/neutron-shell.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -189,6 +194,7 @@ data:extend(
     type = "ammo",
     name = "neutron-rocket",
     icon = "__EndgameCombat__/graphics/icons/neutron-rocket.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -220,6 +226,7 @@ data:extend(
     type = "ammo",
     name = "napalm-shell",
     icon = "__EndgameCombat__/graphics/icons/napalm-shell.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -252,6 +259,7 @@ data:extend(
     type = "ammo",
     name = "napalm-rocket",
     icon = "__EndgameCombat__/graphics/icons/napalm-rocket.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -284,6 +292,7 @@ data:extend(
     type = "capsule",
     name = "radiation-capsule",
     icon = "__EndgameCombat__/graphics/icons/radiation-capsule.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     capsule_action =
     {
@@ -321,6 +330,7 @@ data:extend(
     type = "capsule",
     name = "acid-capsule",
     icon = "__EndgameCombat__/graphics/icons/acid-capsule.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     capsule_action =
     {

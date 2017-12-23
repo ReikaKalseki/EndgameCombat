@@ -5,7 +5,7 @@
   "author": "Reika",
   "contact": "",
   "homepage": "",
-  "factorio_version" : "0.15",
+  "factorio_version" : "0.16",
   "description": "Adds more powerful late and endgame combat capability to keep up with powerful enemies and huge biter bases.",
-  "dependencies": ["base >= 0.15.0"]
+  "dependencies": ["base >= 0.16.0"]
 }

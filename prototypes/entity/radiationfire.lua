@@ -53,8 +53,8 @@ for lifevar = RADIATION_LIFE_VAR_MIN,RADIATION_LIFE_VAR_MAX,RADIATION_LIFE_VAR_S
 		  target_effects =
 		  {
 			{
-			  type = "create-smoke",
-			  entity_name = "fire-smoke-on-adding-fuel",
+			  type = "create-trivial-smoke",
+			  smoke_name = "fire-smoke-on-adding-fuel",
 			  -- speed = {-0.03, 0},
 			  -- speed_multiplier = 0.99,
 			  -- speed_multiplier_deviation = 1.1,

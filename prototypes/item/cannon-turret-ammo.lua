@@ -16,6 +16,7 @@ data:extend(
     name = "cannon-shell-magazine",
     description = "cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/cannon-shell-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -50,6 +51,7 @@ data:extend(
     name = "explosive-cannon-shell-magazine",
     description = "explosive-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/explosive-cannon-shell-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -84,6 +86,7 @@ data:extend(
     name = "uranium-cannon-shell-magazine",
     description = "uranium-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/uranium-cannon-shell-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -118,6 +121,7 @@ data:extend(
     name = "explosive-uranium-cannon-shell-magazine",
     description = "explosive-uranium-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/explosive-uranium-cannon-shell-magazine.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     ammo_type =
     {
@@ -289,7 +293,7 @@ data:extend(
             action =
             {
               type = "area",
-              perimeter = 4,
+              radius = 4,
               action_delivery =
               {
                 type = "instant",
@@ -419,7 +423,7 @@ data:extend(
             action =
             {
               type = "area",
-              perimeter = 4.25,
+              radius = 4.25,
               action_delivery =
               {
                 type = "instant",

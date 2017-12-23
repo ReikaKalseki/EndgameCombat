@@ -8,7 +8,10 @@ require("prototypes.orbital")
 require("prototypes.walls")
 require("prototypes.dome")
 require("prototypes.tank")
+
+require("prototypes.research.equipment")
 require("prototypes.armor")
+
 require("prototypes.misc")
 
 require("prototypes.item.cannon-turret-ammo")
@@ -32,5 +35,4 @@ require("prototypes.research.flamethrower2")
 require("prototypes.research.ammo")
 require("prototypes.research.defense")
 require("prototypes.research.turrets")
-require("prototypes.research.equipment")
 require("prototypes.research.upgrades")

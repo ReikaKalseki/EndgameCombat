@@ -23,7 +23,8 @@ data:extend(
       },
       time = 30
     },
-    order = "e-c-b"
+    order = "e-c-b",
+    icon_size = 128,
   }
 }
 )

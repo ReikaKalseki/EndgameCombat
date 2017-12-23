@@ -35,10 +35,12 @@ function scheduleOrbitalStrike(placer, inv, target)
 	if not global.egcombat.scheduled_orbital then
 		global.egcombat.scheduled_orbital = {}
 	end
-	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_visible(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-10, target.y-10},{target.x+10, target.y+10}}}) == 0 then
+	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_visible(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-20, target.y-20},{target.x+20, target.y+20}}}) == 0 then
 		local entity = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force})
 		local loc = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force}) --just for location
-		local fx = placer.surface.create_entity{name = "orbital-manual-target-effect", position=target}
+		entity.destructible = false
+		loc.destructible = false
+		local fx = placer.surface.create_trivial_smoke{name = "orbital-manual-target-effect", position=target}
 		table.insert(global.egcombat.scheduled_orbital, {location = loc, next = entity, effect=fx, delay = 180, shots = 0})
 		for _,player in pairs (game.connected_players) do
 			player.add_custom_alert(entity, {type = "item", name = "orbital-manual-target"}, {"orbital-strike-incoming"}, true)
@@ -82,9 +84,10 @@ function tickOrbitalStrikeSchedule(egcombat)
 				if entry.shots < 10 and (math.random() < 0.25 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
 					entry.delay = math.random(5, 30)
 					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
+					entry.next.destructible = false
 				else
 					entry.location.destroy()
-					entry.effect.destroy()
+					--not used anymore since is smoke entry.effect.destroy()
 					table.remove(egcombat.scheduled_orbital, i)
 				end
 			end
@@ -108,14 +111,7 @@ local function isRock(entity)
 	entity.name == "red-desert-rock-medium" or entity.name == "red-desert-rock-small" or entity.name == "red-desert-rock-tiny"
 end
 
-function fireOrbitalWeaponManually(egcombat, target)
-	local surface = target.surface
-	local pos = target.position--player.selected and player.selected.position or ??
-	surface.create_entity({name = "orbital-bombardment-firing-sound", position = pos, force = game.forces.neutral})
-	surface.create_entity({name = "orbital-bombardment-explosion", position = pos, force = game.forces.neutral})
-	surface.create_entity({name = "orbital-bombardment-shockwave", position = pos, force = game.forces.neutral})
-	surface.create_entity({name = "orbital-bombardment-crater", position = pos, force = game.forces.neutral})
-	local entities = surface.find_entities_filtered({area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}})
+local function fireOrbitalOnEntities(egcombat, target, entities)
 	for _,entity in pairs(entities) do
 		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
 			local dist = getDistance(entity, target)
@@ -131,7 +127,28 @@ function fireOrbitalWeaponManually(egcombat, target)
 			end
 		end
 	end
-	local rs = 32
+end
+
+function fireOrbitalWeaponManually(egcombat, target)
+	local surface = target.surface
+	local pos = target.position--player.selected and player.selected.position or ??
+	surface.create_entity({name = "orbital-bombardment-firing-sound", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-explosion", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-shockwave", position = pos, force = game.forces.neutral})
+	surface.create_entity({name = "orbital-bombardment-crater", position = pos, force = game.forces.neutral})
+	local area = {{target.position.x-32, target.position.y-32}, {target.position.x+32, target.position.y+32}}
+	--local entities = surface.find_entities_filtered({area = area})
+	for _,force in pairs(game.forces) do
+		if force == target.force then
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force}))
+		elseif force == game.forces.neutral then
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force, type="tree"}))
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force, type="ammo-turret"}))
+		else
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force}))
+		end
+	end
+	local rs = 24
 	target.force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}})
 	target.destroy()
 	for _,player in pairs (game.connected_players) do
@@ -140,10 +157,27 @@ function fireOrbitalWeaponManually(egcombat, target)
 	end
 end
 
-function scanAreaForStrike(surface, pos, force)
+function tickOrbitalScans(egcombat)
+	if egcombat.active_orbital_radar then
+		for i=#egcombat.active_orbital_radar,1,-1 do
+			local entry = egcombat.active_orbital_radar[i]
+			--game.print("Ticking strike @ " .. entry.location.position.x .. " , " .. entry.location.position.y .. " , tick = " .. entry.delay)
+			if game.tick%30 == 0 then
+				entry.force.chart(entry.surface, entry.area)
+			end
+			if game.tick >= entry.life then
+				table.remove(egcombat.active_orbital_radar, i)
+			end
+		end
+	end
+end
+
+function scanAreaForStrike(egcombat, surface, pos, force)
 	if force.get_item_launched("destroyer-satellite") > 0 and force.is_chunk_charted(surface, {math.floor(pos.x/32), math.floor(pos.y/32)}) and #surface.find_entities_filtered({name="orbital-scanner", area={{pos.x-10, pos.y-10},{pos.x+10, pos.y+10}}}) == 0 then	
-		local rs = 24
-		force.chart(surface, {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}})
+		local rs = 96
+		local area = {{pos.x-rs, pos.y-rs}, {pos.x+rs, pos.y+rs}}
+		force.chart(surface, area)
+		table.insert(egcombat.active_orbital_radar, {surface=surface, area = area, force=force, life=game.tick+60*20})
 		for _,player in pairs(game.players) do
 			surface.create_entity({name = "orbital-scan-sound", position = player.position, force = game.forces.neutral})
 		end

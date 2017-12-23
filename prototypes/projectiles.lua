@@ -97,6 +97,7 @@ data:extend({
     {
     type = "projectile",
     name = "neutron-projectile",
+	icon_size = 32,
     flags = {"not-on-map"},
     acceleration = 0.005,
     action =
@@ -116,7 +117,7 @@ data:extend({
             action =
             {
               type = "area",
-              perimeter = 75,
+              radius = 75,
 			 entity_flags = {"placeable-enemy"},
               action_delivery =
               {
@@ -174,6 +175,7 @@ data:extend({
       {
     type = "projectile",
     name = "napalm-projectile",
+	icon_size = 32,
     flags = {"not-on-map"},
     acceleration = 0.005,
     action = {
@@ -206,7 +208,7 @@ data:extend({
       },
       {
         type = "area",
-        perimeter = 30,
+        radius = 30,
         action_delivery =
         {
           type = "instant",
@@ -257,6 +259,7 @@ data:extend({
   {
     type = "explosion",
     name = "uranium-explosion",
+	icon_size = 32,
     flags = {"not-on-map"},
     animations =
     {
@@ -290,6 +293,7 @@ data:extend({
   {
     type = "projectile",
     name = "hiex-cannon-projectile-big",
+	icon_size = 32,
     flags = {"not-on-map"},
     collision_box = {{-0.05, -1.1}, {0.05, 1.1}},
     acceleration = 0,
@@ -316,7 +320,7 @@ data:extend({
             action =
             {
               type = "area",
-              perimeter = 15, --was 15
+              radius = 15, --was 15
               action_delivery =
               {
                 type = "instant",
@@ -354,6 +358,7 @@ data:extend({
     {
     type = "projectile",
     name = "plasma-laser",
+	icon_size = 32,
     flags = {"not-on-map"},
     acceleration = 0.005,
     action =
@@ -392,6 +397,7 @@ data:extend({
     {
     type = "projectile",
     name = "radiation-capsule",
+	icon_size = 32,
     flags = {"not-on-map"},
     acceleration = 0.005,
     action =
@@ -429,6 +435,7 @@ data:extend({
   {
     type = "smoke-with-trigger",
     name = "radiation-cloud",
+	icon_size = 32,
     flags = {"not-on-map"},
     show_when_smoke_off = true,
     animation =
@@ -461,7 +468,7 @@ data:extend({
           action =
           {
             type = "area",
-            perimeter = 15,
+            radius = 15,
             entity_flags = {"placeable-enemy"},
             action_delivery =
             {
@@ -481,6 +488,7 @@ data:extend({
       {
     type = "projectile",
     name = "acid-capsule",
+	icon_size = 32,
     flags = {"not-on-map"},
     acceleration = 0.005,
     action =
@@ -518,6 +526,7 @@ data:extend({
   {
     type = "smoke-with-trigger",
     name = "acid-cloud",
+	icon_size = 32,
     flags = {"not-on-map"},
     show_when_smoke_off = true,
     animation =
@@ -551,7 +560,7 @@ data:extend({
           action =
           {
             type = "area",
-            perimeter = 12,
+            radius = 12,
             entity_flags = {"placeable-enemy", "breaths-air"},
             action_delivery =
             {
@@ -571,6 +580,7 @@ data:extend({
     {
     type = "smoke-with-trigger",
     name = "fire-area-spawner",
+	icon_size = 32,
     flags = {"not-on-map"},
     show_when_smoke_off = true,
     animation =
@@ -603,7 +613,7 @@ data:extend({
           action =
           {
             type = "area",
-            perimeter = 12,
+            radius = 12,
             action_delivery =
             {
               type = "instant",
@@ -622,6 +632,7 @@ data:extend({
     {
     type = "smoke-with-trigger",
     name = "radiation-area-spawner",
+	icon_size = 32,
     flags = {"not-on-map"},
     show_when_smoke_off = true,
     animation =
@@ -654,7 +665,7 @@ data:extend({
           action =
           {
             type = "area",
-            perimeter = 12,
+            radius = 12,
             action_delivery =
             {
               type = "instant",

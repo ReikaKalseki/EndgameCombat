@@ -297,6 +297,19 @@ function spawnRadiationArea(entity)
 	end
 end
 
+function spawnCapsuleFireArea(entity)
+	local nfire = math.random(1, 5)
+	for i = 1, nfire do
+		local ang = math.random()*2*math.pi
+		local r = (math.random())^(1/2)*4
+		local dx = r*math.cos(ang)
+		local dy = r*math.sin(ang)
+		local fx = entity.position.x+dx
+		local fy = entity.position.y+dy
+		entity.surface.create_entity{name = "big-fire-flame-napalm", position = {x = fx, y = fy}, force = game.forces.neutral}
+	end
+end
+
 function spawnFireArea(entity)
 	local nfire = 240+math.random(360) --was 180/160 then 240/220
 	for i = 1, nfire do
@@ -514,7 +527,7 @@ local function replaceTurretKeepingContents(turret, newname)
 		for i = 1,#fbox do
 			local stack = fbox[i]
 			if stack then
-				fluids[#fluids+1] = {fluid = stack.type, amount = stack.amount, temp = stack.temperature}
+				fluids[#fluids+1] = {fluid = stack.name, amount = stack.amount, temp = stack.temperature}
 			else
 				fluids[#fluids+1] = nil
 			end
@@ -538,7 +551,7 @@ local function replaceTurretKeepingContents(turret, newname)
 		for i = 1,#fluids do
 			local stack = fluids[i]
 			if stack ~= nil then
-				repl.fluidbox[i] = {type = stack.fluid, amount = stack.amount, temperature = stack.temp}
+				repl.fluidbox[i] = {name = stack.fluid, amount = stack.amount, temperature = stack.temp}
 			end
 		end
 	end

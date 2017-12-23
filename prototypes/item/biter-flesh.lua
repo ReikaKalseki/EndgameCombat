@@ -6,6 +6,7 @@ data:extend(
     type = "tool",
     name = "biter-flesh",
     icon = "__EndgameCombat__/graphics/icons/biter-flesh.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     subgroup = "intermediate-product",
     order = "b[biter-flesh]",
@@ -18,6 +19,7 @@ data:extend(
     type = "capsule",
     name = "cooked-biter",
     icon = "__EndgameCombat__/graphics/icons/cooked-biter.png",
+	icon_size = 32,
     flags = {"goes-to-quickbar"},
     subgroup = "raw-resource",
     capsule_action =

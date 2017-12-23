@@ -115,6 +115,7 @@
     name = "biter-fuel",
     enabled = "false",
 	icon = "__EndgameCombat__/graphics/icons/biter-fuel.png",
+	icon_size = 32,
     ingredients = {
 		{"biter-flesh", 25},
 		{type="fluid", name="sulfuric-acid", amount=40}

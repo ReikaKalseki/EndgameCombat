@@ -13,11 +13,15 @@ for _,v in pairs(data.raw["fluid-turret"]) do
 	table.insert(baseturrets, v)
 end
 
+local function shouldCreateRangeTurret(base)
+	return base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result --skip technicals
+end
+
 local turrets = {}
 local items = {}
 for i = 1,#TURRET_RANGE_BOOSTS do
 	for _,base in pairs(baseturrets) do
-		if base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result then --skip technicals
+		if shouldCreateRangeTurret(base) then
 			local turret = util.table.deepcopy(base)
 			turret.name = turret.name .. "-rangeboost-" .. i
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
@@ -87,5 +91,34 @@ if MAKE_ITEMS then
 		{
 			item
 		})
+	end
+end
+
+for _,tech in pairs(data.raw.technology) do
+	if tech.effects then
+		local effectsToAdd = {}
+		for _,effect in pairs(tech.effects) do
+			if effect.type == "turret-attack" and effect.turret_id then
+				local base = data.raw["ammo-turret"][effect.turret_id]
+				if not base then
+					base = data.raw["fluid-turret"][effect.turret_id]
+				end
+				if not base then
+					base = data.raw["electric-turret"][effect.turret_id]
+				end
+				if not base then error("Tech set to boost turret '" .. effect.turret_id .. "', which does not exist?!") end
+				if shouldCreateRangeTurret(base) then
+					for i=1,10 do
+						local effectcp = table.deepcopy(effect)--{type="turret-attack", turret_id=base.name .. "-rangeboost-" .. i, modifier=effect.modifier}
+						effectcp.turret_id = base.name .. "-rangeboost-" .. i
+						effectcp.effect_key = {"modifier-description." .. effect.turret_id .. "-attack-bonus"}
+						table.insert(effectsToAdd, effectcp)
+					end
+				end
+			end
+		end
+		for _,effect in pairs(effectsToAdd) do
+			table.insert(tech.effects, effect)
+		end
 	end
 end

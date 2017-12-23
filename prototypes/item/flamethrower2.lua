@@ -4,6 +4,7 @@ data:extend(
     type = "gun",
     name = "flamethrower-2",
     icon = "__base__/graphics/icons/flamethrower.png",
+	icon_size = 32,
     flags = {"goes-to-main-inventory"},
     subgroup = "gun",
     order = "e[flamethrower]",

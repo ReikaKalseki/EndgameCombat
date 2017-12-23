@@ -38,6 +38,9 @@ function initGlobal(markDirty)
 	if global.egcombat.scheduled_orbital_kills == nil then
 		global.egcombat.scheduled_orbital_kills = {}
 	end
+	if global.egcombat.active_orbital_radar == nil then
+		global.egcombat.active_orbital_radar = {}
+	end
 	if global.egcombat.shield_domes == nil then
 		global.egcombat.shield_domes = {}
 	end
@@ -51,8 +54,29 @@ script.on_init(function()
 	initGlobal(true)
 end)
 
+local function convertTurretCache(egcombat)
+	for k,force in pairs(game.forces) do
+		if egcombat.placed_turrets[force.name] == nil then
+			egcombat.placed_turrets[force.name] = {}
+			--game.print("Adding force " .. force.name .. " to turret table")
+		end
+		if #egcombat.placed_turrets[force.name] > 0 and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
+			local repl = {}
+			for _,turret in pairs(egcombat.placed_turrets[force.name]) do
+				local entry = createTurretEntry(turret)
+				if entry then
+					table.insert(repl, entry)
+				end
+			end
+			egcombat.placed_turrets[force.name] = repl
+		end
+	end
+end
+
 script.on_configuration_changed(function()
 	initGlobal(true)
+	
+	convertTurretCache(global.egcombat)
 end)
 
 local function track_turret(entity_list, turret)
@@ -177,6 +201,9 @@ script.on_event(defines.events.on_trigger_created_entity, function(event)
 	if event.entity.name == "fire-area-spawner" then
 		spawnFireArea(event.entity)
 	end
+	if event.entity.name == "fire-cloud" or event.entity.name == "fire-cloud-auto" then
+		spawnCapsuleFireArea(event.entity)
+	end
 	if event.entity.name == "radiation-area-spawner" then
 		spawnRadiationArea(event.entity)
 	end
@@ -196,16 +223,6 @@ script.on_event(defines.events.on_tick, function(event)
 			if egcombat.placed_turrets[force.name] == nil then
 				egcombat.placed_turrets[force.name] = {}
 				--game.print("Adding force " .. force.name .. " to turret table")
-			end
-			if #egcombat.placed_turrets[force.name] > 0 and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
-				local repl = {}
-				for _,turret in pairs(egcombat.placed_turrets[force.name]) do
-					local entry = createTurretEntry(turret)
-					if entry then
-						table.insert(repl, entry)
-					end
-				end
-				egcombat.placed_turrets[force.name] = repl
 			end
 		end
 		
@@ -328,6 +345,7 @@ script.on_event(defines.events.on_tick, function(event)
 	end
 	
 	tickOrbitalStrikeSchedule(egcombat)
+	tickOrbitalScans(egcombat)
 	
 	if #egcombat.fleshToDeconstruct > 0 then
 		for i = #egcombat.fleshToDeconstruct,1,-1 do --iterate in reverse since removing entries
@@ -372,10 +390,11 @@ script.on_event(defines.events.on_tick, function(event)
 	end
 end)
 
-local function onFinishedResearch(event)	
+local function onFinishedResearch(event)
 	local tech = event.research.name
 	local force = event.research.force.name
 	local egcombat = global.egcombat
+	convertTurretCache(egcombat)
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
 		--game.print("Turret range " .. lvl)
@@ -454,7 +473,7 @@ script.on_event(defines.events.on_put_item, function(event)
 	end
 	
 	if stack.name == "orbital-scanner" then
-		scanAreaForStrike(player.surface, event.position, player.force)
+		scanAreaForStrike(global.egcombat, player.surface, event.position, player.force)
 		return
 	end
 end)
