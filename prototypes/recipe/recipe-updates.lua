@@ -37,9 +37,22 @@ if data.raw.item["speed-module-5"] then
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"productivity-module-5", 10})
 end
 
-if data.raw.item["electronic-processing-board"] then
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"electronic-processing-board", 50})
+if data.raw["generator-equipment"]["fusion-reactor-equipment"] then --some mods remove this
+	table.insert(data.raw.recipe["destroyer-satellite"].ingredients, {"fusion-reactor-equipment", 1})
+	table.insert(data.raw.technology["advanced-equipment"].prerequisites, "fusion-reactor-equipment")
+	table.insert(data.raw.technology["orbital-destroyer"].prerequisites, "fusion-reactor-equipment")
+elseif data.raw.item["vehicle-fusion-reactor-1"] then
+	table.insert(data.raw.recipe["destroyer-satellite"].ingredients, {"vehicle-fusion-reactor-1", 1})
+elseif data.raw["generator-equipment"]["vehicle-fusion-cell-1"] then
+	table.insert(data.raw.recipe["destroyer-satellite"].ingredients, {"vehicle-fusion-cell-1", 1})
 else
+	table.insert(data.raw.recipe["destroyer-satellite"].ingredients, {"solar-panel-equipment", 50})
+end
+
+if data.raw.item["advanced-processing-unit"] then
+	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"advanced-processing-unit", 50})
+else
+	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"advanced-circuit", 20})
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"processing-unit", 50})
 end
 

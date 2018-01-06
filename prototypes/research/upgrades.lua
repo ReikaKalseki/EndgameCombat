@@ -13,7 +13,7 @@ data:extend(
     {
       {
         type = "nothing",
-        effect_description = "turret-logistic-capability",
+        effect_description = {"modifier-description.turret-logistic-capability"},
       }
     },
     prerequisites = {"better-turrets", "logistic-robotics", "logistics-3"},
@@ -40,7 +40,7 @@ data:extend(
     {
       {
         type = "nothing",
-        effect_description = "turret-auto-logistic-capability",
+        effect_description = {"modifier-description.turret-auto-logistic-capability"},
       }
     },
     prerequisites = {"turret-logistics", "logistic-system"},

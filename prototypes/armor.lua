@@ -161,6 +161,10 @@ data:extend(
         percent = 60
       },
       {
+        type = "fire",
+        percent = 80
+      },
+      {
         type = "explosion",
         decrease = 20,
         percent = 70

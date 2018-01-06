@@ -49,7 +49,6 @@ data:extend(
 	  "energy-shield-equipment",
 	  "battery-equipment",
 	  "solar-panel-equipment",
-	  "fusion-reactor-equipment",
     },
 	effects =
     {

@@ -191,7 +191,6 @@ data:extend(
 	  "rocket-silo",
 	  "plasma-turrets",
 	  "nuclear-power",
-	  "fusion-reactor-equipment",
     },
 	effects =
     {

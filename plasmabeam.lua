@@ -30,15 +30,11 @@ function createPlasmaAttack()
 end
 
 function createPlasmaBeam()
-	local ret = {
-		type = "beam",
-		name = "laser-beam-purple",
-		flags = {"not-on-map"},
-		width = 0.5,
-		damage_interval = 12,
-		light = {intensity = 0.75, size = 10},
-		working_sound =
-		{
+	local ret = table.deepcopy(data.raw.beam["laser-beam-red"])
+	ret.name = "laser-beam-purple"
+	ret.damage_interval = 12
+	ret.light = {intensity = 0.75, size = 10}
+	ret.working_sound = {
 		  {
 			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-01.ogg",
 			volume = 0.9
@@ -52,64 +48,8 @@ function createPlasmaBeam()
 			volume = 0.9
 		  }
 		  
-		},
-		action =
-		{
-		  type = "direct",
-		  action_delivery =
-		  {
-			type = "instant",
-			target_effects =
-			{
-			  {
-				type = "damage",
-				damage = { amount = 7.5, type = "laser"}
-			  }
-			}
-		  }
-		},
-		head =
-		{
-			  filename = "__Laser_Beam_Turrets__/laser-beam-head-2.png",
-			  line_length = 16,
-			  tint = {r=0.75, g=0.1, b=1.0},
-		  frame_count = 12,
-		  x = 45*4,
-			  width = 45,
-			  height = 1,
-			  priority = "high",
-			  animation_speed = 0.5,
-			  blend_mode = "additive-soft"
-			},
-		tail =
-		{
-			  filename = "__Laser_Beam_Turrets__/laser-beam-tail-3.png",
-			  line_length = 16,
-			  tint = {r=0.75, g=0.1, b=1.0},
-		  frame_count = 12,
-		  x = 48*4,
-			  width = 48,
-			  height = 24,
-			  priority = "high",
-			  animation_speed = 0.5,
-			  blend_mode = "additive-soft"
-			},
-		body =
-		{
-		  {
-			  filename = "__Laser_Beam_Turrets__/laser-beam-body-2.png",
-			  line_length = 16,
-			  tint = {r=0.75, g=0.1, b=1.0},
-			  frame_count = 12,
-		  x = 48*4,
-			  width = 48,
-			  height = 24,
-			  priority = "high",
-			  animation_speed = 0.5,
-			  blend_mode = "additive-soft"
-			},
-		  
 		}
-	}
+	ret.action.action_delivery.target_effects[1].damage.amount = 7.5
+
 	return ret
 end

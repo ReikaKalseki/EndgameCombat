@@ -29,6 +29,7 @@ require("prototypes.recipe.flamethrower2")
 require("prototypes.recipe.ammo")
 require("prototypes.recipe.turrets")
 require("prototypes.recipe.defence")
+require("prototypes.recipe.orbital")
 require("prototypes.recipe.misc")
 
 require("prototypes.research.flamethrower2")
