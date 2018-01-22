@@ -384,7 +384,7 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
-	if game.tick%60 == 0 then
+	if #game.players > 0 and game.tick%60 == 0 then
 		local player = game.players[math.random(1, #game.players)]
 		cleanTissueNearPlayer(egcombat, player)
 	end

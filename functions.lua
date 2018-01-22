@@ -614,7 +614,15 @@ function deconvertTurretForRange(turret)
 	return turret
 end
 
+function isTechnicalTurret(name)
+	if name == "AlienControlStation_Area" then
+		return true
+	end
+	return false
+end
+
 function createLogisticInterface(turret)
+	if isTechnicalTurret(turret.name) then return false end --technical entity
 	local force = turret.force
 	if turret.type == "ammo-turret" and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
 		local pos = turret.position

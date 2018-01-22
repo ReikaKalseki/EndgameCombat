@@ -14,6 +14,7 @@ for _,v in pairs(data.raw["fluid-turret"]) do
 end
 
 local function shouldCreateRangeTurret(base)
+	if isTechnicalTurret(base.name) then return false end
 	return base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result --skip technicals
 end
 
