@@ -524,7 +524,7 @@ local function onEntityMined(event)
 	
 	removeTurretFromCache(egcombat, entity)
 end
-
+--[[
 local function onEntityAttacked(event)	
 	local entity = event.entity
 	local egcombat = global.egcombat
@@ -534,7 +534,7 @@ local function onEntityAttacked(event)
 		getShieldDomeFromEdge(egcombat, entity, false, event.cause, amt)
 	end
 end
-
+--]]
 local function onEntityRemoved(event)	
 	local entity = event.entity
 	local egcombat = global.egcombat
@@ -548,6 +548,11 @@ local function onEntityRemoved(event)
 		return
 	end
 	
+	if string.find(entity.name, "shield-dome-edge", 1, true) then
+		getShieldDomeFromEdge(egcombat, entity, true, event.cause)
+		return
+	end
+	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
 		entity = deconvertTurretForRange(entity)
 		removeTurretFromCache(egcombat, entity)
@@ -557,7 +562,7 @@ local function onEntityRemoved(event)
 	doTissueDrops(egcombat, entity)
 end
 
-script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
+--script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
 
