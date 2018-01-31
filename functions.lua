@@ -439,9 +439,10 @@ end
 function removeShieldDome(egcombat, entity)
 	if string.find(entity.name, "shield-dome", 1, true) and egcombat.shield_domes[entity.force.name] then
 		local entry = egcombat.shield_domes[entity.force.name][entity.unit_number]
+		if not entry then game.print("Dome with no entry @ " .. entity.position.x .. ", " .. entity.position.y .. " ?") return end
 		for biter,edge in pairs(entry.edges) do
 			edge.entity.destroy()
-			if edge.effect.valid then
+			if edge.effect and edge.effect.valid then
 				edge.effect.destroy()
 			end
 			if edge.light and edge.light.valid then

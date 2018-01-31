@@ -24,6 +24,10 @@ data:extend(
     type = "ammo-category",
     name = "shockwave-turret"
   },
+    {
+    type = "ammo-category",
+    name = "acid-stream"
+  },
 }
 )
 

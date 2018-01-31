@@ -101,7 +101,7 @@ data:extend(
     place_result = "bomb-turret",
     stack_size = 50
   },--]]
-    {
+  {
     type = "item",
     name = "last-stand-turret",
     icon = "__EndgameCombat__/graphics/icons/last-stand-turret-2.png",
@@ -111,12 +111,61 @@ data:extend(
     order = "f[gun-turret]-f[last-stand-turret-1-2]",
     place_result = "last-stand-turret",
     stack_size = 10
+  },
+  {
+    type = "item",
+    name = "acid-turret",
+    icon = "__EndgameCombat__/graphics/icons/acid-turret.png",
+	icon_size = 32,
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[acid-turret-1-2]",
+    place_result = "acid-turret",
+    stack_size = 10
   }
 }
 )
 
+
+local acid = table.deepcopy(data.raw["fluid-turret"]["flamethrower-turret"])
+acid.icon = data.raw.item["acid-turret"].icon
+acid.name = "acid-turret"
+acid.minable.result = acid.name
+acid.resistances[1].type = "acid"
+acid.max_health = 1600
+acid.attack_parameters.ammo_category = "acid-stream"
+acid.attack_parameters.fluids = {{type = "sulfuric-acid", damage_modifier = 1}}
+acid.attack_parameters.ammo_type.category = "acid-stream"
+acid.attack_parameters.ammo_type.action.action_delivery.stream = "acid-stream"
+acid.muzzle_animation = nil
+
+local stream = table.deepcopy(data.raw.stream["flamethrower-fire-stream"])
+stream.name = "acid-stream"
+stream.action = {
+      {
+        type = "area",
+        radius = 4,
+        action_delivery =
+        {
+          type = "instant",
+          target_effects =
+          {
+            {
+              type = "damage",
+              damage = { amount = 8, type = "acid" },
+              apply_damage_to_trees = false
+            }
+          }
+        }
+      }
+}
+stream.spine_animation.filename = "__EndgameCombat__/graphics/entity/acid-turret/stream.png"
+stream.particle.filename = "__EndgameCombat__/graphics/entity/acid-turret/puff.png"
+
+
 data:extend(
 {
+acid, stream,
 {
     type = "ammo-turret",
     name = "concussion-turret",

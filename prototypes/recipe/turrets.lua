@@ -69,5 +69,18 @@
 	category = "crafting-with-fluid",
     result = "last-stand-turret"
   },
+  {
+    type = "recipe",
+    name = "acid-turret",
+    enabled = false,
+    energy_required = 20,
+    ingredients =
+    {
+      {"iron-gear-wheel", 25},
+      {"pipe", 20},
+      {"engine-unit", 5}
+    },
+    result = "acid-turret"
+  },
 }
 )

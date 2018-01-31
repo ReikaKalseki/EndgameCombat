@@ -75,6 +75,39 @@ data:extend(
   
     {
     type = "technology",
+    name = "acid-turrets",
+    icon = "__EndgameCombat__/graphics/technology/acid-turrets.png",
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "acid-turret"
+      },
+    },
+    prerequisites =
+    {
+      "fluid-handling",
+	  "better-turrets",
+	  "sulfur-processing",
+    },
+    unit =
+    {
+      count = 100,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+		{"military-science-pack", 1},
+      },
+      time = 45
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+  
+    {
+    type = "technology",
     name = "cannon-turrets",
     icon = "__EndgameCombat__/graphics/technology/cannon-turrets.png",
     effects =

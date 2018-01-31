@@ -18,6 +18,7 @@ if data.raw.item["titanium-plate"] then
   table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"titanium-plate", 25})
   table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"titanium-plate", 50})
   table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"titanium-plate", 10})
+  --table.insert(data.raw["recipe"]["acid-turret"].ingredients,{"titanium-plate", 20})
   
   table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"titanium-plate", 25})
 else
@@ -30,6 +31,7 @@ table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"steel-plate",
 table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"steel-plate", turretArmorSteel})
 table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"steel-plate", turretArmorSteel*2})
 table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"steel-plate", math.floor(turretArmorSteel*0.8)})
+table.insert(data.raw["recipe"]["acid-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]40})
 
 if data.raw.item["speed-module-5"] then
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"speed-module-5", 10})

@@ -124,4 +124,14 @@ if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
 	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
 end
 
+if data.raw.fluid["nitric-acid"] then
+	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "nitric-acid", damage_modifier = 1.25})
+end
+if data.raw.fluid["hydrochloric-acid"] then
+	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "hydrochloric-acid", damage_modifier = 1.125})
+end
+if data.raw.fluid["hydrogen-chloride"] then
+	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "hydrogen-chloride", damage_modifier = 1.125})
+end
+
 table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")

@@ -4,7 +4,7 @@ local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 	if not attacker.unit_number or not entry.edges[attacker.unit_number] or not entry.edges[attacker.unit_number].entity.valid or (entry.edges[attacker.unit_number].entity.health and entry.edges[attacker.unit_number].entity.health <= 0) then
 		local ang = math.atan2(attacker.position.y-entry.dome.position.y, attacker.position.x-entry.dome.position.x) --y,x, not x,y
 		local pos = {x=entry.dome.position.x+r*0.9*math.cos(ang), y=entry.dome.position.y+r*0.9*math.sin(ang)}
-		local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+		local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=entry.dome.force}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
 		local fx = entry.dome.surface.create_trivial_smoke({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
 		local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
 		--game.print("Spawning edge entity for " .. attacker.name)
@@ -63,7 +63,7 @@ function getCurrentDomeStrengthFactor(force)
 		lvl = lvl+1
 	end
 	lvl = lvl-1
-	return getCurrentDomeStrengthFactorByLevel(lvl)
+	return getCurrentDomeStrengthFactorByLevel(0)
 end
 
 function getCurrentDomeCostFactor(force)
@@ -72,7 +72,7 @@ function getCurrentDomeCostFactor(force)
 		lvl = lvl+1
 	end
 	lvl = lvl-1
-	return getCurrentDomeCostFactorByLevel(lvl)
+	return getCurrentDomeCostFactorByLevel(0)
 end
 
 function getShieldDomeStrength(entry)
@@ -157,7 +157,7 @@ function tickShieldDome(egcombat, entry, tick)
 			for i = 1,num do
 				local ang = math.random()*360
 				local pos = {x=entry.dome.position.x+SHIELD_DOMES[entry.index].radius*math.cos(ang), y=entry.dome.position.y+SHIELD_DOMES[entry.index].radius*math.sin(ang)}
-				local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=game.forces.neutral}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
+				local edge = entry.dome.surface.create_entity({name="shield-dome-edge-" .. entry.index, position = pos, force=entry.dome.force}) --neutral force so robots do not try to repair it, and does not trigger "structure damage warning"
 				local fx = entry.dome.surface.create_trivial_smoke({name="shield-dome-edge-effect-" .. entry.index, position = pos, force=game.forces.neutral})
 				local light = entry.dome.surface.create_entity({name="shield-dome-edge-effect-light-" .. entry.index, position = pos, force=game.forces.neutral})
 				table.insert(entry.edges, {entity=edge, effect=fx, light=light, life=tick+math.random(30, 90), force=entry.dome.force, entry_key=entry.dome.unit_number})
@@ -199,7 +199,7 @@ function tickShieldDome(egcombat, entry, tick)
 	end
 end
 
-function getShieldDomeFromEdge(egcombat, entity, destroy, killer)
+function getShieldDomeFromEdge(egcombat, entity, destroy, killer, damage)
 	if killer == nil then return end
 	local edge = egcombat.shield_dome_edges[killer.unit_number]
 	if edge then
@@ -213,9 +213,12 @@ function getShieldDomeFromEdge(egcombat, entity, destroy, killer)
 					if edge.effect and edge.effect.valid then
 						edge.effect.destroy()
 					end
-					if edge.light.valid then
+					if edge.light and edge.light.valid then
 						edge.light.destroy()
 					end
+				else
+					attackShieldDome(entry, damage)
+					entity.health = game.entity_prototypes[entity.name].max_health
 				end
 			else
 				entry.edges[killer.unit_number] = nil --just remove, no effect
@@ -244,15 +247,26 @@ function getShieldDomeFromEntity(egcombat, entity)
 	error("A shield dome without an entry!?")
 end
 
+local function onDomeFailure(entry)
+	entry.rebooting = true
+	entry.dome.surface.create_entity({name="shield-dome-fail-effect-" .. entry.index, position = entry.dome.position, force=game.forces.neutral})
+	entry.dome.surface.create_entity({name="shield-dome-fail-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+	for k,v in pairs(entry.edges) do
+		if v and v.valid then
+			v.destroy()
+		end
+		entry.edges[k] = nil
+	end
+	--game.print("Shield offline. Rebooting.")
+end
+
 function attackShieldDome(entry, damage)
+	--game.print("Damaging dome by " .. damage)
 	if entry.current_shield > 0 then
 		entry.current_shield = math.max(0, entry.current_shield-damage)
 		--game.print("Destroying edge, subtracting " .. damage .. "health from shield. Shield health is now: " .. entry.current_shield)
 		if entry.current_shield == 0 then
-			entry.rebooting = true
-			entry.dome.surface.create_entity({name="shield-dome-fail-effect-" .. entry.index, position = entry.dome.position, force=game.forces.neutral})
-			entry.dome.surface.create_entity({name="shield-dome-fail-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
-			--game.print("Shield offline. Rebooting.")
+			onDomeFailure(entry)
 		end
 	end
 end
