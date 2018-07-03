@@ -48,11 +48,10 @@ function initGlobal(markDirty)
 		global.egcombat.shield_dome_edges = {}
 	end
 	global.egcombat.dirty = markDirty
+	
+	remote.call("silo_script", "set_show_launched_without_satellite", false)
+	remote.call("silo_script", "add_tracked_item", "destroyer-satellite")
 end
-
-script.on_init(function()
-	initGlobal(true)
-end)
 
 local function convertTurretCache(egcombat)
 	for k,force in pairs(game.forces) do
@@ -72,6 +71,10 @@ local function convertTurretCache(egcombat)
 		end
 	end
 end
+
+script.on_init(function()
+	initGlobal(true)
+end)
 
 script.on_configuration_changed(function()
 	initGlobal(true)

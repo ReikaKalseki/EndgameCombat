@@ -26,7 +26,7 @@
       {"beacon", 10},
       {"processing-unit", 50},
       {"big-electric-pole", 10},
-      {"concrete", 200},
+      {"refined-concrete", 200},
     },
     result= "orbital-destroyer"
   },

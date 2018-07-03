@@ -9,7 +9,7 @@
     {
 	  {"stone-wall", 2},
 	  {"stone-brick", 10},
-      {"concrete", 5},
+      {"refined-concrete", 5},
       {"steel-plate", 1}
     },
 	category = "advanced-crafting",

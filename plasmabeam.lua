@@ -31,6 +31,7 @@ end
 
 function createPlasmaBeam()
 	local ret = table.deepcopy(data.raw.beam["laser-beam-red"])
+	local color = {r = 0.8, g = 0.0, b = 1.0}
 	ret.name = "laser-beam-purple"
 	ret.damage_interval = 12
 	ret.light = {intensity = 0.75, size = 10}
@@ -50,6 +51,13 @@ function createPlasmaBeam()
 		  
 		}
 	ret.action.action_delivery.target_effects[1].damage.amount = 7.5
+	
+	
+	ret.head.tint = color
+	ret.start.tint = color
+	ret.ending.tint = color
+	ret.tail.tint = color
+	ret.body[1].tint = color
 
 	return ret
 end
