@@ -146,6 +146,7 @@ local function trackNewTurret(egcombat, turret)
 
 		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #egcombat.placed_turrets[force.name])
 	end
+	return turret
 end
 
 local function reloadRangeTech()
@@ -504,7 +505,16 @@ local function onEntityAdded(event)
     end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
-		trackNewTurret(egcombat, entity)
+		local orig_name = entity.name
+		local turret = trackNewTurret(egcombat, entity)
+		if turret.name ~= orig_name then
+			script.raise_event(defines.events.script_raised_built, {
+				mod_name = "EndgameCombat",
+				created_entity = turret,
+				player_index = event.player_index,
+				stack = event.stack,
+			})
+		end
 		return
 	end
 end
