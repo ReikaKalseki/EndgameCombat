@@ -232,45 +232,6 @@ script.on_event(defines.events.on_tick, function(event)
 		egcombat.dirty = false
 	end
 	
-	--[[
-	if #egcombat.chunk_cache > 0 then
-		local ticksPerChunk = 1--4
-		if game.tick%ticksPerChunk == 0 then
-			local chunksPerTick = 16--1
-			while chunksPerTick > 0 and #egcombat.chunk_cache > 0 do
-				chunk = egcombat.chunk_cache[1]
-				local x1 = chunk.x*32
-				local y1 = chunk.y*32
-				local x2 = x1+32
-				local y2 = y1+32
-				local turrets = game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "ammo-turret"})
-				for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "electric-turret"})) do 
-					table.insert(turrets, v)
-				end
-				for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({area = {{x1, y1}, {x2, y2}}, type = "fluid-turret"})) do 
-					table.insert(turrets, v)
-				end
-				for k,turret in pairs(turrets) do
-					trackNewTurret(egcombat, turret)
-				end
-				
-				if Config.deconstructFlesh then
-					local drops = game.surfaces["nauvis"].find_entities_filtered{area = {{x1, y1}, {x2, y2}}, type="item-entity"}
-					for _,item in pairs(drops) do
-						if item.stack and item.stack.name == "biter-flesh" then
-							table.insert(egcombat.fleshToDeconstruct, {item, game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
-							--item.order_deconstruction(game.forces.player)
-						end
-					end
-				end
-				
-				table.remove(egcombat.chunk_cache, 1)
-				chunksPerTick = chunksPerTick-1
-			end
-		end
-	end
-	--]]
-	
 	if egcombat.placed_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
