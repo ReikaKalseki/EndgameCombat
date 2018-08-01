@@ -7,7 +7,7 @@ data:extend({
     name = "turret-logistic-interface",
     icon = "__EndgameCombat__/graphics/icons/turret-logistic-chest.png",
 	icon_size = 32,
-    flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid"},
+    flags = {"placeable-player", "player-creation", "not-on-map", "placeable-off-grid", "not-blueprintable", "not-deconstructable"},
     --minable = {hardness = 0.4, mining_time = 0.75, result = ""},
     max_health = 100,
     corpse = "small-remnants",

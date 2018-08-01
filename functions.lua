@@ -625,7 +625,7 @@ end
 function createLogisticInterface(turret)
 	if isTechnicalTurret(turret.name) then return false end --technical entity
 	local force = turret.force
-	if turret.type == "ammo-turret" and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
+	if (turret.type == "ammo-turret" or turret.type == "artillery-turret") and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
 		local pos = turret.position
 		local surface = turret.surface
 		local logi = surface.create_entity({name="turret-logistic-interface", position={pos.x+0.5, pos.y+0.5}, force=force})

@@ -58,7 +58,7 @@ data:extend({
     name = "dome-circuit-connection",
     icon = "__base__/graphics/icons/constant-combinator.png",
 	icon_size = 32,
-    flags = {"placeable-neutral", "player-creation", "not-on-map", "placeable-off-grid"},
+    flags = {"placeable-neutral", "player-creation", "not-on-map", "placeable-off-grid", "not-blueprintable", "not-deconstructable"},
 	order = "z",
 	max_health = 100,
 	destructible = false,

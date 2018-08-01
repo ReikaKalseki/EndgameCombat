@@ -49,8 +49,10 @@ function initGlobal(markDirty)
 	end
 	global.egcombat.dirty = markDirty
 	
-	remote.call("silo_script", "set_show_launched_without_satellite", false)
-	remote.call("silo_script", "add_tracked_item", "destroyer-satellite")
+	if remote.interfaces["silo-script"] then
+		remote.call("silo_script", "set_show_launched_without_satellite", false)
+		remote.call("silo_script", "add_tracked_item", "destroyer-satellite")
+	end
 end
 
 local function convertTurretCache(egcombat)
@@ -146,6 +148,8 @@ local function trackNewTurret(egcombat, turret)
 
 		--game.print("Adding " .. turret.name .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for " .. force.name .. " to turret table; size=" .. #egcombat.placed_turrets[force.name])
 	end
+	
+	return turret
 end
 
 local function reloadRangeTech()
@@ -164,22 +168,6 @@ local function reloadRangeTech()
 			end
 		end
 	end
-	
-	--[[
-	local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret"})
-	for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret"})) do 
-		table.insert(turrets, v)
-	end
-	for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret"})) do 
-		table.insert(turrets, v)
-	end
-	for _,turret in pairs(turrets) do
-		if turret.force ~= game.forces.enemy then
-			turret = deconvertTurretForRange(turret)
-			trackNewTurret(egcombat, turret)
-		end
-	end
-	--]]
 end
 
 script.on_event(defines.events.on_sector_scanned, function(event)	
@@ -371,18 +359,6 @@ local function onFinishedResearch(event)
 				convertTurretForRangeWhileKeepingSpecialCaches(entry.turret, lvl)
 			end
 		end
-		--[[
-		local turrets = game.surfaces["nauvis"].find_entities_filtered({type = "ammo-turret", force = force})
-		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "electric-turret", force = force})) do 
-			table.insert(turrets, v)
-		end
-		for _,v in pairs(game.surfaces["nauvis"].find_entities_filtered({type = "fluid-turret", force = force})) do 
-			table.insert(turrets, v)
-		end
-		for _,turret in pairs(turrets) do
-			convertTurretForRangeWhileKeepingSpecialCaches(turret, lvl)
-		end
-		--]]
 	end
 	if tech == "turret-logistics" then
 		if egcombat.placed_turrets[force] == nil then
@@ -464,8 +440,12 @@ local function onEntityAdded(event)
         end
     end
 	
-	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
-		trackNewTurret(egcombat, entity)
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
+		local orig_name = entity.name
+		local turret = trackNewTurret(egcombat, entity)
+		if turret.name ~= orig_name then
+			script.raise_event(defines.events.script_raised_built, {mod_name = "EndgameCombat", created_entity = turret, player_index = event.player_index, stack = event.stack})
+		end
 		return
 	end
 end
@@ -477,28 +457,10 @@ local function onEntityMined(event)
 	removeShockwaveTurret(egcombat, entity)
 	removeCannonTurret(egcombat, entity)
 	removeShieldDome(egcombat, entity)
-	--[[
-	local inv = event.buffer
-	if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
-		if string.find(entity.name, "rangeboost") and game.entity_prototypes[getTurretBaseName(entity)].mineable_properties and #game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products > 0 then
-			inv.remove({name=game.entity_prototypes[entity.name].mineable_properties.products[1].name})
-			inv.insert({name=game.entity_prototypes[getTurretBaseName(entity)].mineable_properties.products[1].name})
-		end
-	end--]]
 	
 	removeTurretFromCache(egcombat, entity)
 end
---[[
-local function onEntityAttacked(event)	
-	local entity = event.entity
-	local egcombat = global.egcombat
-	local amt = event.final_damage_amount
-	
-	if string.find(entity.name, "shield-dome-edge", 1, true) and egcombat.shield_domes[entity.force.name] then
-		getShieldDomeFromEdge(egcombat, entity, false, event.cause, amt)
-	end
-end
---]]
+
 local function onEntityRemoved(event)	
 	local entity = event.entity
 	local egcombat = global.egcombat
@@ -517,7 +479,7 @@ local function onEntityRemoved(event)
 		return
 	end
 	
-	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret") then
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
 		entity = deconvertTurretForRange(entity)
 		removeTurretFromCache(egcombat, entity)
 		return
@@ -525,6 +487,19 @@ local function onEntityRemoved(event)
 	
 	doTissueDrops(egcombat, entity)
 end
+
+--[[
+local function onEntityMarkedDeconstruct(event)	
+	local entity = event.entity
+	local player = event.player_index and game.players[event.player_index] or nil
+	
+	if entity.name == "turret-logistic-interface" or entity.name == "dome-circuit-connection" then
+		entity.cancel_deconstruction(player and player.force or entity.force)
+	end
+end
+
+script.on_event(defines.events.on_marked_for_deconstruction, onEntityMarkedDeconstruct)
+--]]
 
 --script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
 
