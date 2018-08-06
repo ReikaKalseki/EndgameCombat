@@ -401,6 +401,42 @@ data:extend(
 }
 )
 
+for i = 1,5 do
+data:extend({
+    {
+    type = "technology",
+    name = "lightning-turret-charging-" .. i,
+    icon = "__EndgameCombat__/graphics/technology/lightning-turret-charge-speed.png",
+    prerequisites =
+    {
+	  i == 1 and "lightning-turrets" or ("lightning-turret-charging-" .. i-1),
+    },
+	effects =
+	{
+	  {
+		type = "nothing",
+		effect_description = {"modifier-description.lightning-turret-charging", tostring(LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH/60), tostring((LIGHTNING_TURRET_RECHARGE_TIME-LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH*i)/60)}
+	  }
+	},
+    unit =
+    {
+      count = 400+(i-1)*100,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+      },
+      time = 75
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  }
+})
+end
+
 for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 	local ingredients = {
 			{"science-pack-1", 1},

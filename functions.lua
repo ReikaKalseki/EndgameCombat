@@ -337,6 +337,15 @@ local function clearTurretTarget(turret) --not possible right now
 
 end
 
+function getLightningRechargeTime(force)
+	local lvl = 1
+	while force.technologies["lightning-turret-charging-" .. lvl].researched and lvl <= 5 do
+		lvl = lvl+1
+	end
+	lvl = lvl-1
+	return LIGHTNING_TURRET_RECHARGE_TIME-lvl*LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH
+end
+
 function rechargeLightningTurret(egcombat, entity)
 	if egcombat.lightning_turrets[entity.force.name] and egcombat.lightning_turrets[entity.force.name][entity.unit_number] then
 		egcombat.lightning_turrets[entity.force.name][entity.unit_number].last_fire_time = game.tick
@@ -345,19 +354,36 @@ function rechargeLightningTurret(egcombat, entity)
 end
 
 function tickLightningTurret(entry, tick)
+	local mintime = getLightningRechargeTime(entry.turret.force)-entry.delay*2
+
+	if entry.turret.energy < LIGHTNING_TURRET_DISCHARGE_ENERGY then
+		entry.last_fire_time = tick
+		entry.played_charge_sound = false
+		if not entry.played_discharge_sound and tick-entry.last_fire_time >= 20 then
+			entry.turret.surface.create_entity{name = "lightning-discharge-sound", position = entry.turret.position}	
+			entry.played_discharge_sound = true
+		end
+	elseif not entry.played_charge_sound then
+		entry.turret.surface.create_entity{name = "lightning-charge-sound", position = entry.turret.position}
+		entry.played_charge_sound = true	
+		entry.played_discharge_sound = false
+	end
+	
+	if entry.last_fire_time and tick-entry.last_fire_time < mintime then
+		if entry.last_fire_direction then
+			entry.turret.orientation = entry.last_fire_direction
+		end
+		clearTurretTarget(entry.turret)
+		return
+	end
+	
 	if entry.turret.shooting_target and entry.turret.shooting_target.health < LIGHTNING_TURRET_HEALTH_THRESHOLD then
 		--game.print("Turret is currently targeting " .. entry.turret.shooting_target.name)
 		clearTurretTarget(entry.turret)
 		return
 	end
 	
-	local mintime = LIGHTNING_TURRET_RECHARGE_TIME-entry.delay*2
-	if tick-entry.last_fire_time < mintime then
-		entry.turret.orientation = entry.turret.last_fire_direction
-		clearTurretTarget(entry.turret)
-		return
-	end
-	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY and tick-entry.last_fire_time >= mintime then
+	if tick%entry.delay == 0 and entry.turret.energy >= LIGHTNING_TURRET_DISCHARGE_ENERGY and tick-entry.last_fire_time >= mintime then
 		--game.print("Running lightning targeting code.")
 		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 then --do not need to check range; vanilla does that automatically
 			if entry.turret.shooting_target.health >= LIGHTNING_TURRET_HEALTH_THRESHOLD then --was it locked onto an invalid target

@@ -42,7 +42,8 @@ LIGHTNING_TURRET_SCAN_RADIUS = 12
 LIGHTNING_TURRET_DISCHARGE_ENERGY = 6000000 --in J
 LIGHTNING_TURRET_DAMAGE = 12000
 LIGHTNING_TURRET_HEALTH_THRESHOLD = 500
-LIGHTNING_TURRET_RECHARGE_TIME = 60*10*0+1 --17.5 second recharge time (set by charge sound length), then a 10-second sound was used instead
+LIGHTNING_TURRET_RECHARGE_TIME = 60*10 --17.5 second recharge time (set by charge sound length), then a 10-second sound was used instead
+LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH = 60*0.5 -- therefore down to 7.5s at level 5
 
 SHIELD_REACTIVATE_FRACTION = 0.2
 MAX_DOME_STRENGTH_TECH_LEVEL = 100
