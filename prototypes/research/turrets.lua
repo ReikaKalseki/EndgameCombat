@@ -191,7 +191,6 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
-    
     {
     type = "technology",
     name = "last-stand-turrets",
@@ -218,6 +217,41 @@ data:extend(
         {"science-pack-2", 1},
         {"science-pack-3", 1},
         {"military-science-pack", 1},
+      },
+      time = 30
+    },
+    upgrade = false,
+    order = "a-f",
+	icon_size = 128,
+  },
+    {
+    type = "technology",
+    name = "lightning-turrets",
+    icon = "__EndgameCombat__/graphics/technology/lightning-turrets.png",
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "lightning-turret"
+      },
+    },
+    prerequisites =
+    {
+	  "better-turrets",
+	  "military-4",
+	  "shockwave-turrets",
+	  "advanced-electronics-2",
+    },
+    unit =
+    {
+      count = 400,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"science-pack-3", 1},
+        {"military-science-pack", 1},
+        {"high-tech-science-pack", 1},
       },
       time = 30
     },

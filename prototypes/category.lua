@@ -28,6 +28,10 @@ data:extend(
     type = "ammo-category",
     name = "acid-stream"
   },
+    {
+    type = "ammo-category",
+    name = "lightning-turret"
+  },
 }
 )
 

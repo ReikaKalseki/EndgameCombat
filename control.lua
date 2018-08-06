@@ -29,6 +29,9 @@ function initGlobal(markDirty)
 	if global.egcombat.shockwave_turrets == nil then
 		global.egcombat.shockwave_turrets = {}
 	end
+	if global.egcombat.lightning_turrets == nil then
+		global.egcombat.lightning_turrets = {}
+	end
 	if global.egcombat.orbital_indices == nil then
 		global.egcombat.orbital_indices = {}
 	end
@@ -131,11 +134,11 @@ local function trackNewTurret(egcombat, turret)
 			egcombat.placed_turrets[force.name] = {}
 		end
 		if turret.force.technologies["turret-range-1"].researched then
-			turret = convertTurretForRange(turret, getTurretRangeResearch(turret.force))
+			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(turret.force))
 		end
 		track_turret(egcombat.placed_turrets[force.name], turret)
 	
-		checkAndCacheTurret(turret, force)
+		checkAndCacheTurret(egcombat, turret, force)
 		--[[
 		if string.find(turret.name, "shockwave-turret", 1, true) then
 			if egcombat.shockwave_turrets[force.name] == nil then
@@ -160,7 +163,7 @@ local function reloadRangeTech()
 				if egcombat.placed_turrets[force.name] then
 					for k,entry in pairs(egcombat.placed_turrets[force.name]) do
 						if entry.turret.valid then
-							entry.turret = deconvertTurretForRange(entry.turret)
+							entry.turret = deconvertTurretForRange(egcombat, entry.turret)
 							trackNewTurret(egcombat, entry.turret)
 						end
 					end
@@ -268,6 +271,22 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
+	if egcombat.lightning_turrets then
+		for k,force in pairs(game.forces) do
+			if force ~= game.forces.enemy then
+				if egcombat.lightning_turrets[force.name] then
+					for unit, entry in pairs(egcombat.lightning_turrets[force.name]) do
+						if entry.turret.valid then
+							tickLightningTurret(entry, game.tick)
+						else
+							egcombat.lightning_turrets[force.name][unit] = nil
+						end
+					end
+				end
+			end
+		end
+	end
+	
 	if egcombat.shield_domes then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
@@ -356,7 +375,7 @@ local function onFinishedResearch(event)
 		for k,entry in pairs(egcombat.placed_turrets[force]) do
 			if entry.turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
-				convertTurretForRangeWhileKeepingSpecialCaches(entry.turret, lvl)
+				convertTurretForRangeWhileKeepingSpecialCaches(egcombat, entry.turret, lvl)
 			end
 		end
 	end
@@ -440,6 +459,10 @@ local function onEntityAdded(event)
         end
     end
 	
+	if string.find(entity.name, "lightning-turret", 1, true) then
+		entity.surface.create_entity{name = "lightning-charge-sound", position = entity.position}
+	end
+	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
 		local orig_name = entity.name
 		local turret = trackNewTurret(egcombat, entity)
@@ -457,6 +480,7 @@ local function onEntityMined(event)
 	removeShockwaveTurret(egcombat, entity)
 	removeCannonTurret(egcombat, entity)
 	removeShieldDome(egcombat, entity)
+	removeLightningTurret(egcombat, entity)
 	
 	removeTurretFromCache(egcombat, entity)
 end
@@ -468,6 +492,7 @@ local function onEntityRemoved(event)
 	removeShockwaveTurret(egcombat, entity)
 	removeCannonTurret(egcombat, entity)
 	removeShieldDome(egcombat, entity)
+	removeLightningTurret(egcombat, entity)
 	
 	if entity.name == "last-stand-turret" then
 		doLastStandDestruction(entity)
@@ -480,12 +505,28 @@ local function onEntityRemoved(event)
 	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
-		entity = deconvertTurretForRange(entity)
+		entity = deconvertTurretForRange(egcombat, entity)
 		removeTurretFromCache(egcombat, entity)
 		return
 	end
 	
 	doTissueDrops(egcombat, entity)
+end
+
+local function onEntityAttacked(event)	
+	local entity = event.entity
+	local source = event.cause
+	local egcombat = global.egcombat
+	
+	if source and string.find(source.name, "lightning-turret", 1, true) then
+		rechargeLightningTurret(egcombat, source)
+		local offset = source.position
+		local dx = entity.position.x-offset.x
+		local dy = entity.position.y-offset.y
+		offset.x = offset.x+dx/6
+		offset.y = offset.y+dy/6
+		entity.surface.create_entity({name="lightning-beam-fx", position=offset, force=source.force, target=entity, source=source})
+	end
 end
 
 --[[
@@ -501,7 +542,7 @@ end
 script.on_event(defines.events.on_marked_for_deconstruction, onEntityMarkedDeconstruct)
 --]]
 
---script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
+script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
 

@@ -69,7 +69,7 @@ for _,tech in pairs(data.raw.technology) do
 			for _,effect in pairs(tech.effects) do
 				if effect.type == "unlock-recipe" then
 					local recipe = data.raw.recipe[effect.recipe]
-					if not recipe then error("Tech set to unlock recipe '" .. effect.recipe .. "', which does not exist?!") end
+					if not recipe then error("Tech " .. tech.name .. " set to unlock recipe '" .. effect.recipe .. "', which does not exist?! This is a bug in that mod!") end
 					local output = recipe.result
 					if recipe.normal and not output then
 						output = recipe.normal.result

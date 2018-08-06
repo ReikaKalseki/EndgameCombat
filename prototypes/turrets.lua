@@ -122,6 +122,17 @@ data:extend(
     order = "f[gun-turret]-f[acid-turret-1-2]",
     place_result = "acid-turret",
     stack_size = 10
+  },
+  {
+    type = "item",
+    name = "lightning-turret",
+    icon = "__EndgameCombat__/graphics/icons/laser-turret.png",
+	icon_size = 32,
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[lightning-turret-1-2]",
+    place_result = "lightning-turret",
+    stack_size = 10
   }
 }
 )
@@ -753,4 +764,240 @@ data:extend({
     },
     speed = 0
   }
+})
+
+
+
+data:extend({
+{
+    type = "electric-turret",
+    name = "lightning-turret",
+    icon = "__EndgameCombat__/graphics/icons/laser-turret.png",
+	icon_size = 32,
+    flags = { "placeable-player", "placeable-enemy", "player-creation"},
+    minable = { mining_time = 0.5, result = "lightning-turret" },
+    max_health = 400, --glass cannon
+    corpse = "medium-remnants",
+    collision_box = {{ -0.7, -0.7}, {0.7, 0.7}},
+    selection_box = {{ -1, -1}, {1, 1}},
+    rotation_speed = 0.01,
+    preparing_speed = 0.05,
+	fast_replaceable_group = nil,
+    dying_explosion = "medium-explosion",
+    folding_speed = 0.05,
+    call_for_help_radius = LIGHTNING_TURRET_RANGE,
+    resistances = --glass cannon
+    {
+
+    },
+    energy_source =
+    {
+      type = "electric",
+      buffer_capacity = "8MJ", --6MJ to fire
+      input_flow_limit = "12MW",
+      drain = "200kW",
+      usage_priority = "primary-input"
+    },
+    folded_animation =
+    {
+      layers =
+      {
+        laser_turret_extension{frame_count=1, line_length = 1},
+        laser_turret_extension_shadow{frame_count=1, line_length=1},
+        laser_turret_extension_mask{frame_count=1, line_length=1}
+      }
+    },
+    preparing_animation =
+    {
+      layers =
+      {
+        laser_turret_extension{},
+        laser_turret_extension_shadow{},
+        laser_turret_extension_mask{}
+      }
+    },
+    prepared_animation =
+    {
+      layers =
+      {
+        {
+          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun.png",
+          line_length = 8,
+          width = 68,
+          height = 68,
+          frame_count = 1,
+          axially_symmetrical = false,
+          direction_count = 64,
+          shift = {0.0625, -1}
+        },
+        {
+          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun-mask.png",
+          line_length = 8,
+          width = 54,
+          height = 44,
+          frame_count = 1,
+          axially_symmetrical = false,
+          apply_runtime_tint = true,
+          direction_count = 64,
+          shift = {0.0625, -1.3125},
+        },
+        {
+          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun-shadow.png",
+          line_length = 8,
+          width = 88,
+          height = 52,
+          frame_count = 1,
+          axially_symmetrical = false,
+          direction_count = 64,
+          draw_as_shadow = true,
+          shift = {1.59375, 0}
+        }
+      }
+    },
+    folding_animation = 
+    {
+      layers =
+      {
+        laser_turret_extension{run_mode = "backward"},
+        laser_turret_extension_shadow{run_mode = "backward"},
+        laser_turret_extension_mask{run_mode = "backward"}
+      }
+    },
+    base_picture =
+    {
+      layers =
+      {
+        {
+          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-base.png",
+          priority = "high",
+          width = 98,
+          height = 82,
+          axially_symmetrical = false,
+          frame_count = 1,
+          direction_count = 1,
+          shift = { 0.109375, 0.03125 }
+        },
+        {
+          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-base-mask.png",
+          line_length = 1,
+          width = 54,
+          height = 46,
+          frame_count = 1,
+          axially_symmetrical = false,
+          apply_runtime_tint = true,
+          direction_count = 1,
+          shift = {0.046875, -0.109375},
+        },
+      }
+    },
+    vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
+    attack_parameters =
+    {
+      type = "projectile",
+      ammo_category = "lightning-turret",
+      cooldown = LIGHTNING_TURRET_RECHARGE_TIME,
+      range = LIGHTNING_TURRET_RANGE,
+      damage_modifier = 1,
+		ammo_type = {
+			category = "lightning-turret",
+			energy_consumption = LIGHTNING_TURRET_DISCHARGE_ENERGY .. "J",
+			action = {
+				type = "direct",
+				action_delivery = {
+					type = "beam",
+					beam = "lightning-beam",
+					max_length = LIGHTNING_TURRET_RANGE,
+					duration = 20,
+				}
+			}
+		},
+      sound = {
+		{ filename = "__EndgameCombat__/sounds/lightning/fire1.ogg", volume = 2 },
+		{ filename = "__EndgameCombat__/sounds/lightning/fire2.ogg", volume = 2 },
+		{ filename = "__EndgameCombat__/sounds/lightning/fire3.ogg", volume = 2 },
+		{ filename = "__EndgameCombat__/sounds/lightning/fire4.ogg", volume = 2 },
+	  },
+    }
+  },
+  {
+    type = "explosion",
+    name = "lightning-charge-sound",
+	icon_size = 32,
+    flags = {"not-on-map"},
+    animations =
+    {
+      {
+        filename = "__core__/graphics/empty.png",
+        priority = "extra-high",
+        flags = { "compressed" },
+        width = 1,
+        height = 1,
+		frame_count = 1
+      }
+    },
+    light = nil,
+    sound =
+    {
+      aggregation =
+      {
+        max_count = 5,
+        remove = true
+      },
+      variations =
+      {
+        {
+          filename = "__EndgameCombat__/sounds/lightning/charge.ogg",
+          volume = 0.75
+        },
+      }
+    },
+    created_effect = nil,--[[
+    {
+      type = "direct",
+      action_delivery =
+      {
+        type = "instant",
+        target_effects =
+        {
+          {
+            type = "create-particle",
+            repeat_count = 20,
+            entity_name = "explosion-remnants-particle",
+            initial_height = 0.5,
+            speed_from_center = 0.08,
+            speed_from_center_deviation = 0.15,
+            initial_vertical_speed = 0.08,
+            initial_vertical_speed_deviation = 0.15,
+            offset_deviation = {{-0.2, -0.2}, {0.2, 0.2}}
+          }
+        }
+      }
+    }--]]
+  },
+  {
+      type = "explosion",
+      name = "lightning-beam-fx",
+	  icon_size = 32,
+      flags = {"not-on-map", "placeable-off-grid"},
+      animation_speed = 0.5,
+      rotate = true,
+      beam = true,
+      animations =
+      {
+        {
+        filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-3-capped.png",
+        priority = "extra-high",
+        width = 24,
+        height = 256,
+        frame_count = 16,
+		animation_speed = 0.5,
+		scale = 1.6,
+		blend_mode = "additive",
+        }
+      },
+      light = {intensity = 0.8, size = 8},
+      smoke = "smoke-fast",
+      smoke_count = 1,
+      smoke_slow_down_factor = 1
+    },
 })

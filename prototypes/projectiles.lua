@@ -1,99 +1,98 @@
-data:extend({
-  --[[{
-    type = "projectile",
-    name = "nuke-projectile",
+require "constants"
+
+local function createLightningBeam()
+	local color = {r=0,g=0,b=0}--{r = 34/255, g = 170/255, b = 1}
+  return {
+    type = "beam",
+    name = "lightning-beam",
     flags = {"not-on-map"},
-    acceleration = 0.005,
-    action =
-    {
+    width = 1.5,
+    damage_interval = LIGHTNING_TURRET_RECHARGE_TIME,
+    light = {intensity = 0.85, size = 20},
+    working_sound = nil,
+    action = {
       type = "direct",
-      action_delivery =
-      {
+      action_delivery = {
         type = "instant",
-        target_effects =
-        {
+        target_effects = {
           {
             type = "create-entity",
-            entity_name = "explosion"
+            entity_name = "lightning-charge-sound"
           },
           {
-            type = "nested-result",
-            action =
-            {
-              type = "area",
-              perimeter = 50,
-              action_delivery =
-              {
-                type = "instant",
-                target_effects =
-                {
-				  {
-                    type = "damage",
-                    damage = {amount = 1000, type = "physical"}
-                  },
-				  {
-                    type = "damage",
-                    damage = {amount = 600, type = "fire"}
-                  },
-				  {
-                    type = "damage",
-                    damage = {amount = 300, type = "acid"}
-                  },
-				  {
-                    type = "damage",
-                    damage = {amount = 600, type = "impact"}
-                  },
-                  {
-                    type = "damage",
-                    damage = {amount = 2000, type = "explosion"}
-                  },
-				  {
-                    type = "damage",
-                    damage = {amount = 500, type = "radiation"}
-                  },
-                  {
-                    type = "create-entity",
-                    entity_name = "explosion"
-                  }
-                }
-              }
-            },
+            type = "damage",
+            damage = {amount = LIGHTNING_TURRET_DAMAGE, type = "electric"}
           }
         }
       }
     },
-    light = {intensity = 0.85, size = 6},
-    animation =
-    {
-      filename = "__base__/graphics/entity/rocket/rocket.png",
-      frame_count = 1,
-      width = 10,
-      height = 30,
-      priority = "high"
+    head = {
+      filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-head-2.png",
+      line_length = 16,
+      tint = color,
+      frame_count = 12,
+      x = 45 * 4,
+      width = 45,
+      height = 1,
+      priority = "high",
+      animation_speed = 0.5,
+      blend_mode = "additive-soft"
     },
-    shadow =
-    {
-      filename = "__base__/graphics/entity/rocket/rocket-shadow.png",
-      frame_count = 1,
-      width = 10,
-      height = 30,
-      priority = "high"
+    start = {
+      filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-head-2.png",
+      line_length = 16,
+      tint = color,
+      frame_count = 12,
+      x = 45 * 4,
+      width = 45,
+      height = 1,
+      priority = "high",
+      animation_speed = 0.5,
+      blend_mode = "additive-soft"
     },
-    smoke =
-    {
+	ending = {
+      filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-head-2.png",
+      line_length = 16,
+      tint = color,
+      frame_count = 12,
+      x = 45 * 4,
+      width = 45,
+      height = 1,
+      priority = "high",
+      animation_speed = 0.5,
+      blend_mode = "additive-soft"
+    },
+    tail = {
+      filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-tail-3.png",
+      line_length = 16,
+      tint = color,
+      frame_count = 12,
+      x = 48 * 4,
+      width = 48,
+      height = 24,
+      priority = "high",
+      animation_speed = 0.5,
+      blend_mode = "additive-soft"
+    },
+    body = {
       {
-        name = "smoke-fast",
-        deviation = {0.15, 0.15},
-        frequency = 1,
-        position = {0, 0},
-        slow_down_factor = 1,
-        starting_frame = 3,
-        starting_frame_deviation = 5,
-        starting_frame_speed = 0,
-        starting_frame_speed_deviation = 5
+        filename = "__EndgameCombat__/graphics/entity/lightning-turret/lightning-beam-body-2.png",
+        line_length = 16,
+        tint = color,
+        frame_count = 12,
+        x = 48 * 4,
+        width = 48,
+        height = 24,
+        priority = "high",
+        animation_speed = 0.5,
+        blend_mode = "additive-soft"
       }
     }
-  },--]]
+  }
+end
+
+
+data:extend({
     {
     type = "projectile",
     name = "neutron-projectile",
@@ -254,42 +253,6 @@ data:extend({
       }
     }
   },
-  
-  --[[
-  {
-    type = "explosion",
-    name = "uranium-explosion",
-	icon_size = 32,
-    flags = {"not-on-map"},
-    animations =
-    {
-      {
-        filename = "__UraniumPower__/graphics/entity/explosions/uranium-explosion-1.png",
-        priority = "extra-high",
-        width = 256,
-        height = 256,
-        frame_count = 64,
-		line_length = 8,
-		scale = 3,
-        animation_speed = 0.5
-      },
-    },
-    light = {intensity = 1, size = 40},
-    smoke = "smoke-fast",
-    smoke_count = 2,
-    smoke_slow_down_factor = 1,
-    sound =
-    {
-      {
-        filename = "__base__/sound/fight/small-explosion-1.ogg",
-        volume = 0.75
-      },
-      {
-        filename = "__base__/sound/fight/small-explosion-2.ogg",
-        volume = 0.75
-      }
-    }
-  },]]
   {
     type = "projectile",
     name = "hiex-cannon-projectile-big",
@@ -393,7 +356,7 @@ data:extend({
     },
     speed = 0.1875
   },
-  
+createLightningBeam(),  
     {
     type = "projectile",
     name = "radiation-capsule",

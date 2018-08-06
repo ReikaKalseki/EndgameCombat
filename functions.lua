@@ -323,8 +323,90 @@ function spawnFireArea(entity)
 	end
 end
 
+local function clearTurretTarget(turret) --not possible right now
+	--turret.shooting_target = nil --cannot assign nil (yet?)
+	
+	--if turret.shooting_target and turret.shooting_target.name == "laser-turret" then return end
+	--local dummy = turret.surface.create_entity({name = "laser-turret", position = {turret.position.x+25, turret.position.y-25}, force = game.forces.enemy})
+	--turret.shooting_target = dummy
+	
+	--turret.orientation = turret.orientation+0.05 --ranges from 0 to 1
+	
+	--turret.active = false
+	
+
+end
+
+function rechargeLightningTurret(egcombat, entity)
+	if egcombat.lightning_turrets[entity.force.name] and egcombat.lightning_turrets[entity.force.name][entity.unit_number] then
+		egcombat.lightning_turrets[entity.force.name][entity.unit_number].last_fire_time = game.tick
+		egcombat.lightning_turrets[entity.force.name][entity.unit_number].last_fire_direction = entity.orientation
+	end
+end
+
+function tickLightningTurret(entry, tick)
+	if entry.turret.shooting_target and entry.turret.shooting_target.health < LIGHTNING_TURRET_HEALTH_THRESHOLD then
+		--game.print("Turret is currently targeting " .. entry.turret.shooting_target.name)
+		clearTurretTarget(entry.turret)
+		return
+	end
+	
+	local mintime = LIGHTNING_TURRET_RECHARGE_TIME-entry.delay*2
+	if tick-entry.last_fire_time < mintime then
+		entry.turret.orientation = entry.turret.last_fire_direction
+		clearTurretTarget(entry.turret)
+		return
+	end
+	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY and tick-entry.last_fire_time >= mintime then
+		--game.print("Running lightning targeting code.")
+		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 then --do not need to check range; vanilla does that automatically
+			if entry.turret.shooting_target.health >= LIGHTNING_TURRET_HEALTH_THRESHOLD then --was it locked onto an invalid target
+				--game.print("Lightning turret already has a target.")
+			else
+				clearTurretTarget(entry.turret)
+			end
+			return
+		end
+		local dr = getTurretRangeBoost(entry.turret.force)
+		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
+		local scan = entry.delay >= 60
+		local search = LIGHTNING_TURRET_SCAN_RADIUS+dr
+		if scan then
+			search = search+5
+		end
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, search, entry.turret.force)
+		if #enemies > 0 then
+			--game.print(#enemies .. " @ " .. entry.delay .. " > " .. (scan and "scanning" or "acting"))
+			if not scan then
+				local strongest = nil
+				for _,biter in pairs(enemies) do
+					if biter.valid and biter.health >= LIGHTNING_TURRET_HEALTH_THRESHOLD then
+						local d = getDistance(biter, entry.turret)
+						if d <= LIGHTNING_TURRET_RANGE+dr then
+							if strongest == nil or biter.health > strongest.health then
+								strongest = biter
+							end
+						end
+					end
+				end
+				if strongest then
+					local last = entry.turret.shooting_target
+					entry.turret.shooting_target = strongest
+					--game.print("Locking on " .. strongest.name .. --[[" @ " .. strongest.position.x .. " , " .. strongest.position.y .. --]]" ; last = " .. (last and (last.name --[[.. " @ " .. last.position.x .. " , " .. last.position.y--]]) or "nil"))
+					entry.turret.active = true
+				else
+					clearTurretTarget(entry.turret)
+				end
+			end
+			entry.delay = math.max(10, entry.delay-15)
+		else
+			entry.delay = math.min(90, entry.delay+10)
+		end
+	end
+end
+
 function tickCannonTurret(entry, tick)
-	if game.tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
+	if tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
 		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and string.find(entry.turret.shooting_target.name, "spitter", 1, true) then
 			return
 		end
@@ -360,7 +442,7 @@ function tickCannonTurret(entry, tick)
 end
 
 function tickShockwaveTurret(entry, tick)
-	if game.tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
+	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 40
 		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+math.floor(getTurretRangeBoost(entry.turret.force)/2), entry.turret.force)
@@ -381,7 +463,7 @@ function tickShockwaveTurret(entry, tick)
 						local maxh = game.entity_prototypes[biter.name].max_health
 						local dmg = maxh < 20 and 4*(1+(f-1)*1.5) or math.min(cap*(1+(f-1)*2), math.max(3, math.min(maxh/2, maxh*f/10)))
 						biter.damage(dmg, entry.turret.force, "electric")
-						if scan or game.tick%(6*entry.delay) == 0 or (not biter.valid) or biter.health <= 0 then
+						if scan or tick%(6*entry.delay) == 0 or (not biter.valid) or biter.health <= 0 then
 							entry.turret.surface.create_entity({name="blood-explosion-small", position=pos, force=force})
 						end
 						entry.turret.damage_dealt = entry.turret.damage_dealt+dmg
@@ -455,6 +537,12 @@ function removeShieldDome(egcombat, entity)
 			entry.circuit.destroy()
 		end
 		egcombat.shield_domes[entity.force.name][entity.unit_number] = nil
+	end
+end
+
+function removeLightningTurret(egcombat, entity)
+	if string.find(entity.name, "lightning-turret", 1, true) and egcombat.lightning_turrets[entity.force.name] then
+		egcombat.lightning_turrets[entity.force.name][entity.unit_number] = nil
 	end
 end
 
@@ -562,7 +650,7 @@ local function replaceTurretKeepingContents(turret, newname)
 	return repl
 end
 
-function convertTurretForRange(turret, level)
+function convertTurretForRange(egcombat, turret, level)
 	if level == 0 then return turret end
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
@@ -570,42 +658,51 @@ function convertTurretForRange(turret, level)
 	return game.entity_prototypes[n] and replaceTurretKeepingContents(turret, n) or turret --if does not have a counterpart (technical entity), just return the original
 end
 
-function convertTurretForRangeWhileKeepingSpecialCaches(turret, level)
-	local ret = convertTurretForRange(turret, level)
+function convertTurretForRangeWhileKeepingSpecialCaches(egcombat, turret, level)
+	local ret = convertTurretForRange(egcombat, turret, level)
 	local force = ret.force
-	checkAndCacheTurret(ret, force)
+	checkAndCacheTurret(egcombat, ret, force)
 end
 
-function checkAndCacheTurret(turret, force)
+function checkAndCacheTurret(egcombat, turret, force)
 	if string.find(turret.name, "shockwave-turret", 1, true) then
-		if global.egcombat.shockwave_turrets[force.name] == nil then
-			global.egcombat.shockwave_turrets[force.name] = {}
+		if egcombat.shockwave_turrets[force.name] == nil then
+			egcombat.shockwave_turrets[force.name] = {}
 		end
-		table.insert(global.egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
+		table.insert(egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
 		--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 	
 	if string.find(turret.name, "cannon-turret", 1, true) then
-		if global.egcombat.cannon_turrets[force.name] == nil then
-			global.egcombat.cannon_turrets[force.name] = {}
+		if egcombat.cannon_turrets[force.name] == nil then
+			egcombat.cannon_turrets[force.name] = {}
 		end
-		table.insert(global.egcombat.cannon_turrets[force.name], {turret=turret, delay=90})
+		table.insert(egcombat.cannon_turrets[force.name], {turret=turret, delay=90})
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 	
+	if string.find(turret.name, "lightning-turret", 1, true) then
+		if egcombat.lightning_turrets[force.name] == nil then
+			egcombat.lightning_turrets[force.name] = {}
+		end
+		egcombat.lightning_turrets[force.name][turret.unit_number] = {turret=turret, delay=90}
+		rechargeLightningTurret(egcombat, turret)
+		--game.print("Lightning turret @ " .. turret.position.x .. ", " .. turret.position.y)
+	end
+	
 	if string.find(turret.name, "shield-dome", 1, true) then
-		if global.egcombat.shield_domes[force.name] == nil then
-			global.egcombat.shield_domes[force.name] = {}
+		if egcombat.shield_domes[force.name] == nil then
+			egcombat.shield_domes[force.name] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
 		local conn = turret.surface.create_entity({name="dome-circuit-connection", position = {turret.position.x+0.75, turret.position.y+0.75}, force=force})
 		conn.operable = false
-		global.egcombat.shield_domes[force.name][turret.unit_number] = {dome=turret, circuit = conn, delay = 60, index = idx, current_shield = 0, strength_factor = getCurrentDomeStrengthFactor(force), cost_factor = getCurrentDomeCostFactor(force), edges = {}}
+		egcombat.shield_domes[force.name][turret.unit_number] = {dome=turret, circuit = conn, delay = 60, index = idx, current_shield = 0, strength_factor = getCurrentDomeStrengthFactor(force), cost_factor = getCurrentDomeCostFactor(force), edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)
 	end
 end
 
-function deconvertTurretForRange(turret)
+function deconvertTurretForRange(egcombat, turret)
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
 	if string.find(turret.name, "-rangeboost-", 1, true) then

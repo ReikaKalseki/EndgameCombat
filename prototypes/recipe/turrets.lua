@@ -82,5 +82,16 @@
     },
     result = "acid-turret"
   },
+ {
+    type = "recipe",
+    name = "lightning-turret",
+    enabled = "false",
+    ingredients =
+    {
+      {"copper-cable", 200},
+      {"processing-unit", 18},
+    },
+    result = "lightning-turret"
+  },
 }
 )

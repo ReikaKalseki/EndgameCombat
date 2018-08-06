@@ -15,7 +15,7 @@ end
 
 local function shouldCreateRangeTurret(base)
 	if isTechnicalTurret(base.name) then return false end
-	if base.type == "artillery-turret" then return false end
+	if base.type == "artillery-turret" or base.type == "artillery-wagon" then return false end
 	return base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result --skip technicals
 end
 
@@ -110,6 +110,9 @@ for _,tech in pairs(data.raw.technology) do
 				end
 				if not base then
 					base = data.raw["artillery-turret"][effect.turret_id]
+				end
+				if not base then
+					base = data.raw["artillery-wagon"][effect.turret_id]
 				end
 				if not base then error("Tech " .. tech.name .. " set to boost turret '" .. effect.turret_id .. "', which does not exist! This is a bug in that mod!") end
 				if shouldCreateRangeTurret(base) then
