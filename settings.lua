@@ -72,4 +72,11 @@ data:extend({
             default_value = 3,
             order = "r",
         },
+		{
+            type = "bool-setting",
+            name = "super-biters",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
 })

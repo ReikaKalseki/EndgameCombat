@@ -89,42 +89,6 @@ return
 end
 
 function createTotalResistance()
---[[
-	resistances = {
-	  {
-        type = "fire",
-        percent = 100
-      },
-	  {
-        type = "physical",
-        percent = 100
-      },
-	  {
-        type = "acid",
-        percent = 100
-      },
-	  {
-        type = "impact",
-        percent = 100
-      },
-	  {
-        type = "piercing",
-        percent = 100
-      },
-	  {
-        type = "electric",
-        percent = 100
-      },
-	  {
-        type = "explosion",
-        percent = 100
-      },
-	  {
-        type = "poison",
-        percent = 100
-      },
-	}
-	--]]
 	local ret = {}
 	for name,damage in pairs(data.raw["damage-type"]) do
 		table.insert(ret, {type = name, percent = 100})

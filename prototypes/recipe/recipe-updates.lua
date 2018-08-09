@@ -102,8 +102,8 @@ if data.raw.item["silver-zinc-battery"] then
 	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"silver-zinc-battery", 50})
 	table.insert(data.raw["technology"]["lightning-turrets"].prerequisites, "battery-3")
 else
-	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"electric-energy-accumulator", 40})
-	table.insert(data.raw["technology"]["lightning-turrets"].prerequisites, "battery")
+	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"accumulator", 40})
+	table.insert(data.raw["technology"]["lightning-turrets"].prerequisites, "electric-energy-accumulators-1")
 end
 
 if data.raw.item["substation-4"] then

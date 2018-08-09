@@ -15,3 +15,10 @@ Config.radiationTimer = settings.startup["radiation-timer"].value--15
 Config.cratedAmmoBoost = settings.startup["crated-ammo-boost"].value--10
 
 Config.rottingFlesh = settings.startup["rotting-flesh"].value--true
+
+Config.superBiters = settings.startup["super-biters"].value--true
+
+Config.error = function(msg)
+	msg = msg .. " [This error can be silenced in the EndgameCombat config.lua]"
+	error(msg) --change 'error' to 'log' (or remove this line entirely) to have the game not halt. DO NOTE THAT THIS RISKS CRASHES LATER ON!
+end

@@ -933,11 +933,16 @@ data:extend({
 			}
 		},
       sound = {
+      aggregation =
+      {
+        max_count = 25,
+        remove = true
+      }, variations = {
 		{ filename = "__EndgameCombat__/sounds/lightning/fire1.ogg", volume = 2 },
 		{ filename = "__EndgameCombat__/sounds/lightning/fire2.ogg", volume = 2 },
 		{ filename = "__EndgameCombat__/sounds/lightning/fire3.ogg", volume = 2 },
 		{ filename = "__EndgameCombat__/sounds/lightning/fire4.ogg", volume = 2 },
-	  },
+	  }},
     }
   },
   {

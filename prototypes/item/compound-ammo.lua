@@ -69,12 +69,12 @@ for _,tech in pairs(data.raw.technology) do
 			for _,effect in pairs(tech.effects) do
 				if effect.type == "unlock-recipe" then
 					local recipe = data.raw.recipe[effect.recipe]
-					if not recipe then error("Tech " .. tech.name .. " set to unlock recipe '" .. effect.recipe .. "', which does not exist?! This is a bug in that mod!") end
+					if not recipe then Config.error("Tech " .. tech.name .. " set to unlock recipe '" .. effect.recipe .. "', which does not exist?! This is a bug in that mod!") end
 					local output = recipe.result
 					if recipe.normal and not output then
 						output = recipe.normal.result
 					end
-					--if not output then error("Tech set to unlock recipe '" .. effect.recipe .. "', which has a null output?!") end --apparently allowed
+					--if not output then Config.error("Tech set to unlock recipe '" .. effect.recipe .. "', which has a null output?!") end --apparently allowed
 					if output then
 						if ammo.original.name == output then
 							table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name})
