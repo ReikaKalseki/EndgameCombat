@@ -41,3 +41,23 @@ data:extend({
     circuit_wire_max_distance = 12,
   },
 })
+
+local function createAlertSignal(name)
+	data:extend({{
+		type = "virtual-signal",
+		name = name,
+		icon = "__EndgameCombat__/graphics/icons/" .. name .. ".png",
+		icon_size = 64,
+		subgroup = "virtual-signal-special",
+		order = name,
+	}})
+end
+
+createAlertSignal("turret-health-critical")
+createAlertSignal("turret-health-low")
+createAlertSignal("turret-ammo-empty")
+createAlertSignal("turret-ammo-critical")
+createAlertSignal("turret-ammo-low")
+createAlertSignal("turret-energy-empty")
+createAlertSignal("turret-energy-critical")
+createAlertSignal("turret-energy-low")

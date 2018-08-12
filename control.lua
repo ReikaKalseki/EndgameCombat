@@ -64,15 +64,25 @@ local function convertTurretCache(egcombat)
 			egcombat.placed_turrets[force.name] = {}
 			--game.print("Adding force " .. force.name .. " to turret table")
 		end
-		if #egcombat.placed_turrets[force.name] > 0 and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
-			local repl = {}
-			for _,turret in pairs(egcombat.placed_turrets[force.name]) do
-				local entry = createTurretEntry(turret)
-				if entry then
-					table.insert(repl, entry)
+		if #egcombat.placed_turrets[force.name] > 0 then
+			if egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
+				game.print("Converting turret cache to entries.")
+				local repl = {}
+				for _,turret in pairs(egcombat.placed_turrets[force.name]) do
+					local entry = createTurretEntry(turret)
+					if entry then
+						table.insert(repl, entry)
+					end
 				end
+				egcombat.placed_turrets[force.name] = repl
+			elseif isTableAnArray(egcombat.placed_turrets[force.name]) then --using int keys, not unit_number
+				game.print("Converting turret cache to unit-based indexing.")
+				local entries = {}
+				for _,entry in pairs(egcombat.placed_turrets[force.name]) do
+					entries[entry.turret.unit_number] = entry
+				end
+				egcombat.placed_turrets[force.name] = entries
 			end
-			egcombat.placed_turrets[force.name] = repl
 		end
 	end
 end
@@ -88,19 +98,7 @@ script.on_configuration_changed(function()
 end)
 
 local function track_turret(entity_list, turret)
-	--game.print(#entity_list)
-    for i = #entity_list, 1, -1 do
-        local entry = entity_list[i]
-        if not entry.turret.valid then
-            table.remove(entity_list, i)
-        elseif entry.turret == turret then
-			--game.print("already in list?!")
-            return
-        end
-    end
-
-	--game.print("placing " .. entity.name)
-    table.insert(entity_list, createTurretEntry(turret))
+    entity_list[turret.unit_number] = createTurretEntry(turret)
 end
 
 local function removeTurretFromCache(egcombat, turret)
@@ -108,23 +106,16 @@ local function removeTurretFromCache(egcombat, turret)
 	--game.print("Reading remove of " .. turret.name .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
 	if not entity_list then return end
 	--game.print(#entity_list)
-    for i = #entity_list, 1, -1 do
-        local entry = entity_list[i]
-        if (not entry.turret.valid) or entry.turret == turret or entry.turret.position == turret.position then
-            table.remove(entity_list, i)
-			if entry.logistic then
-				local inv = entry.logistic.get_inventory(defines.inventory.chest)
-				for name,count in pairs(inv.get_contents()) do
-					entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)
-				end
-				inv.clear()
-				entry.logistic.destroy()
-			end
-			--game.print("removing " .. entity.name)
-            return
-        end
-    end
-	--game.print("Could not find " .. entity.name)
+    local entry =  entity_list[turret.unit_number]
+	entity_list[turret.unit_number] = nil
+	if entry.logistic then
+		local inv = entry.logistic.get_inventory(defines.inventory.chest)
+		for name,count in pairs(inv.get_contents()) do
+			entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)
+		end
+		inv.clear()
+		entry.logistic.destroy()
+	end
 end
 
 local function trackNewTurret(egcombat, turret)
@@ -515,9 +506,9 @@ local function onEntityAttacked(event)
 	local egcombat = global.egcombat
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
-		updateTurretMonitoring(entity)
+		updateTurretMonitoring(egcombat, entity)
 	elseif source and (source.type == "ammo-turret" or source.type == "electric-turret" or source.type == "fluid-turret" or source.type == "turret" or source.type == "artillery-turret") then
-		updateTurretMonitoring(source)
+		updateTurretMonitoring(egcombat, source)
 		if string.find(source.name, "lightning-turret", 1, true) then
 			rechargeLightningTurret(egcombat, source)
 			local offset = source.position

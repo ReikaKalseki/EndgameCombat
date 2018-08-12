@@ -79,4 +79,11 @@ data:extend({
             default_value = true,
             order = "r",
         },
+		{
+            type = "int-setting",
+            name = "low-ammo-warning",
+            setting_type = "runtime-global",
+            default_value = 150,
+            order = "r",
+        },
 })
