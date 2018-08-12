@@ -6,6 +6,7 @@ require "constants"
 
 require "shield-domes"
 require "orbital-strikes"
+require "turret-alerts"
 
 function initGlobal(markDirty)
 	if not global.egcombat then
@@ -49,6 +50,9 @@ function initGlobal(markDirty)
 	end
 	if global.egcombat.shield_dome_edges == nil then
 		global.egcombat.shield_dome_edges = {}
+	end
+	if global.egcombat.turret_alarms == nil then
+		global.egcombat.turret_alarms = {}
 	end
 	global.egcombat.dirty = markDirty
 	
@@ -107,6 +111,7 @@ local function removeTurretFromCache(egcombat, turret)
 	if not entity_list then return end
 	--game.print(#entity_list)
     local entry =  entity_list[turret.unit_number]
+	--if not entry then game.print("Turret " .. turret.name .. " had no entry?!") return end --this is normal when rangeboost is enabled
 	entity_list[turret.unit_number] = nil
 	if entry.logistic then
 		local inv = entry.logistic.get_inventory(defines.inventory.chest)
@@ -214,6 +219,10 @@ script.on_event(defines.events.on_tick, function(event)
 		egcombat.dirty = false
 	end
 	
+	if Config.continueAlarms and event.tick%60 == 0 then
+		tickTurretAlarms(egcombat, event.tick)
+	end
+	
 	if egcombat.placed_turrets then
 		for k,force in pairs(game.forces) do
 			if force ~= game.forces.enemy then
@@ -222,7 +231,7 @@ script.on_event(defines.events.on_tick, function(event)
 					if force.technologies["healing-alloys-1"].researched then
 						repairTurrets(egcombat, force)
 					end
-					if force.technologies["turret-logistics"].researched and game.tick%120 == 0 then
+					if force.technologies["turret-logistics"].researched and event.tick%120 == 0 then
 						handleTurretLogistics(egcombat, force)
 					end
 				end
@@ -236,7 +245,7 @@ script.on_event(defines.events.on_tick, function(event)
 				if egcombat.shockwave_turrets[force.name] then
 					for i, entry in ipairs(egcombat.shockwave_turrets[force.name]) do
 						if entry.turret.valid then
-							tickShockwaveTurret(entry, game.tick)
+							tickShockwaveTurret(entry, event.tick)
 						else
 							table.remove(egcombat.shockwave_turrets[force.name], i)
 						end
@@ -252,7 +261,7 @@ script.on_event(defines.events.on_tick, function(event)
 				if egcombat.cannon_turrets[force.name] then
 					for i, entry in ipairs(egcombat.cannon_turrets[force.name]) do
 						if entry.turret.valid then
-							tickCannonTurret(entry, game.tick)
+							tickCannonTurret(entry, event.tick)
 						else
 							table.remove(egcombat.cannon_turrets[force.name], i)
 						end
@@ -268,7 +277,7 @@ script.on_event(defines.events.on_tick, function(event)
 				if egcombat.lightning_turrets[force.name] then
 					for unit, entry in pairs(egcombat.lightning_turrets[force.name]) do
 						if entry.turret.valid then
-							tickLightningTurret(entry, game.tick)
+							tickLightningTurret(entry, event.tick)
 						else
 							egcombat.lightning_turrets[force.name][unit] = nil
 						end
@@ -284,7 +293,7 @@ script.on_event(defines.events.on_tick, function(event)
 				if egcombat.shield_domes[force.name] then
 					for unit, entry in pairs(egcombat.shield_domes[force.name]) do
 						if entry.dome.valid then
-							tickShieldDome(egcombat, entry, game.tick)
+							tickShieldDome(egcombat, entry, event.tick)
 						else
 							for biter,edge in pairs(entry.edges) do
 								edge.entity.destroy()
@@ -314,7 +323,7 @@ script.on_event(defines.events.on_tick, function(event)
 			local entry = egcombat.fleshToDeconstruct[i]
 			local item = entry.entity ~= nil and entry.entity or entry[1]
 			local tick = entry.time ~= nil and entry.time or entry[2]
-			if game.tick >= tick or not item.valid then
+			if event.tick >= tick or not item.valid then
 				if item.valid then
 					item.order_deconstruction(game.forces.player)
 				end
@@ -346,7 +355,7 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 	end
 	
-	if #game.players > 0 and game.tick%60 == 0 then
+	if #game.players > 0 and event.tick%60 == 0 then
 		local player = game.players[math.random(1, #game.players)]
 		cleanTissueNearPlayer(egcombat, player)
 	end
@@ -469,7 +478,9 @@ local function onEntityMined(event)
 	removeShieldDome(egcombat, entity)
 	removeLightningTurret(egcombat, entity)
 	
-	removeTurretFromCache(egcombat, entity)
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
+		removeTurretFromCache(egcombat, entity)
+	end
 end
 
 local function onEntityRemoved(event)	
@@ -492,8 +503,9 @@ local function onEntityRemoved(event)
 	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
-		entity = deconvertTurretForRange(egcombat, entity)
 		removeTurretFromCache(egcombat, entity)
+		entity = deconvertTurretForRange(egcombat, entity)
+		entity.die()
 		return
 	end
 	

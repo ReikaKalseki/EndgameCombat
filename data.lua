@@ -37,3 +37,5 @@ require("prototypes.research.ammo")
 require("prototypes.research.defense")
 require("prototypes.research.turrets")
 require("prototypes.research.upgrades")
+
+require("turret-alerts")

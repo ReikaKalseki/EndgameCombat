@@ -236,76 +236,12 @@ function isTableAnArray(t)
 	
 	--check if indices are 1->N in order
 	for i = 1,count do
-		if not t[i] and type(t[i]) ~= "nil" then --The value might be nil, have to check the type too
+		if (not t[i]) and type(t[i]) ~= "nil" then --The value might be nil, have to check the type too
 			return false
 		end
 	end
 	return true
 end
-
-local function raiseTurretAlarm(turret, alarm)
-	alarm = "turret-" .. alarm
-	for _,player in pairs (game.connected_players) do
-		if player.force == turret.force then
-			player.add_custom_alert(turret, {type = "virtual", name = alarm}, {alarm}, true)
-		end
-	end
-end
-
-function updateTurretMonitoring(egcombat, turret)
-	local force = turret.force
-	if not force.technologies["turret-monitoring"].researched then return end
-	
-	if egcombat.placed_turrets[force.name] == nil then
-		egcombat.placed_turrets[force.name] = {}
-	end
-	local entry = egcombat.placed_turrets[force.name][turret.unit_number]
-	if turret.health < 0.125*turret.prototype.max_health then
-		raiseTurretAlarm(turret, "health-critical")
-	else if turret.health < 0.5*turret.prototype.max_health then
-		raiseTurretAlarm(turret, "health-low")
-	end
-	
-	if turret.type == "ammo-turret" then
-		local inv = entry.turret.get_inventory(defines.inventory.turret_ammo) 
-		if inv[1] == nil or (not inv[1].valid_for_read) then
-			raiseTurretAlarm(turret, "ammo-empty")
-		else
-			local ammo = inv[1].amount*inv[1].prototype.magazine_size
-			if ammo <= Config.lowAmmoThreshold/4 then
-				raiseTurretAlarm(turret, "ammo-critical")
-			else if ammo <= Config.lowAmmoThreshold then
-				raiseTurretAlarm(turret, "ammo-low")
-			end
-		end
-	elseif turret.type == "electric-turret" then
-		local e = turret.energy
-		if e == 0 then
-			raiseTurretAlarm(turret, "energy-empty")
-		else
-			local cap = turret.prototype.electric_energy_source_prototype and turret.prototype.electric_energy_source_prototype.buffer_capacity or nil
-			if cap then
-				if ammo <= cap/3 then
-					raiseTurretAlarm(turret, "energy-critical")
-				else if ammo <= cap*0.75 then
-					raiseTurretAlarm(turret, "energy-low")
-				end
-			end
-		end
-	elseif turret.type == "fluid-turret" then
-		local inv = turret.fluidbox[1]
-		if inv[1] == nil or (not inv[1].valid) then
-			raiseTurretAlarm(turret, "ammo-empty")
-		else
-			local ammo = inv[1].amount
-			local cap = turret.fluidbox.get_capacity(1)
-			if ammo <= cap/4 then
-				raiseTurretAlarm(turret, "ammo-critical")
-			else if ammo <= cap/2 then
-				raiseTurretAlarm(turret, "ammo-low")
-			end
-		end
-	end
 
 function doLastStandDestruction(turret)
 	--game.print("Doing last stand @ " .. turret.position.x .. " , " .. turret.position.y)

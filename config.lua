@@ -18,7 +18,9 @@ Config.rottingFlesh = settings.startup["rotting-flesh"].value--true
 
 Config.superBiters = settings.startup["super-biters"].value--true
 
-Config.lowAmmoThreshold = settings.global["low-ammo-warning"].value--true
+Config.lowAmmoThreshold = settings.global and settings.global["low-ammo-warning"].value or 0
+
+Config.continueAlarms = settings.startup["continue-alarms"].value
 
 Config.error = function(msg)
 	msg = msg .. " [This error can be silenced in the EndgameCombat config.lua]"

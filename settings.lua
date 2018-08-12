@@ -86,4 +86,11 @@ data:extend({
             default_value = 150,
             order = "r",
         },
+		{
+            type = "bool-setting",
+            name = "continue-alarms",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
 })
