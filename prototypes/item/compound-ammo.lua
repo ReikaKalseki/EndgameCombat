@@ -38,7 +38,7 @@ for _,ammo in pairs(ammos) do
 			name = ammo.item.name,
 			enabled = "true",
 			energy_required = 0.2,
-			category = "advanced-crafting",
+			category = data.raw["recipe-category"]["non-manual-crafting"] and "non-manual-crafting" or "advanced-crafting",
 			ingredients =
 			{
 			  {ammo.original.name, AMMO_CRATE_CAPACITY/ammo.original.magazine_size},
@@ -70,19 +70,21 @@ for _,tech in pairs(data.raw.technology) do
 				if effect.type == "unlock-recipe" then
 					local recipe = data.raw.recipe[effect.recipe]
 					if not recipe then Config.error("Tech " .. tech.name .. " set to unlock recipe '" .. effect.recipe .. "', which does not exist?! This is a bug in that mod!") end
-					local output = recipe.result
-					if recipe.normal and not output then
-						output = recipe.normal.result
-					end
-					--if not output then Config.error("Tech set to unlock recipe '" .. effect.recipe .. "', which has a null output?!") end --apparently allowed
-					if output then
-						if ammo.original.name == output then
-							table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name})
-							table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name .. "-unpacking"})
-							data.raw.recipe[ammo.item.name].enabled = "false"
-							data.raw.recipe[ammo.item.name .. "-unpacking"].enabled = "false"
-							--log("Adding ammo '" .. ammo.original.name .. "' crate unlock to tech " .. tech.name)
-							break
+					if recipe then
+						local output = recipe.result
+						if recipe.normal and not output then
+							output = recipe.normal.result
+						end
+						--if not output then Config.error("Tech set to unlock recipe '" .. effect.recipe .. "', which has a null output?!") end --apparently allowed
+						if output then
+							if ammo.original.name == output then
+								table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name})
+								table.insert(tech.effects, {type="unlock-recipe", recipe=ammo.item.name .. "-unpacking"})
+								data.raw.recipe[ammo.item.name].enabled = "false"
+								data.raw.recipe[ammo.item.name .. "-unpacking"].enabled = "false"
+								--log("Adding ammo '" .. ammo.original.name .. "' crate unlock to tech " .. tech.name)
+								break
+							end
 						end
 					end
 				end

@@ -514,14 +514,19 @@ local function onEntityAttacked(event)
 	local source = event.cause
 	local egcombat = global.egcombat
 	
-	if source and string.find(source.name, "lightning-turret", 1, true) then
-		rechargeLightningTurret(egcombat, source)
-		local offset = source.position
-		local dx = entity.position.x-offset.x
-		local dy = entity.position.y-offset.y
-		offset.x = offset.x+dx/3.8
-		offset.y = offset.y+dy/3.8-0.25
-		entity.surface.create_entity({name="lightning-beam-fx", position=offset, force=source.force, target=entity, source=source})
+	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
+		updateTurretMonitoring(entity)
+	elseif source and (source.type == "ammo-turret" or source.type == "electric-turret" or source.type == "fluid-turret" or source.type == "turret" or source.type == "artillery-turret") then
+		updateTurretMonitoring(source)
+		if string.find(source.name, "lightning-turret", 1, true) then
+			rechargeLightningTurret(egcombat, source)
+			local offset = source.position
+			local dx = entity.position.x-offset.x
+			local dy = entity.position.y-offset.y
+			offset.x = offset.x+dx/3.8
+			offset.y = offset.y+dy/3.8-0.25
+			entity.surface.create_entity({name="lightning-beam-fx", position=offset, force=source.force, target=entity, source=source})
+		end
 	end
 end
 

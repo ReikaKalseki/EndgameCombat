@@ -223,6 +223,10 @@ function getDistance(e1, e2)
 	return math.sqrt(dx*dx+dy*dy)
 end
 
+function updateTurretMonitoring(turret)
+
+end
+
 function doLastStandDestruction(turret)
 	--game.print("Doing last stand @ " .. turret.position.x .. " , " .. turret.position.y)
 	local entities = turret.surface.find_entities_filtered({area = {{turret.position.x-20, turret.position.y-20}, {turret.position.x+20, turret.position.y+20}}})

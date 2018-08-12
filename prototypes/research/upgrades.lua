@@ -99,6 +99,31 @@ data:extend(
     order = "e-o-a",
 	icon_size = 128,
   },
+    {
+    type = "technology",
+    name = "turret-monitoring",
+    icon = "__EndgameCombat__/graphics/technology/turret-monitoring.png",
+    effects =
+    {
+      {
+        type = "nothing",
+        effect_description = {"modifier-description.turret-monitoring"},
+      }
+    },
+    prerequisites = {"turrets", "electronics", "automation"},
+    unit =
+    {
+      count = 20,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "e-o-a",
+	icon_size = 128,
+  },
 })
 
 data:extend(

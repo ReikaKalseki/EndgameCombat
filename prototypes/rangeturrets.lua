@@ -115,12 +115,14 @@ for _,tech in pairs(data.raw.technology) do
 					base = data.raw["artillery-wagon"][effect.turret_id]
 				end
 				if not base then Config.error("Tech " .. tech.name .. " set to boost turret '" .. effect.turret_id .. "', which does not exist! This is a bug in that mod!") end
-				if shouldCreateRangeTurret(base) then
-					for i=1,10 do
-						local effectcp = table.deepcopy(effect)--{type="turret-attack", turret_id=base.name .. "-rangeboost-" .. i, modifier=effect.modifier}
-						effectcp.turret_id = base.name .. "-rangeboost-" .. i
-						effectcp.effect_key = {"modifier-description." .. effect.turret_id .. "-attack-bonus"}
-						table.insert(effectsToAdd, effectcp)
+				if base then
+					if shouldCreateRangeTurret(base) then
+						for i=1,10 do
+							local effectcp = table.deepcopy(effect)--{type="turret-attack", turret_id=base.name .. "-rangeboost-" .. i, modifier=effect.modifier}
+							effectcp.turret_id = base.name .. "-rangeboost-" .. i
+							effectcp.effect_key = {"modifier-description." .. effect.turret_id .. "-attack-bonus"}
+							table.insert(effectsToAdd, effectcp)
+						end
 					end
 				end
 			end

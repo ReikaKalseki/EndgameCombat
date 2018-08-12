@@ -20,5 +20,5 @@ Config.superBiters = settings.startup["super-biters"].value--true
 
 Config.error = function(msg)
 	msg = msg .. " [This error can be silenced in the EndgameCombat config.lua]"
-	error(msg) --change 'error' to 'log' (or remove this line entirely) to have the game not halt. DO NOTE THAT THIS RISKS CRASHES LATER ON!
+	log(msg) --change 'error' to 'log' (or remove this line entirely) to have the game not halt. DO NOTE THAT THIS RISKS CRASHES LATER ON!
 end
