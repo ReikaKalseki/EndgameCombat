@@ -660,18 +660,40 @@ local function replaceTurretKeepingContents(turret, newname)
 	return repl
 end
 
+function replaceTurretInCache(egcombat, force, new, oldid, entry_fallback)
+	game.print("Replacing turret cache entry from " .. oldid .. " to " .. new.unit_number)
+	local entry = egcombat.placed_turrets[force.name][oldid]
+	if entry_fallback and not entry then
+		entry = entry_fallback
+	end
+	egcombat.placed_turrets[force.name][new.unit_number] = entry
+	egcombat.placed_turrets[force.name][oldid] = nil
+end
+
 function convertTurretForRange(egcombat, turret, level)
 	if level == 0 then return turret end
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
+	local cur = tonumber(string.match(turret.name, "%d+"))
+	game.print("Changing rangeboost from " .. (cur and cur or 0) .. " to " .. level)
 	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
-	return game.entity_prototypes[n] and replaceTurretKeepingContents(turret, n) or turret --if does not have a counterpart (technical entity), just return the original
+	if game.entity_prototypes[n] then
+		local id = turret.unit_number
+		local force = turret.force
+		local ret = replaceTurretKeepingContents(turret, n)
+		replaceTurretInCache(egcombat, force, ret, id)
+		return ret
+	else
+		return turret --if does not have a counterpart (technical entity), just return the original
+	end
 end
 
 function convertTurretForRangeWhileKeepingSpecialCaches(egcombat, turret, level)
 	local ret = convertTurretForRange(egcombat, turret, level)
 	local force = ret.force
 	checkAndCacheTurret(egcombat, ret, force)
+	game.print("conversion finished, with turret " .. ret.unit_number .. " at level " .. level)
+	return ret
 end
 
 function checkAndCacheTurret(egcombat, turret, force)
