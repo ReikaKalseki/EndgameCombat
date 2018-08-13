@@ -111,7 +111,7 @@ end
 
 local function removeTurretFromCache(egcombat, turret)
 	local entity_list = egcombat.placed_turrets[turret.force.name]
-	game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
+	--game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
 	if not entity_list then return end
 	--game.print(#entity_list)
     local entry =  entity_list[turret.unit_number]
@@ -134,7 +134,7 @@ local function trackNewTurret(egcombat, turret)
 			egcombat.placed_turrets[force.name] = {}
 		end
 		if turret.force.technologies["turret-range-1"].researched then
-			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(turret.force))
+			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(turret.force), true)
 		end
 		track_turret(egcombat.placed_turrets[force.name], turret)
 	
@@ -149,7 +149,7 @@ local function trackNewTurret(egcombat, turret)
 		end
 		--]]
 
-		game.print("Adding " .. turret.name .. " ID " .. turret.unit_number .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for force " .. force.name .. " to turret table")
+		--game.print("Adding " .. turret.name .. " ID " .. turret.unit_number .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for force " .. force.name .. " to turret table")
 	end
 	
 	return turret
@@ -164,18 +164,21 @@ local function reloadRangeTech()
 					local repl = {}
 					for id,entry in pairs(egcombat.placed_turrets[force.name]) do
 						if entry.turret.valid then
-							game.print("Converting turret @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y)
-							entry.turret = deconvertTurretForRange(egcombat, entry.turret)
-							game.print("Recaching upgraded turret " .. entry.turret.name .. " @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y .. " with new entry " .. (entry and "nonnull" or "nil"))
+							--game.print("Converting turret @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y)
+							entry.turret = upgradeTurretForRange(egcombat, entry.turret, getTurretRangeResearch(force))
+							--game.print("Recaching upgraded turret " .. entry.turret.name .. " @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y .. " with new entry " .. (entry and "nonnull" or "nil"))
 							--trackNewTurret(egcombat, entry.turret)
-							replaceTurretInCache(egcombat, force, entry.turret, id, entry)
+							--replaceTurretInCache(egcombat, force, entry.turret, id, entry)
 							repl[entry.turret.unit_number] = entry
 						else
 							game.print("Skipping invalid turret during range tech reload " .. id)
 						end
 					end
-					for id,entry in pairs(repl) do egcombat.placed_turrets[force.name][id] = entry end
-					for id,entry in pairs(egcombat.placed_turrets[force.name]) do game.print("still has " .. id) end
+					
+					egcombat.placed_turrets[force.name] = {}
+					for id,entry in pairs(repl) do
+						egcombat.placed_turrets[force.name][id] = entry
+					end
 				end
 			end
 		end
@@ -231,7 +234,6 @@ script.on_event(defines.events.on_tick, function(event)
 		
 		egcombat.dirty = false
 	end
-				for id,entry in pairs(egcombat.placed_turrets["player"]) do game.print("Has id " .. id) end
 	
 	if Config.continueAlarms and event.tick%60 == 0 then
 		tickTurretAlarms(egcombat, event.tick)
@@ -380,7 +382,6 @@ local function onFinishedResearch(event)
 	local force = event.research.force.name
 	local egcombat = global.egcombat
 	convertTurretCache(egcombat)
-	game.print("Call " .. math.random())
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
 		--game.print("Turret range " .. lvl)
@@ -389,19 +390,23 @@ local function onFinishedResearch(event)
 		end
 		local repl = {}
 		for k,entry in pairs(egcombat.placed_turrets[force]) do
-			game.print("Attempting to convert ID " .. k .. " to " .. lvl .. ": " .. (entry.turret.valid and "valid" or "invalid"))
+			--game.print("Attempting to convert ID " .. k .. " to " .. lvl .. ": " .. (entry.turret.valid and "valid" or "invalid"))
 			if entry.turret.valid then
 				--game.print("Converting " .. turret.name .. " @ "  .. turret.position.x .. ", " .. turret.position.y .. " to tier " .. lvl)
-				local ret = convertTurretForRangeWhileKeepingSpecialCaches(egcombat, entry.turret, lvl)
+				local ret = convertTurretForRangeWhileKeepingSpecialCaches(egcombat, entry.turret, lvl, false)
 				--repl[ret.unit_number] = entry
+				entry.turret = ret
 				table.insert(repl, {entry = entry, unit = ret.unit_number})
 			else
 				egcombat.placed_turrets[force][k] = nil
 			end
 		end
-		log("Attempting to recache " .. #repl)
+		--game.print("Attempting to recache " .. #repl .. " turrets")
 		egcombat.placed_turrets[force] = {}
-		for _,data in pairs(repl) do egcombat.placed_turrets[force][data.unit] = data.entry end
+		for _,data in pairs(repl) do
+			egcombat.placed_turrets[force][data.unit] = data.entry
+			--game.print("Recached " .. data.entry.turret.name .. " ID " .. data.unit)
+		end
 	end
 	if tech == "turret-logistics" then
 		if egcombat.placed_turrets[force] == nil then

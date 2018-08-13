@@ -196,20 +196,30 @@ function doTissueDrops(egcombat, entity)
 			size = 1
 		end
 		drops = math.random() < size and (math.random() < 0.2 and math.random(1, 2) or math.random(0, 1)) or 0
-		range = 1
+		range = 0.75
 	end
+	--game.print("Attempting " .. drops .. " drops.")
 	if drops > 0 then
 		for i = 1,drops do
-			local pos = {entity.position.x, entity.position.y}
-			pos[1] = pos[1]-range+math.random()*2*range
-			pos[2] = pos[2]-range+math.random()*2*range
-			entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
-			if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
-				local drops = entity.surface.find_entities_filtered{area={{pos[1]-1,pos[2]-1},{pos[1]+1,pos[2]+1}}--[[position = pos--]], type="item-entity"}
-				for _,item in pairs(drops) do
-					if item.stack and item.stack.valid_for_read and item.stack.name == "biter-flesh" then
-						table.insert(egcombat.fleshToDeconstruct, {entity=item, time=game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
-						--item.order_deconstruction(game.forces.player)
+			local pos = {x = entity.position.x, y = entity.position.y}
+			pos.x = pos.x-range+math.random()*2*range
+			pos.y = pos.y-range+math.random()*2*range
+			local r = 0.25--1
+			local box = {{pos.x-r,pos.y-r},{pos.x+r,pos.y+r}}
+			local belts = entity.surface.find_entities_filtered{area=box, type={"transport-belt", "underground-belt", "loader", "item-entity"}, limit = 1}
+			if belts and #belts > 0 then --do not spill items on belts, or on top of each other
+				drops = math.min(drops+1, 20) --add a retry, within a limit
+				--game.print("Failed drop " .. i .. ", trying again...")
+			else
+				--game.print("Dropping drop @ " .. pos.x .. ", " .. pos.y)
+				entity.surface.spill_item_stack(pos, {name="biter-flesh"}, true) --does not return
+				if Config.deconstructFlesh then --mark for deconstruction? Will draw robots into attack waves and turret fire... -> make config
+					local drops = entity.surface.find_entities_filtered{area=box--[[position = pos--]], type="item-entity"}
+					for _,item in pairs(drops) do
+						if item.stack and item.stack.valid_for_read and item.stack.name == "biter-flesh" then
+							table.insert(egcombat.fleshToDeconstruct, {entity=item, time=game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+							--item.order_deconstruction(game.forces.player)
+						end
 					end
 				end
 			end
@@ -661,7 +671,8 @@ local function replaceTurretKeepingContents(turret, newname)
 end
 
 function replaceTurretInCache(egcombat, force, new, oldid, entry_fallback)
-	game.print("Replacing turret cache entry from " .. oldid .. " to " .. new.unit_number)
+	if new.unit_number == oldid then  error("You cannot replace a turret with itself! @ " .. debug.traceback()) end
+	--game.print("Replacing turret cache entry from " .. oldid .. " to " .. new.unit_number)
 	local entry = egcombat.placed_turrets[force.name][oldid]
 	if entry_fallback and not entry then
 		entry = entry_fallback
@@ -670,29 +681,31 @@ function replaceTurretInCache(egcombat, force, new, oldid, entry_fallback)
 	egcombat.placed_turrets[force.name][oldid] = nil
 end
 
-function convertTurretForRange(egcombat, turret, level)
+function convertTurretForRange(egcombat, turret, level, recache)
 	if level == 0 then return turret end
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
 	local cur = tonumber(string.match(turret.name, "%d+"))
-	game.print("Changing rangeboost from " .. (cur and cur or 0) .. " to " .. level)
+	--game.print("Changing rangeboost from " .. (cur and cur or 0) .. " to " .. level)
 	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
 	if game.entity_prototypes[n] then
 		local id = turret.unit_number
 		local force = turret.force
 		local ret = replaceTurretKeepingContents(turret, n)
-		replaceTurretInCache(egcombat, force, ret, id)
+		if recache then
+			replaceTurretInCache(egcombat, force, ret, id)
+		end
 		return ret
 	else
 		return turret --if does not have a counterpart (technical entity), just return the original
 	end
 end
 
-function convertTurretForRangeWhileKeepingSpecialCaches(egcombat, turret, level)
-	local ret = convertTurretForRange(egcombat, turret, level)
+function convertTurretForRangeWhileKeepingSpecialCaches(egcombat, turret, level, recache)
+	local ret = convertTurretForRange(egcombat, turret, level, recache)
 	local force = ret.force
 	checkAndCacheTurret(egcombat, ret, force)
-	game.print("conversion finished, with turret " .. ret.unit_number .. " at level " .. level)
+	--game.print("conversion finished, with turret " .. ret.unit_number .. " at level " .. level)
 	return ret
 end
 
@@ -742,6 +755,16 @@ function deconvertTurretForRange(egcombat, turret)
 		return replaceTurretKeepingContents(turret, n)
 	end
 	return turret
+end
+
+function upgradeTurretForRange(egcombat, turret, level)
+	local cur = tonumber(string.match(turret.name, "%d+"))
+	if cur == level then
+		--game.print("Not re-upgrading " .. turret.name .. "; it is already level " .. level)
+		return turret
+	end
+	turret = deconvertTurretForRange(egcombat, turret)
+	return convertTurretForRange(egcombat, turret, level, false)
 end
 
 function isTechnicalTurret(name)
