@@ -333,10 +333,9 @@ end
 
 function getLightningRechargeTime(force)
 	local lvl = 1
-	while force.technologies["lightning-turret-charging-" .. lvl].researched and lvl <= 5 do
+	while force.technologies["lightning-turret-charging-" .. lvl].researched and lvl < 5 do
 		lvl = lvl+1
 	end
-	lvl = lvl-1
 	return LIGHTNING_TURRET_RECHARGE_TIME-lvl*LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH
 end
 

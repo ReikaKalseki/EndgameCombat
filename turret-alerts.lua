@@ -145,9 +145,9 @@ createAlertSignal("energy", 2, isEnergyLow)
 
 local function isCategoryApplicable(category, turret)
 	if category == "ammo" then
-		return turret.type == "ammo-turret"
+		return turret.type == "ammo-turret" and #turret.get_inventory(defines.inventory.turret_ammo) > 0
 	elseif category == "fluid" then
-		return turret.type == "fluid-turret"
+		return turret.type == "fluid-turret" and #turret.fluidbox > 0
 	elseif category == "energy" then
 		return turret.type == "electric-turret"
 	end
