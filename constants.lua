@@ -8,6 +8,16 @@ REPAIR_CHANCES = {}
 REPAIR_FACTORS = {}
 REPAIR_LIMITS = {}
 
+RETALIATIONS = {}
+
+local function addRetaliation(type, level, multiply, minDamage, maxDamage)
+	if not RETALIATIONS[type] then RETALIATIONS[type] = {} end
+	RETALIATIONS[type][level] =
+	function(damage, health)
+		return math.min(math.max(minDamage, multiply*damage), math.min(health*0.6, maxDamage))
+	end
+end
+
 local function addRepairTier(chance, factor, limit)
 	chance = chance/60 --seconds to ticks
 	factor = factor/100 --% to raw
@@ -26,6 +36,33 @@ addRepairTier(1/8, 25, 50) --was 1/8
 addRepairTier(1/4, 40, 100) --was 1/6
 addRepairTier(1/2, 40, 200) --was 1/4
 addRepairTier(1, 50, 250) --was 1/2
+
+addRetaliation("robot", 1, 0.1, 1, 5)
+addRetaliation("robot", 2, 0.25, 1, 10)
+addRetaliation("robot", 3, 0.5, 2, 20)
+addRetaliation("robot", 4, 1, 5, 40)
+addRetaliation("robot", 5, 2.5, 5, 50)
+addRetaliation("robot", 6, 5, 5, 75)
+addRetaliation("robot", 7, 10, 10, 100)
+addRetaliation("robot", 8, 25, 10, 250)
+
+addRetaliation("electric", 1, 0.25, 1, 5)
+addRetaliation("electric", 2, 0.5, 1, 10)
+addRetaliation("electric", 3, 1, 2, 20)
+addRetaliation("electric", 4, 2.5, 5, 40)
+addRetaliation("electric", 5, 5, 5, 50)
+addRetaliation("electric", 6, 10, 5, 75)
+addRetaliation("electric", 7, 25, 10, 100)
+addRetaliation("electric", 8, 50, 20, 250)
+
+addRetaliation("radar", 1, 0.1, 1, 2)
+addRetaliation("radar", 2, 0.25, 1, 3)
+addRetaliation("radar", 3, 0.5, 2, 5)
+addRetaliation("radar", 4, 1, 5, 10)
+addRetaliation("radar", 5, 2.5, 5, 20)
+addRetaliation("radar", 6, 5, 5, 50)
+addRetaliation("radar", 7, 10, 10, 100)
+addRetaliation("radar", 8, 25, 10, 250)
 
 NAPALM_RADIUS = 36
 RADIATION_RADIUS = 80--60--45

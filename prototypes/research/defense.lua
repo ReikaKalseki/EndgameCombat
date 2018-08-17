@@ -229,102 +229,74 @@ data:extend(
     order = "a-f",
 	icon_size = 128,
   },
-  
-  {
-    type = "technology",
-    name = "electric-defence",
-    icon = "__EndgameCombat__/graphics/technology/electric-defence.png",
-    prerequisites =
-    {
-      "military-3",
-      "advanced-electronics",
-      "electric-energy-distribution-2",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 150,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  
-      {
-    type = "technology",
-    name = "logistic-defence",
-    icon = "__EndgameCombat__/graphics/technology/logistic.png",
-    prerequisites =
-    {
-      "military-3",
-      "logistic-robotics",
-      "combat-robotics",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 200,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
-  {
-    type = "technology",
-    name = "logistic-defence-2",
-    icon = "__EndgameCombat__/graphics/technology/logistic.png",
-    prerequisites =
-    {
-      "logistic-defence",
-    },
-	effects =
-    {--[[
-      {
-        type = "unlock-recipe",
-        recipe = "big-radar"
-      },--]]
-    },
-    unit =
-    {
-      count = 250,
-      ingredients =
-      {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"military-science-pack", 1},
-      },
-      time = 30
-    },
-    upgrade = true,
-    order = "a-f",
-	icon_size = 128,
-  },
 })
+
+for type,vals in pairs(RETALIATIONS) do
+	for level,func in pairs(vals) do
+	
+		local name = type .. "-retaliation-" .. level
+		
+		local ingredients = {
+				{"science-pack-1", 1},
+				{"science-pack-2", 1},
+				{"science-pack-3", 1},
+		}
+		if level > 2 then
+			table.insert(ingredients, {"military-science-pack", 1})
+		end
+		if level > 5 then
+			table.insert(ingredients, {"high-tech-science-pack", 1})
+		end
+		if level > 8 then
+			table.insert(ingredients, {"space-science-pack", 1})
+		end
+		
+		local prerequisites = {}
+		if level > 1 then
+			table.insert(prerequisites, type .. "-retaliation-" .. (level-1))
+		else
+			if type == "radar" then
+				table.insert(prerequisites, "military-2")
+			else
+				table.insert(prerequisites, "military-3")
+				table.insert(prerequisites, "discharge-defense-equipment")
+			end
+			if type == "electric" then
+				table.insert(prerequisites, "advanced-electronics")
+				table.insert(prerequisites, "electric-energy-distribution-2")
+			elseif type == "radar" then
+				if data.raw.technology["radar-2"] then
+					table.insert(prerequisites, "radar-2")
+				end
+			elseif type == "robot" then
+				table.insert(prerequisites, "logistic-robotics")
+				table.insert(prerequisites, "combat-robotics")
+			end
+		end
+		
+		data:extend({
+			{
+			type = "technology",
+			name = name,
+			icon = "__EndgameCombat__/graphics/technology/" .. type .. "-retaliation.png",
+			prerequisites = prerequisites,
+			effects =
+			{
+			  {
+				type = "nothing",
+				effect_description = {"modifier-description.retaliation-" .. type},	
+			  },
+			},
+			unit =
+			{
+			  count = 100*level,
+			  ingredients = ingredients,
+			  time = 90
+			},
+			upgrade = true,
+			order = "a-f",
+			icon_size = 128,
+		  },
+		})
+	end
+end

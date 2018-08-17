@@ -33,10 +33,15 @@ addCategoryResistance("electric-turret", "radiation", 0, 100)
 addCategoryResistance("fluid-turret", "radiation", 0, 100)
 addCategoryResistance("wall", "radiation", 0, 100)
 
+addCategoryResistance("cliff", "radiation", 0, 100)
+addCategoryResistance("simple-entity", "radiation", 0, 100)
+
 addCategoryResistance("logistic-robot", "radiation", 0, 100)
 addCategoryResistance("construction-robot", "radiation", 0, 100)
 addCategoryResistance("car", "radiation", 0, 100) --also includes tank
 addCategoryResistance("locomotive", "radiation", 0, 100)
+addCategoryResistance("cargo-wagon", "radiation", 0, 100)
+addCategoryResistance("fluid-wagon", "radiation", 0, 100)
 
 addCategoryResistance("assembling-machine", "radiation", 0, 100)
 addCategoryResistance("electric-pole", "radiation", 0, 100)
@@ -57,39 +62,6 @@ addCategoryResistance("storage-tank", "radiation", 0, 100)
 addCategoryResistance("constant-combinator", "radiation", 0, 100)
 addCategoryResistance("decider-combinator", "radiation", 0, 100)
 addCategoryResistance("arithmetic-combinator", "radiation", 0, 100)
-	
-if data.raw["construction-robot"]["bob-construction-robot-2"] then
-	data.raw["construction-robot"]["construction-robot"].attack_reaction = Robot_Defence(0.4)
-	data.raw["construction-robot"]["bob-construction-robot-2"].attack_reaction = Robot_Defence(0.6)
-	data.raw["construction-robot"]["bob-construction-robot-3"].attack_reaction = Robot_Defence(1)
-	data.raw["construction-robot"]["bob-construction-robot-4"].attack_reaction = Robot_Defence(2)
-else
-	data.raw["construction-robot"]["construction-robot"].attack_reaction = Robot_Defence(1)
-end
-if data.raw["logistic-robot"]["bob-logistic-robot-2"] then
-	data.raw["logistic-robot"]["logistic-robot"].attack_reaction = Robot_Defence(0.4)
-	data.raw["logistic-robot"]["bob-logistic-robot-2"].attack_reaction = Robot_Defence(0.6)
-	data.raw["logistic-robot"]["bob-logistic-robot-3"].attack_reaction = Robot_Defence(1)
-	data.raw["logistic-robot"]["bob-logistic-robot-4"].attack_reaction = Robot_Defence(2)
-else
-	data.raw["logistic-robot"]["logistic-robot"].attack_reaction = Robot_Defence(1)
-end
-
-if data.raw["electric-pole"]["big-electric-pole-2"] then
-	data.raw["electric-pole"]["big-electric-pole"].attack_reaction = Electric_Pole_Defence(0.4)
-	data.raw["electric-pole"]["big-electric-pole-2"].attack_reaction = Electric_Pole_Defence(0.6)
-	data.raw["electric-pole"]["big-electric-pole-3"].attack_reaction = Electric_Pole_Defence(1)
-	data.raw["electric-pole"]["big-electric-pole-4"].attack_reaction = Electric_Pole_Defence(2)
-else
-	data.raw["electric-pole"]["big-electric-pole"].attack_reaction = Electric_Pole_Defence(1)
-end
-
---[[
-for k,radar in pairs(data.raw["radar"]) do
-	radar.attack_reaction = Radar_Defence(1)
-end
---]]
-
 
 --increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
 data.raw["locomotive"]["locomotive"].weight = data.raw["locomotive"]["locomotive"].weight*HEAVY_TRAIN_FACTOR --was 2000

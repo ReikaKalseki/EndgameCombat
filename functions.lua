@@ -1,93 +1,6 @@
 require "constants"
 require "plasmabeam"
 
-function Radar_Defence(factor)
-return
-    {
-      {
-         --how far the mirroring works
-        range = (15+5*factor)--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
-         --what kind of damage triggers the mirroring
-         --if not present then anything triggers the mirroring
-        --damage_type = {"physical", "acid", "biological"},
-         --caused damage will be multiplied by this and added to the subsequent damages
-        reaction_modifier = factor--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
-        action =
-        {
-          type = "direct",
-          action_delivery =
-          {
-            type = "instant",
-            target_effects =
-            {
-              type = "damage",
-               --always use at least 0.1 damage
-              damage = {amount = 0.1, type = "laser"}
-            }
-          }
-        },
-      }
-    }
-end
-
-function Robot_Defence(factor)
-return
-    {
-      {
-         --how far the mirroring works
-        range = (15+5*factor)--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
-         --what kind of damage triggers the mirroring
-         --if not present then anything triggers the mirroring
-        --damage_type = {"physical", "acid", "biological"},
-         --caused damage will be multiplied by this and added to the subsequent damages
-        reaction_modifier = factor/1.25--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
-        action =
-        {
-          type = "direct",
-          action_delivery =
-          {
-            type = "instant",
-            target_effects =
-            {
-              type = "damage",
-               --always use at least 0.1 damage
-              damage = {amount = 0.1, type = "laser"}
-            }
-          }
-        },
-      }
-    }
-end
-
-function Electric_Pole_Defence(factor)
-return
-    {
-      {
-         --how far the mirroring works
-        range = 4--[[*global.EndgameCombatVars.poleDefenceLevelBoostFactor--]],
-         --what kind of damage triggers the mirroring
-         --if not present then anything triggers the mirroring
-        --damage_type = {"physical", "acid", "biological"},
-         --caused damage will be multiplied by this and added to the subsequent damages
-        reaction_modifier = 0.01--[[factor--]]--[[*global.EndgameCombatVars.robotDefenceLevelBoostFactor--]],
-        action =
-        {
-          type = "direct",
-          action_delivery =
-          {
-            type = "instant",
-            target_effects =
-            {
-              type = "damage",
-               --always use at least 0.1 damage
-              damage = {amount = 20*factor*factor, type = "electric"}
-            }
-          }
-        },
-      }
-    }
-end
-
 function createTotalResistance()
 	local ret = {}
 	for name,damage in pairs(data.raw["damage-type"]) do
@@ -135,6 +48,25 @@ function Modify_Power(train, factor)
 	local endmult = string.sub(pow, -2, -1)
 	local newpow = num*factor
 	obj.max_power = newpow .. endmult
+end
+
+local function getRetaliationLevel(force, type)
+	local name = type .. "-retaliation-"
+	local ret = 0
+	for lvl,val in pairs(RETALIATIONS[type]) do
+		local name2 = name .. lvl
+		if force.technologies[name2].researched then
+			ret = math.max(ret, lvl)
+		end
+	end
+end
+
+function doRetaliation(attacker, raw, force, type)
+	local lvl = getRetaliationLevel(force, type)
+	game.print("Found level " .. lvl .. " for type " .. type)
+	if lvl <= 0 then return end
+	local amt = raw*RETALIATIONS[type][level](raw, attacker.prototype.max_health)
+	attacker.damage(amt, force, "electric")
 end
 
 local function roundToGridBitShift(position, shift)
