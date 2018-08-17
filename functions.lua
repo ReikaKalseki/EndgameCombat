@@ -65,7 +65,7 @@ function doRetaliation(attacker, raw, force, type)
 	local lvl = getRetaliationLevel(force, type)
 	game.print("Found level " .. lvl .. " for type " .. type)
 	if lvl <= 0 then return end
-	local amt = raw*RETALIATIONS[type][level](raw, attacker.prototype.max_health)
+	local amt = raw*RETALIATIONS[type][level].func(raw, attacker.prototype.max_health)
 	attacker.damage(amt, force, "electric")
 end
 

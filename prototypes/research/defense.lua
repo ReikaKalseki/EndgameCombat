@@ -232,7 +232,7 @@ data:extend(
 })
 
 for type,vals in pairs(RETALIATIONS) do
-	for level,func in pairs(vals) do
+	for level,vals2 in pairs(vals) do
 	
 		local name = type .. "-retaliation-" .. level
 		
@@ -279,12 +279,13 @@ for type,vals in pairs(RETALIATIONS) do
 			type = "technology",
 			name = name,
 			icon = "__EndgameCombat__/graphics/technology/" .. type .. "-retaliation.png",
+			localised_name = {"retaliation-name." .. type, tostring(level)},
 			prerequisites = prerequisites,
 			effects =
 			{
 			  {
 				type = "nothing",
-				effect_description = {"modifier-description.retaliation-" .. type},	
+				effect_description = {"modifier-description.retaliation-" .. type, vals2.display},	
 			  },
 			},
 			unit =
