@@ -9,7 +9,7 @@
     {
 	  {"stone-wall", 2},
 	  {"stone-brick", 10},
-      {"refined-concrete", 5},
+      {"concrete", 2},
       {"steel-plate", 1}
     },
 	category = "advanced-crafting",
@@ -49,7 +49,8 @@
     {
 	  {"tough-wall", 1},
       {"iron-gear-wheel", 4},
-      {"copper-plate", 2}
+      {"copper-plate", 2},
+      {"refined-concrete", 5},
     },
 	category = "advanced-crafting",
     result = "tough-spiked-wall"

@@ -54,6 +54,9 @@ function initGlobal(markDirty)
 	if global.egcombat.turret_alarms == nil then
 		global.egcombat.turret_alarms = {}
 	end
+	if global.egcombat.orbital_targetable == nil then
+		global.egcombat.orbital_targetable = createOrbitalTargetableList()
+	end
 	global.egcombat.dirty = markDirty
 	
 	if remote.interfaces["silo-script"] then
@@ -233,6 +236,10 @@ script.on_event(defines.events.on_tick, function(event)
 		end
 		
 		egcombat.dirty = false
+	end
+	
+	if egcombat.orbital_targetable == nil then
+		egcombat.orbital_targetable = createOrbitalTargetableList()
 	end
 	
 	if Config.continueAlarms and event.tick%60 == 0 then
@@ -579,6 +586,7 @@ script.on_event(defines.events.on_marked_for_deconstruction, onEntityMarkedDecon
 script.on_event(defines.events.on_entity_damaged, onEntityAttacked)
 
 script.on_event(defines.events.on_entity_died, onEntityRemoved)
+script.on_event(defines.events.script_raised_destroy, onEntityRemoved)
 
 script.on_event(defines.events.on_player_mined_entity, onEntityMined)
 script.on_event(defines.events.on_robot_mined_entity, onEntityMined)

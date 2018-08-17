@@ -1,5 +1,21 @@
 require "functions"
 
+function createOrbitalTargetableList()
+	local ret = {}
+	local has = {}
+	for name,type in pairs(game.entity_prototypes) do
+		if type.max_health > 0 then
+			local tag = type.type
+			if not has[tag] then
+				table.insert(ret, tag)
+				has[tag] = true
+				--log(tag)
+			end
+		end
+	end
+	return ret
+end
+
 function getOrCreateIndexForOrbital(entity)
 	local egcombat = global.egcombat
 	if not egcombat.orbital_indices[entity.unit_number] then
@@ -81,7 +97,7 @@ function tickOrbitalStrikeSchedule(egcombat)
 				fireOrbitalWeaponManually(egcombat, entry.next)
 				--game.print("Firing")
 				local loc = entry.location.position
-				if entry.shots < 10 and (math.random() < 0.25 or #entry.location.surface.find_entities_filtered({area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
+				if entry.shots < 10 and (math.random() < 0.25 or #entry.location.surface.find_entities_filtered({type = {"unit", "unit-spawner", "turret"}, area = {{loc.x-24, loc.y-24}, {loc.x+24, loc.y+24}}, force=game.forces.enemy}) > 0) then
 					entry.delay = math.random(5, 30)
 					entry.next = entry.location.surface.create_entity({name="orbital-manual-target-secondary", position={loc.x+math.random(-10, 10), loc.y+math.random(-10, 10)}, force=entry.location.force})
 					entry.next.destructible = false
@@ -107,11 +123,10 @@ function tickOrbitalStrikeSchedule(egcombat)
 end
 
 local function isRock(entity)
-	return entity.name == "small-rock" or entity.name == "stone-rock" or entity.name == "red-desert-rock-big-01" or entity.name == "red-desert-rock-huge-01" or entity.name == "red-desert-rock-huge-02" or
-	entity.name == "red-desert-rock-medium" or entity.name == "red-desert-rock-small" or entity.name == "red-desert-rock-tiny"
+	return entity.type == "simple-entity" and (string.find(entity.name, "rock") or string.find(entity.name, "stone"))
 end
 
-local function fireOrbitalOnEntities(egcombat, target, entities)
+local function fireOrbitalOnEntities(egcombat, target, entities, ownForce)
 	for _,entity in pairs(entities) do
 		if entity.valid and entity.health and entity.health > 0 and game.entity_prototypes[entity.name].selectable_in_game and math.random() <= 0.9 then
 			local dist = getDistance(entity, target)
@@ -140,12 +155,11 @@ function fireOrbitalWeaponManually(egcombat, target)
 	--local entities = surface.find_entities_filtered({area = area})
 	for _,force in pairs(game.forces) do
 		if force == target.force then
-			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force}))
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({type = egcombat.orbital_targetable, area = area, force=force}), true)
 		elseif force == game.forces.neutral then
-			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force, type="tree"}))
-			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force, type="ammo-turret"}))
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force, type={"tree", "ammo-turret"}}))
 		else
-			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({area = area, force=force}))
+			fireOrbitalOnEntities(egcombat, target, surface.find_entities_filtered({type = egcombat.orbital_targetable, area = area, force=force}), false)
 		end
 	end
 	local rs = 24
