@@ -568,11 +568,11 @@ local function onEntityAttacked(event)
 			entity.surface.create_entity({name="lightning-beam-fx", position=offset, force=source.force, target=entity, source=source})
 		end
 	elseif source and (entity.type == "logistic-robot" or entity.type == "construction-robot") then
-		doRetaliation(source, event.final_damage_amount, entity.force, "robot")
+		doRetaliation(source, event.final_damage_amount, entity, "robot")
 	elseif source and entity.type == "electric-pole" then
-		doRetaliation(source, event.final_damage_amount, entity.force, "electric")
+		doRetaliation(source, event.final_damage_amount, entity, "electric")
 	elseif source and entity.type == "radar" then
-		doRetaliation(source, event.final_damage_amount, entity.force, "radar")
+		doRetaliation(source, event.final_damage_amount, entity, "radar")
 	end
 end
 

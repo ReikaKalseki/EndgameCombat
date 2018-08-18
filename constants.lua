@@ -13,7 +13,8 @@ RETALIATIONS = {}
 local function addRetaliation(type, level, multiply, minDamage, maxDamage)
 	if not RETALIATIONS[type] then RETALIATIONS[type] = {} end
 	RETALIATIONS[type][level] = {
-	display = (multiply*100) .. "% reflection within [" .. minDamage .. " - " .. maxDamage .. "]",
+	display1 = (multiply*100) .. "%",
+	display2 = "[" .. minDamage .. " - " .. maxDamage .. "]",
 	func = function(damage, health)
 		return math.min(math.max(minDamage, multiply*damage), math.min(health*0.6, maxDamage))
 	end

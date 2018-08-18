@@ -239,8 +239,10 @@ for type,vals in pairs(RETALIATIONS) do
 		local ingredients = {
 				{"science-pack-1", 1},
 				{"science-pack-2", 1},
-				{"science-pack-3", 1},
 		}
+		if type ~= "radar" or level > 1 then
+			table.insert(ingredients, {"science-pack-3", 1})
+		end
 		if level > 2 then
 			table.insert(ingredients, {"military-science-pack", 1})
 		end
@@ -285,14 +287,14 @@ for type,vals in pairs(RETALIATIONS) do
 			{
 			  {
 				type = "nothing",
-				effect_description = {"modifier-description.retaliation-" .. type, vals2.display},	
+				effect_description = {"modifier-description.retaliation-" .. type, vals2.display1, vals2.display2},	
 			  },
 			},
 			unit =
 			{
 			  count = 100*level,
 			  ingredients = ingredients,
-			  time = 90
+			  time = 40
 			},
 			upgrade = true,
 			order = "a-f",

@@ -730,6 +730,12 @@ data:extend({
       smoke_count = 1,
       smoke_slow_down_factor = 1
     },
+		{
+			type = "sound",
+			name = "shockwave-sound",
+			filename = "__EndgameCombat__/sounds/shockwave-turret.ogg",
+			volume = 0.8
+		},
 	  {
     type = "projectile",
     name = "shockwave-dummy-projectile",

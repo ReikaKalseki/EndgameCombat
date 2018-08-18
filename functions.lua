@@ -59,13 +59,20 @@ local function getRetaliationLevel(force, type)
 			ret = math.max(ret, lvl)
 		end
 	end
+	return ret
 end
 
-function doRetaliation(attacker, raw, force, type)
+function doRetaliation(attacker, raw, target, type)
+	local force = target.force
+	if attacker.force == force then return end--friendly fire
 	local lvl = getRetaliationLevel(force, type)
-	game.print("Found level " .. lvl .. " for type " .. type)
 	if lvl <= 0 then return end
-	local amt = raw*RETALIATIONS[type][level].func(raw, attacker.prototype.max_health)
+	local amt = RETALIATIONS[type][lvl].func(raw, attacker.prototype.max_health)
+	--game.print("Found level " .. lvl .. " for type " .. type .. ": " .. raw .. " > " .. amt)
+	attacker.surface.create_entity{name = "shockwave-beam", position = target.position, source = target, target = attacker, force = force}
+	for _,player in pairs(game.players) do
+		player.play_sound{path="shockwave-sound", position=attacker.position, volume_modifier=1}
+	end
 	attacker.damage(amt, force, "electric")
 end
 
