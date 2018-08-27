@@ -74,11 +74,11 @@ if data and data.raw and not game then
 end
 
 local function isHealthCritical(turret)
-	return turret.health < 0.125*turret.prototype.max_health
+	return turret.health < 0.33*turret.prototype.max_health
 end
 
 local function isHealthLow(turret)
-	return turret.health < 0.5*turret.prototype.max_health
+	return turret.health < 0.67*turret.prototype.max_health
 end
 
 local function isAmmoEmpty(turret)
@@ -90,19 +90,19 @@ local function isAmmoCritical(turret)
 	local inv = turret.get_inventory(defines.inventory.turret_ammo)
 	if not (inv[1] and inv[1].valid_for_read) then return false end
 	local ammo = inv[1].count*inv[1].prototype.magazine_size
-	return ammo <= Config.lowAmmoThreshold/4
+	return ammo <= Config.lowAmmoThreshold/3 or inv[1].count <= 1
 end
 
 local function isAmmoLow(turret)
 	local inv = turret.get_inventory(defines.inventory.turret_ammo) 
 	if not (inv[1] and inv[1].valid_for_read) then return false end
 	local ammo = inv[1].count*inv[1].prototype.magazine_size
-	return ammo <= Config.lowAmmoThreshold
+	return ammo <= Config.lowAmmoThreshold or inv[1].count <= 3
 end
 
 local function isFluidEmpty(turret)
 	local inv = turret.fluidbox[1]
-	return inv[1] == nil or (not inv[1].valid)
+	return inv == nil or inv[1] == nil or (not inv[1].valid)
 end
 
 local function isFluidCritical(turret)
@@ -123,12 +123,12 @@ local function isEnergyEmpty(turret)
 	return turret.energy <= 0
 end
 
-local function isEnergyCritical(turret)
-	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.75
+local function isEnergyLow(turret)
+	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
 end
 
-local function isEnergyLow(turret)
-	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity/3
+local function isEnergyCritical(turret)
+	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33
 end
 
 createAlertSignal("health", 1, isHealthCritical, "immediate")
@@ -145,9 +145,9 @@ createAlertSignal("energy", 2, isEnergyLow)
 
 local function isCategoryApplicable(category, turret)
 	if category == "ammo" then
-		return turret.type == "ammo-turret" and #turret.get_inventory(defines.inventory.turret_ammo) > 0
+		return turret.type == "ammo-turret" and turret.get_inventory(defines.inventory.turret_ammo) and #turret.get_inventory(defines.inventory.turret_ammo) > 0
 	elseif category == "fluid" then
-		return turret.type == "fluid-turret" and #turret.fluidbox > 0
+		return turret.type == "fluid-turret" and turret.fluidbox and #turret.fluidbox > 0
 	elseif category == "energy" then
 		return turret.type == "electric-turret"
 	end
