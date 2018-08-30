@@ -4,6 +4,8 @@ require "functions"
 require "config"
 require "constants"
 
+require "rangeturrets"
+require "turretai"
 require "shield-domes"
 require "orbital-strikes"
 require "turret-alerts"
