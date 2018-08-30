@@ -28,11 +28,11 @@ data:extend(
             },
             {
               type = "damage",
-              damage = { amount = 8 , type = "physical"}
+              damage = { amount = 5 , type = "physical"}
             },
 			{
               type = "damage",
-              damage = { amount = 8 , type = "fire"}
+              damage = { amount = 5 , type = "fire"}
             }
           }
         }
@@ -71,15 +71,11 @@ data:extend(
             },
             {
               type = "damage",
-              damage = { amount = 24 , type = "physical"}
+              damage = { amount = 18 , type = "physical"}
             },
 			{
               type = "damage",
-              damage = { amount = 10 , type = "impact"}
-            },
-			{
-              type = "damage",
-              damage = { amount = 16 , type = "fire"}
+              damage = { amount = 10 , type = "fire"}
             }
           }
         }

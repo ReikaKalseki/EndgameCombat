@@ -86,18 +86,129 @@ local function isAmmoEmpty(turret)
 	return inv[1] == nil or (not inv[1].valid_for_read)
 end
 
+local function getNestedTableValue(root, keys)
+	local val = root
+	for _,key in pairs(keys) do
+		val = val[key]
+		if not val then return nil end
+	end
+	return val
+end
+
+local function getDamageDealtThroughEffects(effects)
+	if not effects then return 0 end
+	local type = "physical"
+	local ret = 0
+	for _,effect in pairs(effects) do
+		if effect.damage then
+			ret = ret+effect.damage.amount
+			if effect.damage.type then
+				type = effect.damage.type
+			end
+		end
+	end
+	return ret, type
+end
+
+local function getAmmoTypeDamage(ammo)
+	--local ret = getNestedTableValue(ammo, {"action", 1, "action_delivery", 1, "target_effects", 2, "damage", "amount"})
+	--return ret and ret or 0
+	local root = getNestedTableValue(ammo, {"action", 1, "action_delivery", 1})
+	if root.projectile then
+		local effects = getNestedTableValue(game.entity_prototypes[root.projectile].attack_result, {1, "action_delivery", 1, "target_effects"})
+		return getDamageDealtThroughEffects(effects)
+	elseif root.beam then
+		local effects = getNestedTableValue(game.entity_prototypes[root.beam].attack_result, {1, "action_delivery", 1, "target_effects"})
+		return getDamageDealtThroughEffects(effects)
+	else
+		return getDamageDealtThroughEffects(root.target_effects)
+	end
+end
+
+--roughly aligns to spawn curve: 0-0.3 = small only; 0.3-0.5 adds medium,0.5-0.9 adds big, 0.9+ = behemoth
+local function getAverageEnemyHealth(damage) --move this to a proper linear interpolate in 0.17 when can have centralized reference - probably want to cache into an array (2.5% granularity) for performance
+	local evo = game.forces.enemy.evolution_factor
+	local unit = nil
+	if evo < 0.3 then
+		unit = "small-biter"
+	elseif evo < 0.5 then
+		unit = "medium-biter"
+	elseif evo < 0.9 then
+		unit = "big-biter"
+	else
+		unit = "behemoth-biter"
+	end
+	local health = game.entity_prototypes[unit].max_health
+	local res = game.entity_prototypes[unit].resistances
+	if res and res[damage] and res[damage].percent then --simplified
+		health = health*(1+res[damage].percent*2)
+	end
+	return health
+end	
+
+local function getTurretDealableDamage(turret)
+	if turret.type == "ammo-turret" then
+		local inv = turret.get_inventory(defines.inventory.turret_ammo)
+		if not (inv[1] and inv[1].valid_for_read) then return 0 end
+		local shots = inv[1].count*inv[1].prototype.magazine_size
+		local info = inv[1].prototype.get_ammo_type("turret")
+		local per, type = getAmmoTypeDamage(info)
+		per = per*turret.prototype.attack_parameters.damage_modifier
+		local tech1 = 1+turret.force.get_ammo_damage_modifier(info.category)
+		local tech2 = 1+turret.force.get_turret_attack_modifier(turret.name)
+		--game.print("Modifier " .. tech1 .. " for " .. info.category .. " and " .. tech2 .. " for turret")
+		local per2 = per*tech1*tech2
+		--game.print("Shots: " .. shots .. " ; dmg per = " .. per .. "; net " .. per2)
+		per2 = math.min(per2, getAverageEnemyHealth("physical")) --clip to max health per enemy, since having 1 shot of 1000 damage does not mean you can kill 50x 20-health biters
+		return shots*per2
+	elseif turret.type == "electric-turret" then
+		local param = turret.prototype.attack_parameters
+		local info = param.ammo_type
+		local dmg, type = getAmmoTypeDamage(info)
+		local per = param.damage_modifier*dmg
+		local tech1 = 1+turret.force.get_ammo_damage_modifier(info.category)
+		local tech2 = 1+turret.force.get_turret_attack_modifier(turret.name)
+		local per2 = per*tech1*tech2
+		local cost = math.max(1, info.energy_consumption)
+		local shots = turret.energy/cost
+		--game.print("Modifier " .. tech1 .. " for " .. info.category .. " and " .. tech2 .. " for turret")
+		--game.print("Shots: " .. shots .. " ; dmg per = " .. per .. "; net " .. per2)
+		per2 = math.min(per2, getAverageEnemyHealth(type)) --clip to max health per enemy, since having 1 shot of 1000 damage does not mean you can kill 50x 20-health biters
+		return shots*per2
+	end
+end
+
+local function getCriticalDamageThreshold(damage)
+	return getAverageEnemyHealth(damage)*5
+end
+
+local function getLowDamageThreshold(damage)
+	return getAverageEnemyHealth(damage)*25
+end
+
 local function isAmmoCritical(turret)
 	local inv = turret.get_inventory(defines.inventory.turret_ammo)
 	if not (inv[1] and inv[1].valid_for_read) then return false end
-	local ammo = inv[1].count*inv[1].prototype.magazine_size
-	return ammo <= Config.lowAmmoThreshold/3 or inv[1].count <= 1
+	--game.print("Turret " .. turret.name .. " can deal a total damage of " .. getTurretDealableDamage(turret) .. " with " .. inv[1].count .. " of " .. inv[1].name)
+	if Config.dynamicAlarms then
+		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getCriticalDamageThreshold("physical"))
+		return getTurretDealableDamage(turret) <= getCriticalDamageThreshold("physical")
+	else
+		local ammo = inv[1].count*inv[1].prototype.magazine_size
+		return ammo <= Config.lowAmmoThreshold/3 or inv[1].count <= 1
+	end
 end
 
 local function isAmmoLow(turret)
 	local inv = turret.get_inventory(defines.inventory.turret_ammo) 
 	if not (inv[1] and inv[1].valid_for_read) then return false end
-	local ammo = inv[1].count*inv[1].prototype.magazine_size
-	return ammo <= Config.lowAmmoThreshold or inv[1].count <= 3
+	if Config.dynamicAlarms then
+		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getLowDamageThreshold("physical"))
+		return getTurretDealableDamage(turret) <= getLowDamageThreshold("physical")
+	else
+		local ammo = inv[1].count*inv[1].prototype.magazine_size
+		return ammo <= Config.lowAmmoThreshold or inv[1].count <= 3
+	end
 end
 
 local function isFluidEmpty(turret)
@@ -120,15 +231,26 @@ local function isFluidLow(turret)
 end
 
 local function isEnergyEmpty(turret)
+	--game.print("Turret " .. turret.name .. " can deal a total damage of " .. getTurretDealableDamage(turret) .. " with " .. turret.energy)
 	return turret.energy <= 0
 end
 
 local function isEnergyLow(turret)
-	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
+	if Config.dynamicAlarms then
+		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getCriticalDamageThreshold("laser"))
+		return getTurretDealableDamage(turret) <= getLowDamageThreshold("laser")
+	else
+		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
+	end
 end
 
 local function isEnergyCritical(turret)
-	return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33
+	if Config.dynamicAlarms then
+		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getLowDamageThreshold("laser"))
+		return getTurretDealableDamage(turret) <= getCriticalDamageThreshold("laser")
+	else
+		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33
+	end
 end
 
 createAlertSignal("health", 1, isHealthCritical, "immediate")

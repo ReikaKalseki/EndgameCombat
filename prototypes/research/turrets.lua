@@ -10,7 +10,7 @@ data:extend(
     prerequisites =
     {
 	  "military-2",
-      "advanced-electronics",
+      "electronics",
       "turrets",
     },
 	effects =
@@ -22,14 +22,12 @@ data:extend(
     },
     unit =
     {
-      count = 100,
+      count = 80,
       ingredients =
       {
         {"science-pack-1", 1},
         {"science-pack-2", 1},
-        --{"science-pack-3", 1},
 		{"military-science-pack", 1},
-		--{"high-tech-science-pack", 1},
       },
       time = 30
     },

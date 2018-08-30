@@ -1008,7 +1008,7 @@ data:extend(
     flags = {"placeable-neutral","placeable-player", "player-creation"},
     fast_replaceable_group = "wall",
     minable = {hardness = 0.2, mining_time = 0.5, result = "tough-gate"},
-    max_health = 5000,
+    max_health = 2000,
     corpse = "small-remnants",
     collision_box = {{-0.29, -0.29}, {0.29, 0.29}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},

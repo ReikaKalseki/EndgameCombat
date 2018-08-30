@@ -23,6 +23,34 @@ data:extend(
         type = "unlock-recipe",
         recipe = "sulfur-bullet-magazine-conversion"
       },
+    },
+    unit =
+    {
+      count = 150,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        {"military-science-pack", 1},
+      },
+      time = 40
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
+    name = "fire-ammo-2",
+    icon = "__EndgameCombat__/graphics/technology/fire-ammo.png",
+    prerequisites =
+    {
+	  "fire-ammo",
+	  "uranium-ammo",
+      "military-4",
+    },
+	effects =
+    {
 	   {
         type = "unlock-recipe",
         recipe = "sulfur-heavy-bullet-magazine"
@@ -34,12 +62,13 @@ data:extend(
     },
     unit =
     {
-      count = 200,
+      count = 250,
       ingredients =
       {
-        {"science-pack-1", 2},
+        {"science-pack-1", 1},
         {"science-pack-2", 1},
         {"science-pack-3", 1},
+        {"military-science-pack", 1},
       },
       time = 40
     },

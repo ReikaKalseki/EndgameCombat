@@ -274,7 +274,7 @@ acid, stream,
       cooldown = 6,
       projectile_creation_distance = 1.39375,
       projectile_center = {0.0625, -0.0875}, -- same as gun_turret_attack shift
-      damage_modifier = 5, --more DPS than plasma turret, but physical (and thus resisted against), so balanced
+      damage_modifier = 2,--5, --this value is a multiplier against the ammo; gun turrets have 1x --more DPS than plasma turret, but physical (and thus resisted against), so balanced
       shell_particle =
       {
         name = "shell-particle",

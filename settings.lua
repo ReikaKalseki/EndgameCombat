@@ -93,4 +93,11 @@ data:extend({
             default_value = true,
             order = "r",
         },
+		{
+            type = "bool-setting",
+            name = "smarter-alarms",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
 })
