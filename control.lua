@@ -104,6 +104,38 @@ script.on_init(function()
 	initGlobal(true)
 end)
 
+script.on_load(function()
+	commands.add_command("muteAlerts", {"cmd.mute-alerts-help"}, function(event)
+		if game.players[event.player_index].admin then
+			if not event.parameter then
+				game.players[event.player_index].print("You must specify a duration!")
+				return
+			end
+			local duration = tonumber(event.parameter)
+			if not duration then
+				duration = tonumber(string.sub(event.parameter, 1, -2))
+				if not duration then
+					game.players[event.player_index].print("Invalid duration '" .. event.parameter .. "'!")
+					return
+				end
+				local dur = string.sub(event.parameter, -1)
+				if dur == "s" then
+					
+				elseif dur == "m" then
+					duration = duration*60
+				elseif dur == "h" then
+					duration = duration*3600
+				else
+					game.players[event.player_index].print("Invalid time unit '" .. dur .. "'!")
+					return
+				end
+			end
+			game.print("EndgameCombat: Silencing turret alerts for " .. duration .. " seconds.")
+			global.egcombat.turretMuteTime = event.tick+duration*60
+		end
+	end)
+end)
+
 script.on_configuration_changed(function()
 	initGlobal(true)
 	

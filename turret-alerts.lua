@@ -301,11 +301,16 @@ local function isAlarmNoLongerApplicable(alarm)
 	return not func(alarm.turret)
 end
 
+local function createAlarmTick(time)
+	return time-time%(5*60)
+end
+
 function tickTurretAlarms(egcombat, tick)
 	for _,player in pairs (game.connected_players) do
 		if not egcombat.turret_alarms[player.force.name] then
 			egcombat.turret_alarms[player.force.name] = {}
 		end
+		local played = {}
 		for unit,li in pairs(egcombat.turret_alarms[player.force.name]) do
 			for type,alarm in pairs(li) do
 				if alarm.turret.valid then
@@ -318,8 +323,14 @@ function tickTurretAlarms(egcombat, tick)
 							--game.print("Removing " .. type .. " as it no longer applies")
 						else
 							player.add_custom_alert(alarm.turret, {type = "virtual", name = type}, {"virtual-signal-name." .. type}, true)
-							player.play_sound{path=alerts[type].sound, position=player.position, volume_modifier=1}
-							alarm.time = tick
+							if (egcombat.turretMuteTime == nil or egcombat.turretMuteTime < tick) then
+								local snd = alerts[type].sound
+								if (not played[snd]) then
+									player.play_sound{path=snd, position=player.position, volume_modifier=1}
+									played[snd] = true
+								end
+							end
+							alarm.time = createAlarmTick(tick) --group all alarms together in the 5s intervals
 						end
 					end
 				else
@@ -363,7 +374,7 @@ local function raiseTurretAlarm(egcombat, turret, alarm)
 		if not egcombat.turret_alarms[turret.force.name][turret.unit_number] then
 			egcombat.turret_alarms[turret.force.name][turret.unit_number] = {}
 		end
-		egcombat.turret_alarms[turret.force.name][turret.unit_number][alarm] = {turret = turret, type = alarm, time = game.tick}
+		egcombat.turret_alarms[turret.force.name][turret.unit_number][alarm] = {turret = turret, type = alarm, time = createAlarmTick(game.tick)}
 		cancelLessImportantAlarms(egcombat.turret_alarms[turret.force.name][turret.unit_number], alarm)
 	end
 	
