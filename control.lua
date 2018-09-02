@@ -134,6 +134,22 @@ script.on_load(function()
 			global.egcombat.turretMuteTime = event.tick+duration*60
 		end
 	end)
+	
+	commands.add_command("unmuteAlerts", {"cmd.mute-alerts-help"}, function(event)
+		if game.players[event.player_index].admin then
+			global.egcombat.turretMuteTime = nil
+			local count = 0
+			for unit,li in pairs(global.egcombat.turret_alarms[game.players[event.player_index].force.name]) do
+				for type,alarm in pairs(li) do
+					if alarm.turret.valid then
+						alarm.time = 0
+						count = count+1
+					end
+				end
+			end
+			game.print("EndgameCombat: Unmuting " .. count .. " turret alerts.")
+		end
+	end)
 end)
 
 script.on_configuration_changed(function()

@@ -302,7 +302,7 @@ local function isAlarmNoLongerApplicable(alarm)
 end
 
 local function createAlarmTick(time)
-	return time-time%(5*60)
+	return time-time%300
 end
 
 function tickTurretAlarms(egcombat, tick)

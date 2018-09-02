@@ -220,7 +220,8 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/capsules.png",
     prerequisites =
     {
-	  "military-4",
+	  "military-3",
+      "sulfur-processing",
       "advanced-oil-processing",
     },
 	effects =
