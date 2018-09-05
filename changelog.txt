@@ -1,10 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.135
-Date: Sep 2 2018
+Date: Sep 5 2018
 	- Shockwave turret damage technology now shows the effect in the tech screen
 	- Moved shockwave turret earlier in the techtree, and replaced aluminum (if applicable) with nickel
 	- Cannon turret now uses cobalt instead of invar
 	- Acid turret now uses aluminum instead of cobalt
+	- Fixed spurious turret alarms
+	- Fixed some missing localizations
+	- Added "weaponized electrical discharge" tech as a prereq for some defence technologies
+	- Turret logi chests no longer show "no network" icons
+	- Hid range-boost turrets from the bonus gui
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.132
 Date: Sep 2 2018
