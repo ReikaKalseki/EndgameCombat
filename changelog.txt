@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.135
+Date: Sep 2 2018
+	- Shockwave turret damage technology now shows the effect in the tech screen
+	- Moved shockwave turret earlier in the techtree, and replaced aluminum (if applicable) with nickel
+	- Cannon turret now uses cobalt instead of invar
+	- Acid turret now uses aluminum instead of cobalt
+---------------------------------------------------------------------------------------------------
+Version: 1.0.132
+Date: Sep 2 2018
+	- Rebalanced technology dependencies and recipes, with a focus on BobMods integration
+	- Added command to silence the sounds from turret alerts for a user-specified length of time
+	- T2 Flamethrower now requires Advanced Electronics 2
+	- Added option for more intelligent "low ammo" warnings, based on dealable damage and its relation to average enemy health at that evolution factor
+	- Reduced concussion turret damage from 5x to 2x
+	- Made concussion turrets available much earlier
+	- Split incendiary ammo tech into pre and post uranium
+	- Brought incendiary uranium ammo more in line with vanilla ammo DPS
+---------------------------------------------------------------------------------------------------
+Version: 1.0.120
+Date: Aug 21 2018
+	- Redesigned robot and electric pole defence techs, they now have proper tiered and tech-level-dependent behavior
+	- Added a radar defence tech
+	- Trains and cliffs are now properly radiation-immune
+	- Reduced reinforced-only wall strength from 4000 to 2000, and made it cheaper
+	- Improved orbital strike performance

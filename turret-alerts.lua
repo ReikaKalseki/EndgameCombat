@@ -212,19 +212,20 @@ local function isAmmoLow(turret)
 end
 
 local function isFluidEmpty(turret)
-	local inv = turret.fluidbox[1]
-	return inv == nil or inv[1] == nil or (not inv[1].valid)
+	local inv = (turret.fluidbox and turret.fluidbox.valid) and turret.fluidbox[1] or nil
+	--game.print(serpent.block(inv))
+	return inv == nil or inv.amount <= 0
 end
 
 local function isFluidCritical(turret)
-	if not (turret.fluidbox[1] and turret.fluidbox[1].valid) then return false end
+	if isFluidEmpty(turret) then return false end
 	local inv = turret.fluidbox[1].amount
 	local cap = turret.fluidbox.get_capacity(1)
 	return inv <= cap/4
 end
 
 local function isFluidLow(turret)
-	if not (turret.fluidbox[1] and turret.fluidbox[1].valid) then return false end
+	if isFluidEmpty(turret) then return false end
 	local inv = turret.fluidbox[1].amount
 	local cap = turret.fluidbox.get_capacity(1)
 	return inv <= cap/2
@@ -236,21 +237,22 @@ local function isEnergyEmpty(turret)
 end
 
 local function isEnergyLow(turret)
-	if Config.dynamicAlarms then
-		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getCriticalDamageThreshold("laser"))
-		return getTurretDealableDamage(turret) <= getLowDamageThreshold("laser")
-	else
-		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
-	end
-end
-
-local function isEnergyCritical(turret)
+--[[
 	if Config.dynamicAlarms then
 		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getLowDamageThreshold("laser"))
+		return getTurretDealableDamage(turret) <= getLowDamageThreshold("laser")
+	else--]]
+		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
+	--end
+end
+
+local function isEnergyCritical(turret)--[[
+	if Config.dynamicAlarms then
+		game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getCriticalDamageThreshold("laser"))
 		return getTurretDealableDamage(turret) <= getCriticalDamageThreshold("laser")
-	else
+	else--]]
 		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33
-	end
+	--end
 end
 
 createAlertSignal("health", 1, isHealthCritical, "immediate")
@@ -301,8 +303,8 @@ local function isAlarmNoLongerApplicable(alarm)
 	return not func(alarm.turret)
 end
 
-local function createAlarmTick(time)
-	return time-time%300
+local function createAlarmTick(time, first)
+	return time-time%(first and 60 or 300)
 end
 
 function tickTurretAlarms(egcombat, tick)
@@ -311,12 +313,16 @@ function tickTurretAlarms(egcombat, tick)
 			egcombat.turret_alarms[player.force.name] = {}
 		end
 		local played = {}
+		local updated = {}
 		for unit,li in pairs(egcombat.turret_alarms[player.force.name]) do
 			for type,alarm in pairs(li) do
 				if alarm.turret.valid then
-					if tick-alarm.time > 300 then --only trigger once per 5s
+					if tick-alarm.time > (alarm.fired and 300 or 60) then --only trigger once per 5s
 						--game.print("Refiring " .. type)
-						updateTurretMonitoring(egcombat, alarm.turret) --in case alarm status has changed
+						if not updated[alarm.turret.unit_number] then
+							updateTurretMonitoring(egcombat, alarm.turret, false) --in case alarm status has changed
+							updated[alarm.turret.unit_number] = true
+						end
 						if isAlarmNoLongerApplicable(alarm) then
 							--table.remove(alarms, i)
 							li[type] = nil
@@ -330,7 +336,8 @@ function tickTurretAlarms(egcombat, tick)
 									played[snd] = true
 								end
 							end
-							alarm.time = createAlarmTick(tick) --group all alarms together in the 5s intervals
+							alarm.time = createAlarmTick(tick, false) --group all alarms together in the 5s intervals
+							alarm.fired = true
 						end
 					end
 				else
@@ -360,7 +367,7 @@ local function cancelLessImportantAlarms(li, alarm)
 	end
 end
 
-local function raiseTurretAlarm(egcombat, turret, alarm)
+local function raiseTurretAlarm(egcombat, turret, alarm, first)
 	if isDuplicateOrLessImportantAlarm(egcombat, turret, alarm) then
 		--game.print("Skipping " .. alarm .. " since it already exists or is superseded by an already-existing one")
 		return
@@ -374,20 +381,21 @@ local function raiseTurretAlarm(egcombat, turret, alarm)
 		if not egcombat.turret_alarms[turret.force.name][turret.unit_number] then
 			egcombat.turret_alarms[turret.force.name][turret.unit_number] = {}
 		end
-		egcombat.turret_alarms[turret.force.name][turret.unit_number][alarm] = {turret = turret, type = alarm, time = createAlarmTick(game.tick)}
+		egcombat.turret_alarms[turret.force.name][turret.unit_number][alarm] = {turret = turret, type = alarm, time = createAlarmTick(game.tick, first)}
 		cancelLessImportantAlarms(egcombat.turret_alarms[turret.force.name][turret.unit_number], alarm)
 	end
 	
-	--raise immediately no matter what
 	for _,player in pairs(game.connected_players) do
 		if player.force == turret.force then
 			player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
-			player.play_sound{path=alerts[alarm].sound}
+			if not (first and Config.continueAlarms) then
+				player.play_sound{path=alerts[alarm].sound}
+			end
 		end
 	end
 end
 
-function updateTurretMonitoring(egcombat, turret)
+function updateTurretMonitoring(egcombat, turret, first)
 	local force = turret.force
 	if not force.technologies["turret-monitoring"].researched then return end
 	
@@ -397,7 +405,7 @@ function updateTurretMonitoring(egcombat, turret)
 	local entry = egcombat.placed_turrets[force.name][turret.unit_number]
 	
 	for _,alarm in pairs(checkAllAlerts(turret)) do
-		raiseTurretAlarm(egcombat, turret, alarm)
+		raiseTurretAlarm(egcombat, turret, alarm, first)
 	end
 	--[[
 	if turret.health < 0.125*turret.prototype.max_health then

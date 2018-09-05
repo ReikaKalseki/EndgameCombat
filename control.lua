@@ -605,9 +605,9 @@ local function onEntityAttacked(event)
 	local egcombat = global.egcombat
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
-		updateTurretMonitoring(egcombat, entity)
+		updateTurretMonitoring(egcombat, entity, true)
 	elseif source and (source.type == "ammo-turret" or source.type == "electric-turret" or source.type == "fluid-turret" or source.type == "turret" or source.type == "artillery-turret") then
-		updateTurretMonitoring(egcombat, source)
+		updateTurretMonitoring(egcombat, source, true)
 		if string.find(source.name, "lightning-turret", 1, true) then
 			rechargeLightningTurret(egcombat, source)
 			local offset = source.position
@@ -624,6 +624,17 @@ local function onEntityAttacked(event)
 	elseif source and entity.type == "radar" then
 		doRetaliation(source, event.final_damage_amount, entity, "radar")
 	end
+end
+
+local function onAmmoChanged(event)
+	local player = game.players[event.player_index]
+	local inv1 = player.get_inventory(defines.inventory.player_guns)
+	local inv2 = player.get_inventory(defines.inventory.player_ammo)
+	for i = 1,#inv2 do
+		if inv1[i] and inv1[i].valid_for_read and inv1[i].attack_parameters.ammo_category == "flamethrower" then
+			
+		end
+	end	
 end
 
 --[[
@@ -651,3 +662,5 @@ script.on_event(defines.events.on_built_entity, onEntityAdded)
 script.on_event(defines.events.on_robot_built_entity, onEntityAdded)
 
 script.on_event(defines.events.on_research_finished, onFinishedResearch)
+
+--script.on_event(defines.events.on_player_ammo_inventory_changed, onAmmoChanged)

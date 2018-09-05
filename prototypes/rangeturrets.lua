@@ -26,6 +26,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 		if shouldCreateRangeTurret(base) then
 			local turret = util.table.deepcopy(base)
 			turret.name = turret.name .. "-rangeboost-" .. i
+			table.insert(turret.flags, "hide-from-bonus-gui")
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
 			if base.name == "shockwave-turret" then

@@ -25,6 +25,7 @@ data:extend({
     inventory_size = 1,
 	logistic_slots_count = 1,
     logistic_mode = "requester",
+	render_not_in_network_icon = false,
     open_sound = { filename = "__base__/sound/metallic-chest-open.ogg", volume=0.65 },
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7 },
     vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },

@@ -168,19 +168,20 @@ data:extend(
     },
     prerequisites =
     {
-      "discharge-defense-equipment",
+      --"discharge-defense-equipment",
 	  "better-turrets",
-	  "military-3",
-	  "electric-energy-distribution-2",
+	  --"military-3",
+	  --"electric-energy-distribution-2",
+	  "electrical-discharges",
     },
     unit =
     {
-      count = 120,
+      count = 60,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+        --{"science-pack-3", 1},
         {"military-science-pack", 1},
       },
       time = 30

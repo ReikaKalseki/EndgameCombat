@@ -1,16 +1,5 @@
 require "config"
 
---[[ gates it too late
-if data.raw.item["gilded-copper-cable"] then
-
-  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"gilded-copper-cable", 40})
-  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"copper-cable", 20})
-  table.insert(data.raw["technology"]["shockwave-turrets"].prerequisites,{"gold-processing", 20})
-else
-  table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"copper-cable", 100})
-end
---]]
-
 local turretArmorSteel = 10
 
 local function addPlateToTurret(turret, item, amt)
@@ -26,17 +15,16 @@ local function addPlateToTurret(turret, item, amt)
 	local pre = item .. "-processing"
 	if item == "cobalt-steel" then pre = "cobalt-processing" end
 	if not data.raw.technology[pre] then error("No such technology " .. pre .. "!") end
-	if item == "cobalt-steel" and mods["FTweaks"] then pre = "cobalt-processing-2" end
+	if item == "cobalt-steel" and mods["FTweaks"] and data.raw.technology["cobalt-processing"] then pre = "cobalt-processing-2" end
 	table.insert(tech.prerequisites, pre)
 end
 
 if data.raw.item["titanium-plate"] then
-  --table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"titanium-plate", 25})
 	addPlateToTurret("plasma-turret", "titanium", 25)
-	addPlateToTurret("cannon-turret", "invar", 50)
-	addPlateToTurret("shockwave-turret", "aluminium", 10)
-	addPlateToTurret("acid-turret", "cobalt", 20)
-	addPlateToTurret("lightning-turret", "tungsten", 4)
+	addPlateToTurret("cannon-turret", "cobalt", 50)
+	addPlateToTurret("shockwave-turret", "nickel", 40)
+	addPlateToTurret("acid-turret", "aluminium", 20)
+	addPlateToTurret("lightning-turret", "tungsten", 10)
   
   table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"titanium-plate", 25})
 else

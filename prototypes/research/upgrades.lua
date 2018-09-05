@@ -42,6 +42,13 @@ for name,tech in pairs(data.raw.technology) do
 	end
 end
 
+local function createShockwaveDmgUpgrade(lvl)
+	return {
+		type = "nothing",
+		effect_description = {"modifier-description.shockwave-damage", tostring(40), tostring(40*lvl)},	
+	}
+end
+
 data:extend(
 {
     {
@@ -306,7 +313,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
     effects =
     {
-	
+		createShockwaveDmgUpgrade(1)
     },
     prerequisites = {"shockwave-turrets"},
     unit =
@@ -330,7 +337,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
     effects =
     {
-	
+		createShockwaveDmgUpgrade(2)
     },
     prerequisites = {"shockwave-turret-damage-1"},
     unit =
@@ -354,7 +361,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
     effects =
     {
-	
+		createShockwaveDmgUpgrade(3)
     },
     prerequisites = {"shockwave-turret-damage-2"},
     unit =
@@ -379,7 +386,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
     effects =
     {
-	
+		createShockwaveDmgUpgrade(4)
     },
     prerequisites = {"shockwave-turret-damage-3"},
     unit =
@@ -404,7 +411,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/shockwave-turret-damage.png",
     effects =
     {
-	
+		createShockwaveDmgUpgrade(5)
     },
     prerequisites = {"shockwave-turret-damage-4"},
     unit =

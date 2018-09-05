@@ -16,3 +16,5 @@ if Config.superBiters then
 	data.raw.unit["behemoth-biter"].max_health = 10000
 	addResistance("unit", "behemoth-biter", "laser", 2, 15)
 end
+
+table.insert(data.raw.technology["discharge-defense-equipment"].prerequisites, "electrical-discharges")

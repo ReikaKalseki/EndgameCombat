@@ -110,11 +110,39 @@ data:extend(
   --others
     {
     type = "technology",
+    name = "electrical-discharges",
+    icon = "__EndgameCombat__/graphics/technology/discharge.png",
+    prerequisites =
+    {
+      "military-2",
+      "electric-energy-distribution-1",
+    },
+	effects =
+    {
+
+    },
+    unit =
+    {
+      count = 40,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+      },
+      time = 30
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+    {
+    type = "technology",
     name = "big-radar",
     icon = "__EndgameCombat__/graphics/technology/radar.png",
     prerequisites =
     {
       "military-4",
+	  "advanced-electronics-2"
     },
 	effects =
     {
@@ -136,7 +164,7 @@ data:extend(
     },
     upgrade = true,
     order = "a-f",
-	icon_size = 32,
+	icon_size = 128,
   },
     {
     type = "technology",
@@ -257,15 +285,14 @@ for type,vals in pairs(RETALIATIONS) do
 		if level > 1 then
 			table.insert(prerequisites, type .. "-retaliation-" .. (level-1))
 		else
+			table.insert(prerequisites, "electrical-discharges")
 			if type == "radar" then
-				table.insert(prerequisites, "military-2")
+				table.insert(prerequisites, "military")
 			else
-				table.insert(prerequisites, "military-3")
-				table.insert(prerequisites, "discharge-defense-equipment")
+				table.insert(prerequisites, "military-2")
 			end
 			if type == "electric" then
 				table.insert(prerequisites, "advanced-electronics")
-				table.insert(prerequisites, "electric-energy-distribution-2")
 			elseif type == "radar" then
 				if data.raw.technology["radar-2"] then
 					table.insert(prerequisites, "radar-2")
