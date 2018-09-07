@@ -268,10 +268,10 @@ for type,vals in pairs(RETALIATIONS) do
 				{"science-pack-1", 1},
 				{"science-pack-2", 1},
 		}
-		if type ~= "radar" or level > 1 then
+		if level > (type == "radar" and 3 or 2) then
 			table.insert(ingredients, {"science-pack-3", 1})
 		end
-		if level > 2 then
+		if level > 1 then
 			table.insert(ingredients, {"military-science-pack", 1})
 		end
 		if level > 5 then
@@ -319,7 +319,7 @@ for type,vals in pairs(RETALIATIONS) do
 			},
 			unit =
 			{
-			  count = 100*level,
+			  count = 80*level,
 			  ingredients = ingredients,
 			  time = 40
 			},

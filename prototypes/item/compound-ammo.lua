@@ -13,15 +13,7 @@ for name,base in pairs(data.raw.ammo) do
 		ammo.icons = {
 			{icon=ammo.icon}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png"}
 		}
-		if ammo.ammo_type.action and ammo.ammo_type.action.type == "direct" then
-			if ammo.ammo_type.action.action_delivery and ammo.ammo_type.action.action_delivery.target_effects then
-				for _,effect in pairs(ammo.ammo_type.action.action_delivery.target_effects) do
-					if effect.type == "damage" then
-						effect.damage.amount = math.ceil(effect.damage.amount*(1+math.max(5, math.min(100, Config.cratedAmmoBoost))/100)) --small (default 10%) DPS boost for using the crated ammo
-					end
-				end
-			end
-		end
+		--do damage behavior later
 		table.insert(ammos, {item=ammo, original=base})
 		--log("Creating crate for ammo '" .. name .. "'")
 	end
@@ -46,6 +38,7 @@ for _,ammo in pairs(ammos) do
 			},
 			result = ammo.item.name,
 			--allow_decomposition = false,
+			allow_as_intermediate = false
 		},
 		{
 			type = "recipe",
@@ -59,6 +52,7 @@ for _,ammo in pairs(ammos) do
 			result = ammo.original.name, 
 			result_count = AMMO_CRATE_CAPACITY/ammo.original.magazine_size,
 			allow_decomposition = false,
+			allow_as_intermediate = false
 		},
 	})
 end

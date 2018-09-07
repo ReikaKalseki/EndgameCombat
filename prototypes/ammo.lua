@@ -32,6 +32,10 @@ data:extend(
             },
 			{
               type = "damage",
+              damage = { amount = 1 , type = "piercing"}
+            },
+			{
+              type = "damage",
               damage = { amount = 5 , type = "fire"}
             }
           }
@@ -73,9 +77,13 @@ data:extend(
               type = "damage",
               damage = { amount = 18 , type = "physical"}
             },
+            {
+              type = "damage",
+              damage = { amount = 4 , type = "piercing"}
+            },
 			{
               type = "damage",
-              damage = { amount = 10 , type = "fire"}
+              damage = { amount = 9 , type = "fire"}
             }
           }
         }

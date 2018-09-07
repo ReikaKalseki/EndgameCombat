@@ -50,6 +50,22 @@ function Modify_Power(train, factor)
 	obj.max_power = newpow .. endmult
 end
 
+function changeAmmoDamage(ammo, damages)
+	local effects = data.raw.ammo[ammo].ammo_type.action.action_delivery.target_effects
+	local repl = {}
+	for _,effect in pairs(effects) do
+		if effect.type ~= "damage" then
+			table.insert(repl, effect)
+		end
+	end
+	data.raw.ammo[ammo].ammo_type.action.action_delivery.target_effects = repl
+	for i = 1,#damages,2 do
+		local type_ = damages[i]
+		local amt = damages[i+1]
+		table.insert(data.raw.ammo[ammo].ammo_type.action.action_delivery.target_effects, {type = "damage", damage = {amount = amt, type = type_}})
+	end
+end
+
 local function getRetaliationLevel(force, type)
 	local name = type .. "-retaliation-"
 	local ret = 0

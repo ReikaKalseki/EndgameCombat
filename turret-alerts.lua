@@ -46,6 +46,7 @@ local function createAlertSignal(category, priority, check, sound)
 			icon_size = 64,
 			subgroup = "virtual-signal-special",
 			order = name,
+			hidden = true,
 		}})
 	end
 end

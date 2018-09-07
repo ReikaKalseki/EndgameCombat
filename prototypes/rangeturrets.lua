@@ -29,9 +29,11 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			table.insert(turret.flags, "hide-from-bonus-gui")
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
+			--[[
 			if base.name == "shockwave-turret" then
-				turret.attack_parameters.range = base.attack_parameters.range+math.floor(TURRET_RANGE_BOOST_SUMS[i]/2)
+				turret.attack_parameters.range = base.attack_parameters.range+math.ceil(TURRET_RANGE_BOOST_SUMS[i]/2)
 			end
+			--]]
 			turret.order = "z"
 			if MAKE_ITEMS then
 				--turret.minable.result = turret.name can work without

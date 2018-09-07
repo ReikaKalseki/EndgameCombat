@@ -71,6 +71,7 @@ Modify_Power("locomotive", HEAVY_TRAIN_FACTOR)
 data.raw["locomotive"]["locomotive"].burner.effectivity = data.raw["locomotive"]["locomotive"].burner.effectivity*HEAVY_TRAIN_FACTOR
 addResistance("locomotive", "locomotive", "impact", 400, 99)
 addResistance("cargo-wagon", "cargo-wagon", "impact", 400, 98)
+addResistance("fluid-wagon", "fluid-wagon", "impact", 400, 98)
 if data.raw["locomotive"]["locomotive-2"] then
 	data.raw["locomotive"]["locomotive-2"].weight = data.raw["locomotive"]["locomotive-2"].weight*HEAVY_TRAIN_FACTOR*1.6 --was 2000
 	data.raw["locomotive"]["locomotive-2"].braking_force = data.raw["locomotive"]["locomotive-2"].braking_force*HEAVY_TRAIN_FACTOR*1.6
@@ -79,6 +80,7 @@ if data.raw["locomotive"]["locomotive-2"] then
 	data.raw["locomotive"]["locomotive-2"].burner.effectivity = data.raw["locomotive"]["locomotive-2"].burner.effectivity*HEAVY_TRAIN_FACTOR*1.6
 	addResistance("locomotive", "locomotive-2", "impact", 400, 99)
 	addResistance("cargo-wagon", "cargo-wagon-2", "impact", 400, 98)
+	addResistance("fluid-wagon", "fluid-wagon-2", "impact", 400, 98)
 
 	data.raw["locomotive"]["locomotive-3"].weight = data.raw["locomotive"]["locomotive-3"].weight*HEAVY_TRAIN_FACTOR*2.4 --was 2000
 	data.raw["locomotive"]["locomotive-3"].braking_force = data.raw["locomotive"]["locomotive-3"].braking_force*HEAVY_TRAIN_FACTOR*2.4
@@ -87,6 +89,7 @@ if data.raw["locomotive"]["locomotive-2"] then
 	data.raw["locomotive"]["locomotive-3"].burner.effectivity = data.raw["locomotive"]["locomotive-3"].burner.effectivity*HEAVY_TRAIN_FACTOR*2.4
 	addResistance("locomotive", "locomotive-3", "impact", 400, 99)
 	addResistance("cargo-wagon", "cargo-wagon-3", "impact", 400, 98)
+	addResistance("fluid-wagon", "fluid-wagon-3", "impact", 400, 98)
 end
 
 if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
@@ -94,6 +97,13 @@ if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
 		createPlasmaBeam()
 	})  
 	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
+end
+
+if not mods["BobWarfare"] then
+	changeAmmoDamage("piercing-rounds-magazine", {"physical", 7, "piercing", 2})
+	changeAmmoDamage("uranium-rounds-magazine", {"physical", 20, "piercing", 6})
+	
+	data:extend({{type = "damage-type", name = "piercing"}})
 end
 
 if data.raw.fluid["nitric-acid"] then

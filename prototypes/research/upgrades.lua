@@ -664,7 +664,7 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 			prerequisites = prereq,
 			unit =
 			{
-			  count = math.ceil(100*(2^(l-1))),
+			  count = math.ceil(50*(2^(l-1))),
 			  ingredients = packs,
 			  time = 60+20*(l-1)
 			},

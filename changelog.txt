@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.138
+Date: Sep 7 2018
+	- High-tier ammo now has some piercing damage
+	- Ammo crate properly inherits damage from parent type
+	- Fluid wagons no longer pop like balloons when bumped into
+	- Shockwave turret rangeboost effectivity increased
+	- Spitters will no longer stop just outside the range of a shockwave turret
+	- Cheapened electric defence technologies
+	- Turret range boost tech is now cheaper
+---------------------------------------------------------------------------------------------------
 Version: 1.0.135
 Date: Sep 5 2018
 	- Shockwave turret damage technology now shows the effect in the tech screen

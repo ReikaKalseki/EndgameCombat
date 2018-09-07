@@ -166,8 +166,9 @@ end
 function tickShockwaveTurret(entry, tick)
 	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
-		local scan = entry.delay >= 40
-		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+math.floor(getTurretRangeBoost(entry.turret.force)/2), entry.turret.force)
+		local scan = entry.delay >= 40 or tick%(12*entry.delay) == 0
+		--game.print(entry.delay .. " -> " .. (scan and "scan" or "flat"))
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
 		if #enemies > 0 then
 			local flag = false
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)
@@ -192,6 +193,8 @@ function tickShockwaveTurret(entry, tick)
 						if not biter.valid or biter.health <= 0 then
 							entry.turret.kills = entry.turret.kills+1
 						end
+					elseif scan then
+						biter.set_command({type = defines.command.compound, structure_type = defines.compound_command.logical_and, commands = {{type = defines.command.go_to_location, distraction = defines.distraction.none, destination = entry.turret.position}, {type = defines.command.attack, distraction = defines.distraction.none, target = entry.turret}}})
 					end
 				end
 			end
