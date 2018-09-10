@@ -47,6 +47,45 @@ data:extend(
     order = "a",
     stack_size = 200
   },
+  {
+    type = "ammo",
+    name = "supercavitating-bullet-magazine",
+    icon = "__EndgameCombat__/graphics/icons/explosive-bullet-magazine.png",
+	icon_size = 32,
+    flags = {"goes-to-main-inventory"},
+    ammo_type =
+    {
+      category = "bullet",
+      action =
+      {
+        type = "direct",
+        action_delivery =
+        {
+          type = "instant",
+          source_effects =
+          {
+              type = "create-entity",
+              entity_name = "explosion-gunshot"
+          },
+          target_effects =
+          {
+            {
+              type = "create-entity",
+              entity_name = "explosion-gunshot"
+            },
+            {
+              type = "damage",
+              damage = { amount = 14 , type = "cavitation"}
+            },
+          }
+        }
+      }
+    },
+    magazine_size = 10,
+	subgroup = "ammo",
+    order = "a",
+    stack_size = 200
+  },
     {
     type = "ammo",
     name = "sulfur-heavy-bullet-magazine",

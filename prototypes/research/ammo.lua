@@ -10,7 +10,7 @@ data:extend(
     prerequisites =
     {
 	  "flammables",
-      "military-3",
+      "military-2",
       "sulfur-processing",
     },
 	effects =

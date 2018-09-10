@@ -29,6 +29,21 @@
     },
     result = "sulfur-bullet-magazine"
   },
+    {
+    type = "recipe",
+    name = "supercavitating-bullet-magazine",
+    enabled = "false",
+    energy_required = 9,
+	category = "advanced-crafting",
+    ingredients =
+    {
+      {"explosives", 4},
+      {"plastic-bar", 1},
+      {"piercing-rounds-magazine", 10},
+    },
+    result = "supercavitating-bullet-magazine",
+	result_count = 10
+  },
       {
     type = "recipe",
     name = "sulfur-heavy-bullet-magazine",

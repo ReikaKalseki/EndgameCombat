@@ -99,11 +99,20 @@ if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
 	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
 end
 
-if not mods["BobWarfare"] then
+if not mods["bobwarfare"] then
 	changeAmmoDamage("piercing-rounds-magazine", {"physical", 7, "piercing", 2})
 	changeAmmoDamage("uranium-rounds-magazine", {"physical", 20, "piercing", 6})
 	
 	data:extend({{type = "damage-type", name = "piercing"}})
+end
+
+for i = 1,10 do
+	local tech = data.raw.technology["laser-turret-damage-" .. i]
+	if tech then
+		for _,effect in pairs(tech.effects) do
+			effect.modifier = i/10
+		end
+	end
 end
 
 if data.raw.fluid["nitric-acid"] then
@@ -117,3 +126,5 @@ if data.raw.fluid["hydrogen-chloride"] then
 end
 
 table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")
+
+table.insert(data.raw.technology["military-3"].effects, {type = "unlock-recipe", recipe = "supercavitating-bullet-magazine"})

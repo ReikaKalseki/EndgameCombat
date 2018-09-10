@@ -243,7 +243,7 @@ local function isEnergyLow(turret)
 		--game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getLowDamageThreshold("laser"))
 		return getTurretDealableDamage(turret) <= getLowDamageThreshold("laser")
 	else--]]
-		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67
+		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.67 and turret.prototype.electric_energy_source_prototype.drain == 0 --only play for drainless, since others would run totally empty
 	--end
 end
 
@@ -252,7 +252,7 @@ local function isEnergyCritical(turret)--[[
 		game.print("Comparing " .. getTurretDealableDamage(turret) .. " and " .. getCriticalDamageThreshold("laser"))
 		return getTurretDealableDamage(turret) <= getCriticalDamageThreshold("laser")
 	else--]]
-		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33
+		return turret.prototype.electric_energy_source_prototype and turret.energy < turret.prototype.electric_energy_source_prototype.buffer_capacity*0.33 and turret.prototype.electric_energy_source_prototype.drain == 0 --only play for drainless, since others would run totally empty
 	--end
 end
 

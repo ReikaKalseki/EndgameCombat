@@ -40,10 +40,14 @@ data:extend(
   {
     type = "damage-type",
     name = "cutting" --used by spiked walls
-  }, 
+  },
   {
     type = "damage-type",
     name = "radiation" --used by neutron bomb, unstoppable
-  }, 
+  },
+  {
+    type = "damage-type",
+    name = "cavitation" --ie internal injuries, for certain ammo types
+  },
 }
 )
