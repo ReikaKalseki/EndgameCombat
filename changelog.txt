@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.144
+Date: Sep 10 2018
+	- Added Supercavitating ammo type
+	- Electric turrets no longer play low/critical alerts unless they have a zero idle drain, as non-drainless turrets would deplete entirely if power is lost
+	- Tweaked a few tech costs
+	- Made laser turret damage tech more uniform
+---------------------------------------------------------------------------------------------------
 Version: 1.0.138
 Date: Sep 7 2018
 	- High-tier ammo now has some piercing damage
