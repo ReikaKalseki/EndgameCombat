@@ -32,6 +32,10 @@ data:extend(
     type = "ammo-category",
     name = "lightning-turret"
   },
+    {
+    type = "ammo-category",
+    name = "glue-stream"
+  },
 }
 )
 

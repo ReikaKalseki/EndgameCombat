@@ -102,6 +102,8 @@ end
 if not mods["bobwarfare"] then
 	changeAmmoDamage("piercing-rounds-magazine", {"physical", 7, "piercing", 2})
 	changeAmmoDamage("uranium-rounds-magazine", {"physical", 20, "piercing", 6})
+	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "piercing", 1, "fire", 5})
+	changeAmmoDamage("sulfur-heavy-bullet-magazine", {"physical", 18, "piercing", 4, "fire", 9})
 	
 	data:extend({{type = "damage-type", name = "piercing"}})
 end

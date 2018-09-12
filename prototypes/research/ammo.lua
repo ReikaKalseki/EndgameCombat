@@ -5,6 +5,36 @@ data:extend(
 {
   {
     type = "technology",
+    name = "sticky-ammo-2",
+    icon = "__EndgameCombat__/graphics/technology/sticky-turrets.png",
+    prerequisites =
+    {
+	  "sticky-turrets",
+	  "oil-processing",
+    },
+	effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "glue-expensive"
+      },
+    },
+    unit =
+    {
+      count = 50,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+      },
+      time = 20
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+  {
+    type = "technology",
     name = "fire-ammo",
     icon = "__EndgameCombat__/graphics/technology/fire-ammo.png",
     prerequisites =

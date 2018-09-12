@@ -106,6 +106,42 @@ data:extend(
   
     {
     type = "technology",
+    name = "sticky-turrets",
+    icon = "__EndgameCombat__/graphics/technology/sticky-turrets.png",
+    effects =
+    {
+      {
+        type = "unlock-recipe",
+        recipe = "sticky-turret"
+      },
+      {
+        type = "unlock-recipe",
+        recipe = "glue-cheap"
+      },
+    },
+    prerequisites =
+    {
+      "fluid-handling",
+	  "better-turrets",
+    },
+    unit =
+    {
+      count = 50,
+      ingredients =
+      {
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
+		{"military-science-pack", 1},
+      },
+      time = 45
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  },
+  
+    {
+    type = "technology",
     name = "cannon-turrets",
     icon = "__EndgameCombat__/graphics/technology/cannon-turrets.png",
     effects =

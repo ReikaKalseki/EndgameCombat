@@ -46,6 +46,30 @@ if data.raw.item["speed-module-5"] then
 	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"productivity-module-5", 10})
 end
 
+if data.raw.item.resin then
+	table.insert(data.raw.recipe["glue-cheap"].ingredients, {type = "item", name = "resin", amount = 1})
+	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "item", name = "resin", amount = 2})
+else
+	table.insert(data.raw.recipe["glue-cheap"].ingredients, {type = "item", name = "raw-wood", amount = 1})
+	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "item", name = "raw-wood", amount = 2})
+end
+
+if data.raw.fluid.chlorine then
+	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "fluid", name = "chlorine", amount = 20})
+	data.raw.recipe["glue-expensive"].results[1].amount = 150 --from 120
+end
+
+if data.raw.technology["chemical-plant"] then
+	table.insert(data.raw.technology["sticky-turrets"].prerequisites, "chemical-plant")
+else
+	table.insert(data.raw.technology["sticky-turrets"].effects, {type = "unlock-recipe", recipe = "chemical-plant"})
+end
+
+if data.raw.technology["chemical-processing-1"] then
+	table.insert(data.raw.technology["sticky-turrets"].prerequisites, "chemical-processing-1")
+	table.insert(data.raw.technology["sticky-ammo-2"].prerequisites, "chemical-processing-2")
+end
+
 if data.raw["generator-equipment"]["fusion-reactor-equipment"] then --some mods remove this
 	table.insert(data.raw.recipe["destroyer-satellite"].ingredients, {"fusion-reactor-equipment", 1})
 	table.insert(data.raw.technology["advanced-equipment"].prerequisites, "fusion-reactor-equipment")

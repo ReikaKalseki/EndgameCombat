@@ -133,6 +133,17 @@ data:extend(
     order = "f[gun-turret]-f[lightning-turret-1-2]",
     place_result = "lightning-turret",
     stack_size = 10
+  },
+  {
+    type = "item",
+    name = "sticky-turret",
+    icon = "__EndgameCombat__/graphics/icons/sticky-turret.png",
+	icon_size = 32,
+    flags = {"goes-to-quickbar"},
+    subgroup = "defensive-structure",
+    order = "f[gun-turret]-f[sticky-turret-1-2]",
+    place_result = "sticky-turret",
+    stack_size = 10
   }
 }
 )
@@ -173,10 +184,42 @@ stream.action = {
 stream.spine_animation.filename = "__EndgameCombat__/graphics/entity/acid-turret/stream.png"
 stream.particle.filename = "__EndgameCombat__/graphics/entity/acid-turret/puff.png"
 
+local sticky = table.deepcopy(data.raw["fluid-turret"]["flamethrower-turret"])
+sticky.icon = data.raw.item["sticky-turret"].icon
+sticky.name = "sticky-turret"
+sticky.minable.result = sticky.name
+sticky.max_health = 600
+sticky.attack_parameters.ammo_category = "glue-stream"
+sticky.attack_parameters.fluids = {{type = "glue", damage_modifier = 0}}
+sticky.attack_parameters.ammo_type.category = "glue-stream"
+sticky.attack_parameters.ammo_type.action.action_delivery.stream = "glue-stream"
+sticky.muzzle_animation = nil
+
+local stream2 = table.deepcopy(data.raw.stream["flamethrower-fire-stream"])
+stream2.name = "glue-stream"
+stream2.action = {
+      {
+        type = "area",
+        radius = 6,
+        action_delivery =
+        {
+          type = "instant",
+          target_effects =
+          {
+            {
+				type = "create-sticker",
+				sticker = "slowdown-sticker"
+            }
+          }
+        }
+      }
+}
+stream2.spine_animation.filename = "__EndgameCombat__/graphics/entity/sticky-turret/stream.png"
+stream2.particle.filename = "__EndgameCombat__/graphics/entity/sticky-turret/puff.png"
 
 data:extend(
 {
-acid, stream,
+acid, stream, sticky, stream2,
 {
     type = "ammo-turret",
     name = "concussion-turret",

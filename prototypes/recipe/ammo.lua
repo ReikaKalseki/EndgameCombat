@@ -31,6 +31,34 @@
   },
     {
     type = "recipe",
+    name = "glue-cheap",
+    enabled = "false",
+	category = "chemistry",
+    energy_required = 1,
+    ingredients =
+    {
+		{type = "fluid", name = "water", amount = 50}
+    },
+    results = {
+		{type = "fluid", name = "glue", amount = 10}
+	}
+  },
+    {
+    type = "recipe",
+    name = "glue-expensive",
+    enabled = "false",
+    energy_required = 2,
+	category = "chemistry",
+    ingredients =
+    {
+		{type = "fluid", name = "heavy-oil", amount = 10}
+    },
+    results = {
+		{type = "fluid", name = "glue", amount = 120}
+	}
+  },
+    {
+    type = "recipe",
     name = "supercavitating-bullet-magazine",
     enabled = "false",
     energy_required = 9,

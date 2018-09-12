@@ -82,6 +82,20 @@
     },
     result = "acid-turret"
   },
+  {
+    type = "recipe",
+    name = "sticky-turret",
+    enabled = false,
+    energy_required = 8,
+    ingredients =
+    {
+      {"iron-gear-wheel", 10},
+      {"pipe", 12},
+      --{"engine-unit", 2},
+      {"stone-brick", 5}
+    },
+    result = "sticky-turret"
+  },
  {
     type = "recipe",
     name = "lightning-turret",

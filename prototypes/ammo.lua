@@ -48,6 +48,20 @@ data:extend(
     stack_size = 200
   },
   {
+    type = "fluid",
+    name = "glue",
+    default_temperature = 15,
+    max_temperature = 30,
+    heat_capacity = "0.04KJ",
+    base_color = {r=178/255, g=160/255, b=105/255},
+    flow_color = {r=229/255, g=227/255, b=213/255},
+    icon = "__EndgameCombat__/graphics/icons/sticky.png",
+    icon_size = 32,
+    order = "a[fluid]-a[sticky]",
+    pressure_to_speed_ratio = 0.1,
+    flow_to_energy_ratio = 0.59
+  },
+  {
     type = "ammo",
     name = "supercavitating-bullet-magazine",
     icon = "__EndgameCombat__/graphics/icons/explosive-bullet-magazine.png",
@@ -115,10 +129,6 @@ data:extend(
             {
               type = "damage",
               damage = { amount = 18 , type = "physical"}
-            },
-            {
-              type = "damage",
-              damage = { amount = 4 , type = "piercing"}
             },
 			{
               type = "damage",
