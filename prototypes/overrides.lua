@@ -99,7 +99,10 @@ if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
 	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
 end
 
-if not mods["bobwarfare"] then
+if mods["bobwarfare"] then
+	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "bob-pierce", 1, "fire", 5})
+	changeAmmoDamage("sulfur-heavy-bullet-magazine", {"physical", 18, "bob-pierce", 4, "fire", 9})
+else
 	changeAmmoDamage("piercing-rounds-magazine", {"physical", 7, "piercing", 2})
 	changeAmmoDamage("uranium-rounds-magazine", {"physical", 20, "piercing", 6})
 	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "piercing", 1, "fire", 5})

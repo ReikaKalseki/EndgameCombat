@@ -624,6 +624,10 @@ local function onEntityAttacked(event)
 	elseif source and entity.type == "radar" then
 		doRetaliation(source, event.final_damage_amount, entity, "radar")
 	end
+	
+	if event.damage_type.name == "sticky" and entity.type == "unit" then
+		entity.surface.create_entity{name="slowdown-sticker", target=entity, position=entity.position}
+	end
 end
 
 local function onAmmoChanged(event)

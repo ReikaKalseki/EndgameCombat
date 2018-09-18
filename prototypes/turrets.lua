@@ -189,18 +189,39 @@ sticky.icon = data.raw.item["sticky-turret"].icon
 sticky.name = "sticky-turret"
 sticky.minable.result = sticky.name
 sticky.max_health = 600
-sticky.attack_parameters.ammo_category = "glue-stream"
-sticky.attack_parameters.fluids = {{type = "glue", damage_modifier = 0}}
-sticky.attack_parameters.ammo_type.category = "glue-stream"
-sticky.attack_parameters.ammo_type.action.action_delivery.stream = "glue-stream"
+sticky.attack_parameters.ammo_category = "sticky-stream"
+sticky.attack_parameters.fluids = {{type = "sticky", damage_modifier = 0}}
+sticky.attack_parameters.ammo_type.category = "sticky-stream"
+sticky.attack_parameters.ammo_type.action.action_delivery.stream = "sticky-stream"
 sticky.muzzle_animation = nil
+sticky.muzzle_light = nil
+sticky.attack_parameters.min_range = 10
+sticky.attack_parameters.range = 24 --from 30
 
 local stream2 = table.deepcopy(data.raw.stream["flamethrower-fire-stream"])
-stream2.name = "glue-stream"
+stream2.name = "sticky-stream"
 stream2.action = {
       {
+        type = "direct",
+        action_delivery =
+        {
+          type = "instant",
+          target_effects =
+          {
+            {
+              type = "create-fire",
+              entity_name = "sticky-patch"
+            },
+            {
+              type = "create-entity",
+              entity_name = "sticky-patch-render"
+            }
+          }
+        }
+      },
+      {
         type = "area",
-        radius = 6,
+        radius = 2,
         action_delivery =
         {
           type = "instant",
@@ -217,9 +238,89 @@ stream2.action = {
 stream2.spine_animation.filename = "__EndgameCombat__/graphics/entity/sticky-turret/stream.png"
 stream2.particle.filename = "__EndgameCombat__/graphics/entity/sticky-turret/puff.png"
 
+local function create_sticky_picture(i)
+	return
+	    {
+      filename = "__EndgameCombat__/graphics/entity/sticky-turret/splash-" .. i .. ".png",
+      line_length = 1,
+      width = 140,
+      height = 95,
+      frame_count = 1,
+      axially_symmetrical = false,
+      direction_count = 1,
+      animation_speed = 0.5,
+	  blend_mode = "normal",
+      scale = 1.5,
+	  priority = "very-low",
+      flags = { "compressed" },
+      --shift = { -0.0390625, -0.90625 }
+    }
+end
+	  
+local function create_sticky_pictures()
+  local retval =
+  {
+	create_sticky_picture(1),
+	create_sticky_picture(2),
+	create_sticky_picture(3),
+	create_sticky_picture(4),
+  }
+  return retval
+end
+
+local function createEmptyGraphic()
+return {{
+      filename = "__core__/graphics/empty.png",
+      line_length = 1,
+      width = 1,
+      height = 1,
+      frame_count = 1,
+}}
+end
+
+local patch = table.deepcopy(data.raw.fire["fire-flame"])
+patch.name = "sticky-patch"
+patch.damage_per_tick = {amount = 0.000001, type = "sticky"} --have an event handler for this and apply the slowdown
+patch.spawn_entity = "sticky-on-tree"
+patch.on_fuel_added_action = nil
+patch.add_fuel_cooldown = 99999
+patch.smoke = nil
+patch.light = nil
+patch.working_sound = nil
+patch.final_render_layer = "decals"
+--patch.initial_lifetime = 
+patch.burnt_patch_lifetime = 0
+patch.duration = 900 --15s
+patch.fade_in_duration = 1--15
+patch.fade_out_duration = 1--15
+patch.smoke_source_pictures = nil
+patch.pictures = createEmptyGraphic()
+
+local tree = table.deepcopy(data.raw.fire["fire-flame-on-tree"])
+tree.name = "sticky-on-tree"
+tree.damage_per_tick = {amount = 0.000001, type = "sticky"}
+tree.tree_dying_factor = 0
+tree.maximum_spread_count = 0
+tree.spread_delay = 99999
+tree.trivial_smoke = nil
+tree.light = nil
+tree.working_sound = nil
+tree.smoke_source_pictures = nil
+tree.pictures = createEmptyGraphic()
+
+local patchimg = {
+	type = "corpse",
+	name = "sticky-patch-render",
+	flags = {"not-on-map"},
+	time_before_removed = patch.duration,
+	final_render_layer = "corpse",--"decals",
+	pictures = create_sticky_pictures(),
+	splash = create_sticky_pictures()
+}
+
 data:extend(
 {
-acid, stream, sticky, stream2,
+acid, stream, sticky, stream2, patch, patchimg, tree,
 {
     type = "ammo-turret",
     name = "concussion-turret",

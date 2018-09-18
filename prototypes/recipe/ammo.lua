@@ -31,7 +31,7 @@
   },
     {
     type = "recipe",
-    name = "glue-cheap",
+    name = "sticky-cheap",
     enabled = "false",
 	category = "chemistry",
     energy_required = 1,
@@ -40,12 +40,12 @@
 		{type = "fluid", name = "water", amount = 50}
     },
     results = {
-		{type = "fluid", name = "glue", amount = 10}
+		{type = "fluid", name = "sticky", amount = 10}
 	}
   },
     {
     type = "recipe",
-    name = "glue-expensive",
+    name = "sticky-expensive",
     enabled = "false",
     energy_required = 2,
 	category = "chemistry",
@@ -54,7 +54,7 @@
 		{type = "fluid", name = "heavy-oil", amount = 10}
     },
     results = {
-		{type = "fluid", name = "glue", amount = 120}
+		{type = "fluid", name = "sticky", amount = 120}
 	}
   },
     {

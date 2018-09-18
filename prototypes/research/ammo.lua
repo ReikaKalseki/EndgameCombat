@@ -16,7 +16,7 @@ data:extend(
     {
       {
         type = "unlock-recipe",
-        recipe = "glue-expensive"
+        recipe = "sticky-expensive"
       },
     },
     unit =

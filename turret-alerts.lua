@@ -3,6 +3,7 @@ require "functions"
 
 local alerts = {}
 local alertsByCategory = {}
+local categoryPriorities = {}
 
 local function getSoundForPriority(priority)
 	if priority == 0 then
@@ -28,8 +29,9 @@ local function getKeywordForPriority(priority)
 	end
 end
 
-local function createAlertSignal(category, priority, check, sound)
+local function createAlertSignal(category, catpri, priority, check, sound)
 	local key = getKeywordForPriority(priority)
+	categoryPriorities[category] = catpri
 	local name = "turret-" .. category .. "-" .. key
 	log("Creating alert " .. name)
 	if check then
@@ -256,17 +258,17 @@ local function isEnergyCritical(turret)--[[
 	--end
 end
 
-createAlertSignal("health", 1, isHealthCritical, "immediate")
-createAlertSignal("health", 2, isHealthLow)
-createAlertSignal("ammo", 0, isAmmoEmpty)
-createAlertSignal("ammo", 1, isAmmoCritical)
-createAlertSignal("ammo", 2, isAmmoLow)
-createAlertSignal("fluid", 0, isFluidEmpty)
-createAlertSignal("fluid", 1, isFluidCritical)
-createAlertSignal("fluid", 2, isFluidLow)
-createAlertSignal("energy", 0, isEnergyEmpty)
-createAlertSignal("energy", 1, isEnergyCritical)
-createAlertSignal("energy", 2, isEnergyLow)
+createAlertSignal("health", 0, 1, isHealthCritical, "immediate")
+createAlertSignal("health", 0, 2, isHealthLow)
+createAlertSignal("ammo", 1, 0, isAmmoEmpty)
+createAlertSignal("ammo", 1, 1, isAmmoCritical)
+createAlertSignal("ammo", 1, 2, isAmmoLow)
+createAlertSignal("fluid", 2, 0, isFluidEmpty)
+createAlertSignal("fluid", 2, 1, isFluidCritical)
+createAlertSignal("fluid", 2, 2, isFluidLow)
+createAlertSignal("energy", 3, 0, isEnergyEmpty)
+createAlertSignal("energy", 3, 1, isEnergyCritical)
+createAlertSignal("energy", 3, 2, isEnergyLow)
 
 local function isCategoryApplicable(category, turret)
 	if category == "ammo" then
@@ -308,7 +310,14 @@ local function createAlarmTick(time, first)
 	return time-time%(first and 60 or 300)
 end
 
+--lower = higher priority
+local function getAlertPriority(alarm)
+	local entry = alerts[alarm]
+	return entry.priority+categoryPriorities[entry.category]*10
+end
+
 function tickTurretAlarms(egcombat, tick)
+	local alertQueue = {}
 	for _,player in pairs (game.connected_players) do
 		if not egcombat.turret_alarms[player.force.name] then
 			egcombat.turret_alarms[player.force.name] = {}
@@ -329,7 +338,8 @@ function tickTurretAlarms(egcombat, tick)
 							li[type] = nil
 							--game.print("Removing " .. type .. " as it no longer applies")
 						else
-							player.add_custom_alert(alarm.turret, {type = "virtual", name = type}, {"virtual-signal-name." .. type}, true)
+							--player.add_custom_alert(alarm.turret, {type = "virtual", name = type}, {"virtual-signal-name." .. type}, true)
+							table.insert(alertQueue, {turret = alarm.turret, id = type, player = player, priority = getAlertPriority(type)})
 							if (egcombat.turretMuteTime == nil or egcombat.turretMuteTime < tick) then
 								local snd = alerts[type].sound
 								if (not played[snd]) then
@@ -347,6 +357,12 @@ function tickTurretAlarms(egcombat, tick)
 				end
 			end
 		end
+	end
+	
+	table.sort(alertQueue, function(e1, e2) return e1.priority < e2.priority end)
+	
+	for _,alert in pairs(alertQueue) do
+		alert.player.add_custom_alert(alert.turret, {type = "virtual", name = alert.id}, {"virtual-signal-name." .. alert.id}, true)
 	end
 end
 
@@ -368,7 +384,8 @@ local function cancelLessImportantAlarms(li, alarm)
 	end
 end
 
-local function raiseTurretAlarm(egcombat, turret, alarm, first)
+local function raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
+	if alarm == nil then error(serpent.block(debug.traceback())) end
 	if isDuplicateOrLessImportantAlarm(egcombat, turret, alarm) then
 		--game.print("Skipping " .. alarm .. " since it already exists or is superseded by an already-existing one")
 		return
@@ -388,7 +405,8 @@ local function raiseTurretAlarm(egcombat, turret, alarm, first)
 	
 	for _,player in pairs(game.connected_players) do
 		if player.force == turret.force then
-			player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
+			--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
+			table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
 			if not (first and Config.continueAlarms) then
 				player.play_sound{path=alerts[alarm].sound}
 			end
@@ -405,8 +423,16 @@ function updateTurretMonitoring(egcombat, turret, first)
 	end
 	local entry = egcombat.placed_turrets[force.name][turret.unit_number]
 	
+	local alertQueue = {}
+	
 	for _,alarm in pairs(checkAllAlerts(turret)) do
-		raiseTurretAlarm(egcombat, turret, alarm, first)
+		raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
+	end
+	
+	table.sort(alertQueue, function(e1, e2) return e1.priority < e2.priority end)
+	
+	for _,alert in pairs(alertQueue) do
+		alert.player.add_custom_alert(alert.turret, {type = "virtual", name = alert.id}, {"virtual-signal-name." .. alert.id}, true)
 	end
 	--[[
 	if turret.health < 0.125*turret.prototype.max_health then

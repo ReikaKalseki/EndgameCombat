@@ -47,16 +47,16 @@ if data.raw.item["speed-module-5"] then
 end
 
 if data.raw.item.resin then
-	table.insert(data.raw.recipe["glue-cheap"].ingredients, {type = "item", name = "resin", amount = 1})
-	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "item", name = "resin", amount = 2})
+	table.insert(data.raw.recipe["sticky-cheap"].ingredients, {type = "item", name = "resin", amount = 1})
+	table.insert(data.raw.recipe["sticky-expensive"].ingredients, {type = "item", name = "resin", amount = 2})
 else
-	table.insert(data.raw.recipe["glue-cheap"].ingredients, {type = "item", name = "raw-wood", amount = 1})
-	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "item", name = "raw-wood", amount = 2})
+	table.insert(data.raw.recipe["sticky-cheap"].ingredients, {type = "item", name = "raw-wood", amount = 1})
+	table.insert(data.raw.recipe["sticky-expensive"].ingredients, {type = "item", name = "raw-wood", amount = 2})
 end
 
 if data.raw.fluid.chlorine then
-	table.insert(data.raw.recipe["glue-expensive"].ingredients, {type = "fluid", name = "chlorine", amount = 20})
-	data.raw.recipe["glue-expensive"].results[1].amount = 150 --from 120
+	table.insert(data.raw.recipe["sticky-expensive"].ingredients, {type = "fluid", name = "chlorine", amount = 20})
+	data.raw.recipe["sticky-expensive"].results[1].amount = 150 --from 120
 end
 
 if data.raw.technology["chemical-plant"] then

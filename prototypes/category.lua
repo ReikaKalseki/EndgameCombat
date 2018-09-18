@@ -34,7 +34,7 @@ data:extend(
   },
     {
     type = "ammo-category",
-    name = "glue-stream"
+    name = "sticky-stream"
   },
 }
 )
@@ -52,6 +52,10 @@ data:extend(
   {
     type = "damage-type",
     name = "cavitation" --ie internal injuries, for certain ammo types
+  },
+  {
+    type = "damage-type",
+    name = "sticky" --a marker for sticky turrets
   },
 }
 )

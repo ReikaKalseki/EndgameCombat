@@ -116,7 +116,7 @@ data:extend(
       },
       {
         type = "unlock-recipe",
-        recipe = "glue-cheap"
+        recipe = "sticky-cheap"
       },
     },
     prerequisites =

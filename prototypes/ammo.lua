@@ -32,10 +32,6 @@ data:extend(
             },
 			{
               type = "damage",
-              damage = { amount = 1 , type = "piercing"}
-            },
-			{
-              type = "damage",
               damage = { amount = 5 , type = "fire"}
             }
           }
@@ -49,7 +45,7 @@ data:extend(
   },
   {
     type = "fluid",
-    name = "glue",
+    name = "sticky",
     default_temperature = 15,
     max_temperature = 30,
     heat_capacity = "0.04KJ",
