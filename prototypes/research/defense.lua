@@ -32,7 +32,6 @@ data:extend(
       },
       time = 20
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -70,7 +69,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -102,7 +100,6 @@ data:extend(
       },
       time = 40
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -131,7 +128,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -162,7 +158,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -204,7 +199,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -253,7 +247,6 @@ data:extend(
       },
       time = 90
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -323,7 +316,7 @@ for type,vals in pairs(RETALIATIONS) do
 			  ingredients = ingredients,
 			  time = 40
 			},
-			upgrade = true,
+			upgrade = level > 1,
 			order = "a-f",
 			icon_size = 128,
 		  },

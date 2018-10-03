@@ -1,4 +1,5 @@
 require "constants"
+require "functions"
 
 local function createLightningBeam()
 	local color = {r=0,g=0,b=0}--{r = 34/255, g = 170/255, b = 1}
@@ -419,34 +420,6 @@ createLightningBeam(),
     fade_away_duration = 2 * 60,
     spread_duration = 10,
     color = { r = 0.8, g = 0.7, b = 0.1 },
-    action =
-    {
-      type = "direct",
-      action_delivery =
-      {
-        type = "instant",
-        target_effects =
-        {
-          type = "nested-result",
-          action =
-          {
-            type = "area",
-            radius = 15,
-            entity_flags = {"placeable-enemy"},
-            action_delivery =
-            {
-              type = "instant",
-              target_effects =
-              {
-                type = "damage",
-                damage = { amount = 180, type = "radiation"} --was 10
-              }
-            }
-          }
-        }
-      }
-    },
-    action_cooldown = 10 --was 10
   },
       {
     type = "projectile",
@@ -507,38 +480,10 @@ createLightningBeam(),
     slow_down_factor = 0,
     affected_by_wind = false,
     cyclic = true,
-    duration = 60 * 5,
+    duration = 60 * 12,
     fade_away_duration = 2 * 60,
     spread_duration = 10,
     color = { r = 0.6, g = 0.0, b = 1.0 },
-    action =
-    {
-      type = "direct",
-      action_delivery =
-      {
-        type = "instant",
-        target_effects =
-        {
-          type = "nested-result",
-          action =
-          {
-            type = "area",
-            radius = 12,
-            entity_flags = {"placeable-enemy", "breaths-air"},
-            action_delivery =
-            {
-              type = "instant",
-              target_effects =
-              {
-                type = "damage",
-                damage = { amount = 60, type = "acid"}
-              }
-            }
-          }
-        }
-      }
-    },
-    action_cooldown = 20
   },
     {
     type = "smoke-with-trigger",
@@ -645,3 +590,6 @@ createLightningBeam(),
     action_cooldown = 20
   },
 })
+
+createCapsuleDamage("acid-cloud", "acid", "acid")
+createCapsuleDamage("radiation-cloud", "radiation", "radiation")

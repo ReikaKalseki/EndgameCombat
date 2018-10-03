@@ -118,3 +118,12 @@ for lifevar = RADIATION_LIFE_VAR_MIN,RADIATION_LIFE_VAR_MAX,RADIATION_LIFE_VAR_S
 end
 
 AMMO_CRATE_CAPACITY = 100 --default is 10
+
+CLOUD_DAMAGE_PROFILES = {}
+
+local function addCapsuleDamage(name, dps, tickrate, damage, radius)
+	CLOUD_DAMAGE_PROFILES[name] = {tickrate = tickrate, dps = dps, total = damage, radius = radius}
+end
+
+addCapsuleDamage("acid", 1.6, 2/3, 3.6, 12/11)
+addCapsuleDamage("radiation", 6, 1/3, 15, 1.6)

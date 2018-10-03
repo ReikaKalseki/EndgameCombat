@@ -31,7 +31,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -66,7 +65,6 @@ data:extend(
       },
       time = 45
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -99,7 +97,6 @@ data:extend(
       },
       time = 45
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -135,7 +132,6 @@ data:extend(
       },
       time = 45
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },
@@ -186,7 +182,6 @@ data:extend(
       },
       time = 45
     },
-    upgrade = false,
     order = "a-f",
 	icon_size = 128,
   },
@@ -222,7 +217,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = false,
     order = "a-f",
 	icon_size = 128,
   },
@@ -255,7 +249,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = false,
     order = "a-f",
 	icon_size = 128,
   },
@@ -290,7 +283,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = false,
     order = "a-f",
 	icon_size = 128,
   },

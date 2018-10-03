@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.148
+Date: Sep 18 2018
+	- Added sticky turrets
+	- Health alerts should now take priority
+	- Fixed crash with Bob Warfare
+---------------------------------------------------------------------------------------------------
 Version: 1.0.144
 Date: Sep 10 2018
 	- Added Supercavitating ammo type

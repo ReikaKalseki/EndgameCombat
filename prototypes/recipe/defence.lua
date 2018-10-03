@@ -55,6 +55,8 @@
 	category = "advanced-crafting",
     result = "tough-spiked-wall"
   },
+  
+  --misc
  {
     type = "recipe",
     name = "big-radar",

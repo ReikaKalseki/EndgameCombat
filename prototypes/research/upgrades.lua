@@ -127,7 +127,6 @@ data:extend(
       },
       time = 30
     },
-    upgrade = true,
     order = "e-o-a",
 	icon_size = 128,
   },
@@ -167,7 +166,6 @@ data:extend(
       },
       time = 60
     },
-    upgrade = true,
     order = "a-f",
 	icon_size = 128,
   },

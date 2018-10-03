@@ -1,6 +1,22 @@
 require "constants"
 require "plasmabeam"
 
+function createCapsuleDamage(capsule, name, dtype)
+	if type(capsule) == "string" then capsule = data.raw["smoke-with-trigger"][capsule] end
+	local dat = CLOUD_DAMAGE_PROFILES[name]
+	local base = data.raw["smoke-with-trigger"]["poison-cloud"]
+	local action = table.deepcopy(base.action)
+    action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
+	local newdmg = action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount
+	newdmg = newdmg*dat.dps*dat.tickrate
+    action.action_delivery.target_effects.action.action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
+	table.insert(action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
+	capsule.action = action
+	capsule.action_cooldown = base.action_cooldown*dat.tickrate
+	capsule.duration = base.duration*dat.total/dat.dps
+	capsule.animation.scale = base.animation.scale*dat.radius
+end
+
 function createTotalResistance()
 	local ret = {}
 	for name,damage in pairs(data.raw["damage-type"]) do
