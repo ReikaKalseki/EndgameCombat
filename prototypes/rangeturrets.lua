@@ -35,6 +35,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			end
 			--]]
 			turret.order = "z"
+			turret.placeable_by = {item=base.minable.result, count = 1}
 			if MAKE_ITEMS then
 				--turret.minable.result = turret.name can work without
 			end

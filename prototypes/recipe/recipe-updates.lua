@@ -26,9 +26,11 @@ if data.raw.item["titanium-plate"] then
 	addPlateToTurret("acid-turret", "aluminium", 20)
 	addPlateToTurret("lightning-turret", "tungsten", 10)
   
-  table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"titanium-plate", 25})
+  table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"copper-tungsten-alloy", 25})
+  table.insert(data.raw.technology["power-armor-3"].prerequisites, "tungsten-processing")
+  table.insert(data.raw.technology["power-armor-3"].prerequisites, "nitinol-processing")
 else
-  turretArmorSteel = 50
+	turretArmorSteel = 50
 	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"steel-plate", 6})
   
   table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"steel-plate", 100})

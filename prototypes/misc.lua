@@ -102,12 +102,12 @@ data:extend({
 		  {
 			{
 			  priority = "low",
-			  width = 220,
-			  height = 370,
+			  width = 296,
+			  height = 540,
 			  frame_count = 1,
 			  direction_count = 1,
 			  scale = 1,
-			  shift = {0, 0},
+			  shift = {0, -6.2},
 			  stripes =
 			  {
 				{
@@ -119,13 +119,13 @@ data:extend({
 			},
 			{
 			  priority = "low",
-			  width = 850,
-			  height = 170,
+			  width = 923,
+			  height = 201,
 			  frame_count = 1,
 			  draw_as_shadow = true,
 			  direction_count = 1,
 			  scale = 1,
-			  shift = {0, 0},
+			  shift = {12.5, 0},
 			  stripes = 
 			  {
 			   {
