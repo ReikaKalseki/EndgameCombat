@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.164
+Date: Oct 15 2018
+	- Rebalanced T2 flamethrower
+	- Napalm rocket tech is no longer much more expensive than napalm shells
+	- Tweaked plasma turret tech prereqs
+	- Added option to make napalm not set trees on fire
+---------------------------------------------------------------------------------------------------
+Version: 1.0.160
+Date: Oct 10 2018
+	- Rebalanced capsules
+	- BobMods version of the Power Armor 3 recipe changed somewhat
+---------------------------------------------------------------------------------------------------
 Version: 1.0.148
 Date: Sep 18 2018
 	- Added sticky turrets

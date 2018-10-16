@@ -50,7 +50,8 @@ data:extend(
     {
       "laser-turrets",
 	  "better-turrets",
-	  "military-4",
+	  "military-3",
+	  "advanced-electronics-2"
     },
     unit =
     {

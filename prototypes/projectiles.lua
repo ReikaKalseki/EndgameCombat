@@ -192,7 +192,7 @@ data:extend({
           },
             {
               type = "create-fire",
-              entity_name = "big-fire-flame"
+              entity_name = "big-fire-flame-napalm"
             },
             {
               type = "damage",
@@ -209,6 +209,7 @@ data:extend({
       {
         type = "area",
         radius = 30,
+		entity_flags = Config.napalmTrees and nil or {"placeable-enemy"},
         action_delivery =
         {
           type = "instant",
@@ -216,7 +217,7 @@ data:extend({
           {
             {
               type = "create-sticker",
-              sticker = "fire-sticker"
+              sticker = "fire-sticker-napalm"
             }
           }
         }

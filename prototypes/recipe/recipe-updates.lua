@@ -117,14 +117,15 @@ else
 end
 
 if data.raw.item["nitinol-alloy"] then
-	table.insert(data.raw["recipe"]["better-tank"].ingredients,{"nitinol-alloy", 25})
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"nitinol-alloy", 25})
+	table.insert(data.raw["recipe"]["better-tank"].ingredients, {"nitinol-alloy", 25})
+	table.insert(data.raw["recipe"]["power-armor-3"].ingredients, {"nitinol-alloy", 25})
 else
-	table.insert(data.raw["recipe"]["better-tank"].ingredients,{"plastic-bar", 50})
+	table.insert(data.raw["recipe"]["better-tank"].ingredients, {"plastic-bar", 50})
 end
 
 if data.raw.item["lithium-ion-battery"] then
-	table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"lithium-ion-battery", 10})
+	table.insert(data.raw["recipe"]["plasma-turret"].ingredients, {"lithium-ion-battery", 10})
+	table.insert(data.raw["technology"]["lightning-turrets"].prerequisites, "battery-2")
 else
 	table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"battery", 20})
 end

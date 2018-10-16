@@ -24,6 +24,8 @@ Config.continueAlarms = settings.startup["continue-alarms"].value
 
 Config.dynamicAlarms = settings.startup["smarter-alarms"].value
 
+Config.napalmTrees = settings.startup["napalm-trees"].value
+
 Config.error = function(msg)
 	msg = msg .. " [This error can be silenced in the EndgameCombat config.lua]"
 	log(msg) --change 'error' to 'log' (or remove this line entirely) to have the game not halt. DO NOTE THAT THIS RISKS CRASHES LATER ON!

@@ -137,7 +137,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/radar.png",
     prerequisites =
     {
-      "military-4",
+      "military-3",
 	  "advanced-electronics-2"
     },
 	effects =
@@ -167,9 +167,10 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/domes.png",
     prerequisites =
     {
-      "military-4",
+      "military-3",
       "energy-shield-mk2-equipment",
       "effect-transmission",
+	  "advanced-electronics-2",
     },
 	effects =
     {

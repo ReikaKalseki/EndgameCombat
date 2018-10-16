@@ -171,6 +171,8 @@ function doTissueDrops(egcombat, entity)
 	end
 	--game.print("Attempting " .. drops .. " drops.")
 	if drops > 0 then
+		local evo = game.forces.enemy.evolution_factor
+		local droptime = game.tick+Config.deconstructFleshTimer*60*(1+evo*3)
 		for i = 1,drops do
 			local pos = {x = entity.position.x, y = entity.position.y}
 			pos.x = pos.x-range+math.random()*2*range
@@ -188,7 +190,7 @@ function doTissueDrops(egcombat, entity)
 					local drops = entity.surface.find_entities_filtered{area=box--[[position = pos--]], type="item-entity"}
 					for _,item in pairs(drops) do
 						if item.stack and item.stack.valid_for_read and item.stack.name == "biter-flesh" then
-							table.insert(egcombat.fleshToDeconstruct, {entity=item, time=game.tick+Config.deconstructFleshTimer*60}) --10s delay by default; 60*seconds
+							table.insert(egcombat.fleshToDeconstruct, {entity=item, time=droptime}) --10s delay by default; 60*seconds
 							--item.order_deconstruction(game.forces.player)
 						end
 					end

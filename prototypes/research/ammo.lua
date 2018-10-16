@@ -110,7 +110,7 @@ data:extend(
     prerequisites =
     {
 	  "fire-ammo",
-      "military-4",
+      "military-3",
 	  "tanks"
     },
 	effects =
@@ -153,15 +153,14 @@ data:extend(
     },
     unit =
     {
-      count = 400,
+      count = 20,
       ingredients =
       {
-        {"science-pack-1", 4},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
+        {"science-pack-1", 1},
+        {"science-pack-2", 1},
         {"military-science-pack", 1},
       },
-      time = 60
+      time = 15
     },
     order = "a-f",
 	icon_size = 32,

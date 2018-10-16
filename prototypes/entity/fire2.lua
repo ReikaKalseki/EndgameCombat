@@ -144,7 +144,7 @@ data:extend({
 },
 {
   type = "fire",
-  name = "big-fire-flame-napalm", --like big-fire-flame but lasts 5x longer
+  name = "big-fire-flame-napalm", --like big-fire-flame but lasts 5x longer, and may not spread to trees
   flags = {"placeable-off-grid", "not-on-map"},
   duration = 600*new_burn_factor*5,
   fade_away_duration = 600*new_burn_factor,
@@ -154,11 +154,11 @@ data:extend({
   color = {r=1, g=0.9, b=0.3, a=0.65},
   damage_per_tick = {amount = fire2_damage_per_tick, type = "fire"},
   
-  spawn_entity = "fire-flame-on-tree",
+  spawn_entity = "fire-flame-on-tree",--Config.napalmTrees and "fire-flame-on-tree" or "null-flame-on-tree",
   
-  spread_delay = 300,
+  spread_delay = Config.napalmTrees and 300 or 9999999,
   spread_delay_deviation = 180,
-  maximum_spread_count = 100,
+  maximum_spread_count = Config.napalmTrees and 100 or 0,
   initial_lifetime = 480*new_burn_factor*5,
   
   flame_alpha = 0.35,
@@ -501,3 +501,35 @@ data:extend(
   }
 }
 )
+
+data:extend(
+{
+  {
+    type = "sticker",
+    name = "fire-sticker-napalm",
+    flags = {"not-on-map"},
+
+    animation =
+    {
+      filename = "__base__/graphics/entity/fire-flame/fire-flame-13.png",
+      line_length = 8,
+      width = 60,
+      height = 118,
+      frame_count = 25,
+      axially_symmetrical = false,
+      direction_count = 1,
+      blend_mode = "normal",
+      animation_speed = 1,
+      scale = 0.2,
+      tint = { r = 0.5, g = 0.5, b = 0.5, a = 0.18 }, --{ r = 1, g = 1, b = 1, a = 0.35 },
+      shift = math3d.vector2.mul({-0.078125, -1.8125}, 0.1)
+    },
+
+    duration_in_ticks = 30 * 60*5,
+    target_movement_modifier = 0.8,
+    damage_per_tick = { amount = 150 / 60, type = "fire" },
+    spread_fire_entity = "fire-flame-on-tree",
+    fire_spread_cooldown = Config.napalmTrees and 30 or 9999,
+    fire_spread_radius = Config.napalmTrees and 0.75 or 0
+  }
+})

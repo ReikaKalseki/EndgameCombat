@@ -11,7 +11,7 @@ data:extend(
         recipe = "flamethrower-2"
       }
     },
-    prerequisites = {"flamethrower", "military-3", "advanced-electronics-2"},
+    prerequisites = {"flamethrower-damage-3", "military-3", "advanced-electronics-2"},
     unit =
     {
       count = 100,
