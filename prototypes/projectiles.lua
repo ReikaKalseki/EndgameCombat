@@ -1,5 +1,6 @@
 require "constants"
 require "functions"
+require "config"
 
 local function createLightningBeam()
 	local color = {r=0,g=0,b=0}--{r = 34/255, g = 170/255, b = 1}
