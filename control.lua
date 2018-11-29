@@ -100,11 +100,7 @@ local function convertTurretCache(egcombat)
 	end
 end
 
-script.on_init(function()
-	initGlobal(true)
-end)
-
-script.on_load(function()
+local function addCommands()
 	commands.add_command("muteAlerts", {"cmd.mute-alerts-help"}, function(event)
 		if game.players[event.player_index].admin then
 			if not event.parameter then
@@ -150,6 +146,16 @@ script.on_load(function()
 			game.print("EndgameCombat: Unmuting " .. count .. " turret alerts.")
 		end
 	end)
+end
+
+addCommands()
+
+script.on_load(function()
+	
+end)
+
+script.on_init(function()
+	initGlobal(true)
 end)
 
 script.on_configuration_changed(function()

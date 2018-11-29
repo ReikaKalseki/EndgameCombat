@@ -138,12 +138,8 @@ if data.raw.car["heli-entity-_-"] then
 	for name,car in pairs(data.raw.car) do
 		if string.find(name, "heli", 1, true) then
 			--error(serpent.block(car.consumption .. " >> " .. string.sub(car.consumption, 1, -3) .. " >>> " .. tonumber(string.sub(car.consumption, 1, -3))))
-			if tonumber(string.sub(car.consumption, 1, -3)) then --skip technical entities
-				car.breaking_speed = car.breaking_speed*f
-				car.consumption = (tonumber(string.sub(car.consumption, 1, -3))*f) .. "MW"
-				car.braking_power = (tonumber(string.sub(car.braking_power, 1, -3))*f) .. "MW"
-				car.effectivity = car.effectivity*f*f
-				car.burner.effectivity = car.burner.effectivity*f*f
+			if car.guns and #car.guns > 0 then --skip technical entities
+				table.insert(car.guns, "flamethrower-2")
 			end
 		end
 	end

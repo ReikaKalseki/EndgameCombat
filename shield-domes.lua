@@ -96,6 +96,11 @@ local function setDomeCircuitStatus(entry)
 				index = 1,
 				signal = {type = "virtual", name = "shield-level"},
 				count = entry.current_shield
+			},
+			{
+				index = 2,
+				signal = {type = "virtual", name = "shield-capacity"},
+				count = getShieldDomeStrength(entry)
 			}
 		}}
 		entry.circuit.get_control_behavior().parameters = params

@@ -258,7 +258,7 @@ function spawnCapsuleFireArea(entity)
 end
 
 function spawnFireArea(entity)
-	local nfire = 240+math.random(360) --was 180/160 then 240/220
+	local nfire = 320+math.random(320) --was 180/160 then 240/220 then 240/360
 	for i = 1, nfire do
 		local ang = math.random()*2*math.pi
 		local r = (math.random())^(1/2)*NAPALM_RADIUS
@@ -293,9 +293,9 @@ function removeCannonTurret(egcombat, entity)
 end
 
 function removeShieldDome(egcombat, entity)
-	if string.find(entity.name, "shield-dome", 1, true) and egcombat.shield_domes[entity.force.name] then
+	if string.find(entity.name, "shield-dome", 1, true) and egcombat.shield_domes[entity.force.name] and (not string.find(entity.name, "edge")) then
 		local entry = egcombat.shield_domes[entity.force.name][entity.unit_number]
-		if not entry then game.print("Dome with no entry @ " .. entity.position.x .. ", " .. entity.position.y .. " ?") return end
+		if not entry then game.print("Dome " .. entity.name .. " #" .. entity.unit_number .. " with no entry @ " .. entity.position.x .. ", " .. entity.position.y .. " ?") return end
 		for biter,edge in pairs(entry.edges) do
 			edge.entity.destroy()
 			if edge.effect and edge.effect.valid then

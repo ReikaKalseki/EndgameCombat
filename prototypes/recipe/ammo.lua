@@ -109,7 +109,7 @@
     ingredients =
     {
       {"steel-plate", 10},
-	  {"processing-unit", 25},
+	  {"processing-unit", 5},
 	  {"uranium-235", 1},
 	  {"explosives", 100}
     },
@@ -124,8 +124,8 @@
     ingredients =
     {
 	  {"rocket", 1},
-      {"steel-plate", 10},
-	  {"processing-unit", 25},
+      {"steel-plate", 5},
+	  {"processing-unit", 5},
 	  {"uranium-235", 1},
 	  {"explosives", 100}
     },
@@ -141,8 +141,8 @@
     {
       {"flamethrower-ammo", 20},
 	  {"steel-plate", 20},
-	  {"explosives", 10},
-      {"plastic-bar", 25}
+	  {"explosives", 25},
+      {"plastic-bar", 10}
     },
     result = "napalm-shell"
   },
@@ -155,9 +155,9 @@
     ingredients =
     {
       {"flamethrower-ammo", 20},
-	  {"steel-plate", 20},
-	  {"explosives", 10},
-      {"plastic-bar", 25},
+	  {"steel-plate", 15},
+	  {"explosives", 25},
+      {"plastic-bar", 10},
       {"rocket", 1}
     },
     result = "napalm-rocket"
