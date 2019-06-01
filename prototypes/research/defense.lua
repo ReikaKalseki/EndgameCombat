@@ -26,8 +26,8 @@ data:extend(
       count = 50,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 20
@@ -63,9 +63,9 @@ data:extend(
       count = 75,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        --{"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        --{"chemical-science-pack", 1},
       },
       time = 30
     },
@@ -93,9 +93,9 @@ data:extend(
       count = 125,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 2},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 40
@@ -123,8 +123,8 @@ data:extend(
       count = 40,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
       },
       time = 30
     },
@@ -152,9 +152,9 @@ data:extend(
       count = 100,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 2},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 2},
+        {"chemical-science-pack", 1},
       },
       time = 30
     },
@@ -192,11 +192,11 @@ data:extend(
       count = 1000,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-        {"high-tech-science-pack", 1},
+        {"utility-science-pack", 1},
       },
       time = 30
     },
@@ -239,11 +239,11 @@ data:extend(
       count = 2500,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-        {"high-tech-science-pack", 1},
+        {"utility-science-pack", 1},
         {"space-science-pack", (Config.spacePlasma or Config.spaceNukes) and 10 or 1},
       },
       time = 90
@@ -259,17 +259,17 @@ for type,vals in pairs(RETALIATIONS) do
 		local name = type .. "-retaliation-" .. level
 		
 		local ingredients = {
-				{"science-pack-1", 1},
-				{"science-pack-2", 1},
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
 		}
 		if level > (type == "radar" and 3 or 2) then
-			table.insert(ingredients, {"science-pack-3", 1})
+			table.insert(ingredients, {"chemical-science-pack", 1})
 		end
 		if level > 1 then
 			table.insert(ingredients, {"military-science-pack", 1})
 		end
 		if level > 5 then
-			table.insert(ingredients, {"high-tech-science-pack", 1})
+			table.insert(ingredients, {"utility-science-pack", 1})
 		end
 		if level > 8 then
 			table.insert(ingredients, {"space-science-pack", 1})

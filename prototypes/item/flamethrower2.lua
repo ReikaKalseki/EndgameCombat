@@ -5,7 +5,7 @@ data:extend(
     name = "flamethrower-2",
     icon = "__base__/graphics/icons/flamethrower.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     subgroup = "gun",
     order = "e[flamethrower]",
     attack_parameters =

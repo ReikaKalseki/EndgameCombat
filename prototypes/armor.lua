@@ -35,7 +35,7 @@ local function createCloudDumpEquipment(name, cname, ammo)
     icons = {{icon=shot.icon and shot.icon or capsule.icon}, {icon="__EndgameCombat__/graphics/icons/capsule-launcher-equipment.png"}}, -- icon="__EndgameCombat__/graphics/icons/" .. name .. ".png",
 	icon_size = 32,
     placed_as_equipment_result = name,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     subgroup = "equipment",
     order = "d[active-defense]-a[" .. name .. "]",
     stack_size = 20
@@ -147,7 +147,7 @@ data:extend(
     name = "power-armor-3",
     icon = "__EndgameCombat__/graphics/icons/power-armor-3.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     resistances =
     {
       {
@@ -193,7 +193,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/icons/advanced-laser-defense-equipment.png",
 	icon_size = 32,
     placed_as_equipment_result = "advanced-laser-defense-equipment",
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     subgroup = "equipment",
     order = "d[active-defense]-a[advanced-laser-defense-equipment]",
     stack_size = 20

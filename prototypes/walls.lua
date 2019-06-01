@@ -5,7 +5,7 @@ data:extend(
     name = "spiked-wall",
     icon = "__EndgameCombat__/graphics/icons/spiked-wall.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "defensive-structure",
     order = "f[stone-wall]-f[spiked-wall-1-2]",
     place_result = "spiked-wall",	
@@ -16,7 +16,7 @@ data:extend(
     name = "tough-wall",
     icon = "__EndgameCombat__/graphics/icons/tough-wall.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "defensive-structure",
     order = "f[stone-wall]-f[tough-wall-1-2]",
     place_result = "tough-wall",	
@@ -27,7 +27,7 @@ data:extend(
     name = "tough-spiked-wall",
     icon = "__EndgameCombat__/graphics/icons/tough-spiked-wall.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "defensive-structure",
     order = "f[stone-wall]-f[tough-spiked-wall-1-2]",
     place_result = "tough-spiked-wall",	
@@ -38,7 +38,7 @@ data:extend(
     name = "tough-gate",
     icon = "__EndgameCombat__/graphics/icons/gate.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "defensive-structure",
     order = "a[wall]-b[tough-gate]",
     place_result = "tough-gate",
@@ -1007,7 +1007,7 @@ data:extend(
 	icon_size = 32,
     flags = {"placeable-neutral","placeable-player", "player-creation"},
     fast_replaceable_group = "wall",
-    minable = {hardness = 0.2, mining_time = 0.5, result = "tough-gate"},
+    minable = {mining_time = 0.5, result = "tough-gate"},
     max_health = 2000,
     corpse = "small-remnants",
     collision_box = {{-0.29, -0.29}, {0.29, 0.29}},
@@ -1251,79 +1251,44 @@ data:extend(
     },
     wall_patch =
     {
-      north =
+      layers =
       {
-        layers =
         {
+          filename = "__base__/graphics/entity/gate/gate-wall-patch.png",
+          line_length = 8,
+          width = 34,
+          height = 48,
+          frame_count = 16,
+          shift = util.by_pixel(0, 12),
+          hr_version =
           {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-north.png",
-            width = 22,
-            height = 35,
-            shift = {0, -0.62}
-          },
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-north-shadow.png",
-            width = 46,
-            height = 31,
-            shift = {0.3, 0.20},
-            draw_as_shadow = true
+            filename = "__base__/graphics/entity/gate/hr-gate-wall-patch.png",
+            line_length = 8,
+            width = 70,
+            height = 94,
+            frame_count = 16,
+            shift = util.by_pixel(-1, 13),
+            scale = 0.5
           }
-        }
-      },
-      east =
-      {
-        layers =
+        },
         {
+          filename = "__base__/graphics/entity/gate/gate-wall-patch-shadow.png",
+          line_length = 8,
+          width = 44,
+          height = 38,
+          frame_count = 16,
+          shift = util.by_pixel(8, 32),
+          draw_as_shadow = true,
+          hr_version =
           {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-east.png",
-            width = 11,
-            height = 40,
-            shift = {0.328125, -0.109375}
-          },
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-east-shadow.png",
-            width = 38,
-            height = 32,
-            shift = {0.8125, 0.46875},
-            draw_as_shadow = true
-          }
-        }
-      },
-      south =
-      {
-        layers =
-        {
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-south.png",
-            width = 22,
-            height = 40,
-            shift = {0, -0.125}
-          },
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-south-shadow.png",
-            width = 48,
-            height = 25,
-            shift = {0.3, 0.95},
-            draw_as_shadow = true
-          }
-        }
-      },
-      west =
-      {
-        layers =
-        {
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-west.png",
-            width = 11,
-            height = 40,
-            shift = {-0.328125, -0.109375}
-          },
-          {
-            filename = "__EndgameCombat__/graphics/entity/gate/wall-patch-west-shadow.png",
-            width = 46,
-            height = 32,
-            shift = {0.1875, 0.46875},
-            draw_as_shadow = true
+            filename = "__base__/graphics/entity/gate/hr-gate-wall-patch-shadow.png",
+            line_length = 8,
+            width = 82,
+            height = 72,
+            frame_count = 16,
+            shift = util.by_pixel(9, 33),
+            draw_as_shadow = true,
+            scale = 0.5
           }
         }
       }

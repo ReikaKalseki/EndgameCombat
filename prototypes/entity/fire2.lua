@@ -478,7 +478,7 @@ data:extend(
     
     shadow =
     {
-      filename = "__base__/graphics/entity/acid-projectile-purple/acid-projectile-purple-shadow.png",
+      filename = "__base__/graphics/entity/acid-projectile/projectile-shadow.png",
       line_length = 5,
       width = 28,
       height = 16,
@@ -529,7 +529,7 @@ data:extend(
     target_movement_modifier = 0.8,
     damage_per_tick = { amount = 150 / 60, type = "fire" },
     spread_fire_entity = "fire-flame-on-tree",
-    fire_spread_cooldown = Config.napalmTrees and 30 or 9999,
+    fire_spread_cooldown = Config.napalmTrees and 30 or 255,
     fire_spread_radius = Config.napalmTrees and 0.75 or 0
   }
 })

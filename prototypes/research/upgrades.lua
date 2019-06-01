@@ -68,9 +68,9 @@ data:extend(
       count = 80,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1}
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1}
       },
       time = 30
     },
@@ -95,10 +95,10 @@ data:extend(
       count = 100,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
-        {"high-tech-science-pack", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"utility-science-pack", 1},
       },
       time = 30
     },
@@ -123,7 +123,7 @@ data:extend(
       count = 20,
       ingredients =
       {
-        {"science-pack-1", 1},
+        {"automation-science-pack", 1},
       },
       time = 30
     },
@@ -158,9 +158,9 @@ data:extend(
       count = 100,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
 		{"biter-flesh", 8}
       },
@@ -190,11 +190,11 @@ data:extend(
       count = 200,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
+		{"utility-science-pack", 1},
 		{"biter-flesh", 12}
       },
       time = 75
@@ -224,11 +224,11 @@ data:extend(
       count = 400,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
+		{"utility-science-pack", 1},
 		{"biter-flesh", 16}
       },
       time = 90
@@ -258,11 +258,11 @@ data:extend(
       count = 800,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
+		{"utility-science-pack", 1},
 		{"biter-flesh", 24}
       },
       time = 120
@@ -292,11 +292,11 @@ data:extend(
       count = 1600,
       ingredients =
       {
-        {"science-pack-1", 2},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 2},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
-		{"high-tech-science-pack", 1},
+		{"utility-science-pack", 1},
 		{"biter-flesh", 32}
       },
       time = 180
@@ -319,8 +319,8 @@ data:extend(
       count = 50,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 30
@@ -343,8 +343,8 @@ data:extend(
       count = 100,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 30
@@ -367,9 +367,9 @@ data:extend(
       count = 200,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1}
       },
       time = 60
@@ -392,9 +392,9 @@ data:extend(
       count = 300,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1}
       },
       time = 60
@@ -417,9 +417,9 @@ data:extend(
       count = 500,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 60
@@ -453,9 +453,9 @@ data:extend({
       count = 400+(i-1)*100,
       ingredients =
       {
-        {"science-pack-1", 1},
-        {"science-pack-2", 1},
-        {"science-pack-3", 1},
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
         {"military-science-pack", 1},
       },
       time = 75
@@ -469,19 +469,19 @@ end
 
 for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 	local ingredients = {
-			{"science-pack-1", 1},
-			{"science-pack-2", 1},
-			{"science-pack-3", 1},
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
 			{"military-science-pack", 1},
-			{"high-tech-science-pack", 1},
+			{"utility-science-pack", 1},
 	}
 	if i > 4 then
 		ingredients = {
-			{"science-pack-1", 4},
-			{"science-pack-2", 4},
-			{"science-pack-3", 4},
+			{"automation-science-pack", 4},
+			{"logistic-science-pack", 4},
+			{"chemical-science-pack", 4},
 			{"military-science-pack", 4},
-			{"high-tech-science-pack", 4},
+			{"utility-science-pack", 4},
 			{"space-science-pack", 1}
 		}
 	end
@@ -515,19 +515,19 @@ end
 
 for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 	local ingredients = {
-			{"science-pack-1", 1},
-			{"science-pack-2", 1},
-			{"science-pack-3", 1},
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
 			{"military-science-pack", 1},
-			{"high-tech-science-pack", 1},
+			{"utility-science-pack", 1},
 	}
 	if i > 10 then
 		ingredients = {
-			{"science-pack-1", 4},
-			{"science-pack-2", 4},
-			{"science-pack-3", 4},
+			{"automation-science-pack", 4},
+			{"logistic-science-pack", 4},
+			{"chemical-science-pack", 4},
 			{"military-science-pack", 4},
-			{"high-tech-science-pack", 4},
+			{"utility-science-pack", 4},
 			{"space-science-pack", 1}
 		}
 	end
@@ -590,11 +590,11 @@ while #REPAIR_CHANCES >= i do
 		  count = math.ceil(1600*(1.5^(i-5))),
 		  ingredients =
 		  {
-			{"science-pack-1", 2},
-			{"science-pack-2", 1},
-			{"science-pack-3", 1},
+			{"automation-science-pack", 2},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
 			{"military-science-pack", 1},
-			{"high-tech-science-pack", 1},
+			{"utility-science-pack", 1},
 			{"biter-flesh", 32+(16*(i-5))}
 		  },
 		  time = 180+60*(i-5)
@@ -610,18 +610,18 @@ end
 
 for l = 1,#TURRET_RANGE_BOOSTS do
 	local packs = {
-		{"science-pack-1", 1},
-		{"science-pack-2", 1}
+		{"automation-science-pack", 1},
+		{"logistic-science-pack", 1}
 	}
 	
 	if l >= 3 then
 		packs[#packs+1] = {"military-science-pack", 1}
 	end	
 	if l >= 5 then
-		packs[#packs+1] = {"science-pack-3", 1}
+		packs[#packs+1] = {"chemical-science-pack", 1}
 	end	
 	if l >= 7 then
-		packs[#packs+1] = {"high-tech-science-pack", 1}
+		packs[#packs+1] = {"utility-science-pack", 1}
 	end
 	if l >= 10 then
 		packs[#packs+1] = {"space-science-pack", 1}

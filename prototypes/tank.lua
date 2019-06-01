@@ -91,7 +91,7 @@ data:extend(
     name = "better-tank",
     icon = "__EndgameCombat__/graphics/icons/tank.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "transport",
     order = "b[personal-transport]-b[tank]",
     place_result = "better-tank",
@@ -103,7 +103,7 @@ data:extend(
     name = "better-submachine-gun",
     icon = "__base__/graphics/icons/submachine-gun.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     subgroup = "gun",
     order = "a[basic-clips]-b[submachine-gun]",
     attack_parameters =
@@ -136,7 +136,7 @@ data:extend(
     name = "better-tank-cannon",
     icon = "__base__/graphics/icons/tank-cannon.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory", "hidden"},
+    flags = {"hidden"},
     subgroup = "gun",
     order = "z[tank]-a[cannon]",
     attack_parameters =

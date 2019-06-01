@@ -1,5 +1,10 @@
 require "functions"
 
+local STREAMS = {
+"acid-stream-worm-small", "acid-stream-worm-medium", "acid-stream-worm-big", "acid-stream-worm-behemoth",
+"acid-stream-spitter-small", "acid-stream-spitter-medium", "acid-stream-spitter-big", "acid-stream-spitter-behemoth"
+}
+
 local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 	if not attacker.unit_number or not entry.edges[attacker.unit_number] or not entry.edges[attacker.unit_number].entity.valid or (entry.edges[attacker.unit_number].entity.health and entry.edges[attacker.unit_number].entity.health <= 0) then
 		local ang = math.atan2(attacker.position.y-entry.dome.position.y, attacker.position.x-entry.dome.position.x) --y,x, not x,y
@@ -14,7 +19,7 @@ local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 			egcombat.shield_dome_edges[attacker.unit_number] = entry2
 			attacker.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
 		elseif attacker.type == "projectile" then
-			entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
+			--entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
 			attackShieldDome(entry, 25) --cannot get actual damage, so go for 25 (normally 10/20/30/50 for S/M/Bg/Bhm)
 			attacker.destroy()
 		end
@@ -131,7 +136,7 @@ function tickShieldDome(egcombat, entry, tick)
 					end
 					
 					--this is required for spitters to be able to damage the shield
-					local projs = entry.dome.surface.find_entities_filtered({area = {{entry.dome.position.x-r, entry.dome.position.y-r}, {entry.dome.position.x+r, entry.dome.position.y+r}}, type="projectile", name = "acid-projectile-purple"})
+					local projs = entry.dome.surface.find_entities_filtered({area = {{entry.dome.position.x-r, entry.dome.position.y-r}, {entry.dome.position.x+r, entry.dome.position.y+r}}, type="projectile", name = STREAMS})
 					for _,proj in pairs(projs) do
 						local d = getDistance(proj, entry.dome)
 						if d < r*0.9 then

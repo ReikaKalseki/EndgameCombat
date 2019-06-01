@@ -27,7 +27,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 		if shouldCreateRangeTurret(base) then
 			local turret = util.table.deepcopy(base)
 			turret.name = turret.name .. "-rangeboost-" .. i
-			table.insert(turret.flags, "hide-from-bonus-gui")
+			table.insert(turret.flags, "hidden")
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
 			--[[
@@ -82,7 +82,7 @@ for _,base in pairs(baseturrets) do
 			name = turret.name,
 			localised_name = base.localised_name,
 			icon = "__base__/graphics/icons/radar.png", --temp
-			flags = {"goes-to-main-inventory"},
+			flags = {},
 			subgroup = "defensive-structure",
 			order = "z",
 			place_result = turret.name,

@@ -5,7 +5,7 @@ data:extend(
     name = "big-radar",
     icon = "__EndgameCombat__/graphics/icons/radar.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "defensive-structure",
     order = "f[radar]-f[big-radar-1-2]",
     place_result = "big-radar",	
@@ -22,7 +22,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/icons/radar.png",
 	icon_size = 32,
     flags = {"placeable-player", "player-creation"},
-    minable = {hardness = 0.2, mining_time = 0.5, result = "big-radar"},
+    minable = {mining_time = 0.5, result = "big-radar"},
     max_health = 400,
     corpse = "big-remnants",
     resistances =

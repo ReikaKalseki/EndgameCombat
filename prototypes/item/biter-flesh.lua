@@ -7,7 +7,7 @@ data:extend(
     name = "biter-flesh",
     icon = "__EndgameCombat__/graphics/icons/biter-flesh.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     subgroup = "intermediate-product",
     order = "b[biter-flesh]",
     stack_size = 250,
@@ -20,7 +20,7 @@ data:extend(
     name = "cooked-biter",
     icon = "__EndgameCombat__/graphics/icons/cooked-biter.png",
 	icon_size = 32,
-    flags = {"goes-to-quickbar"},
+    flags = {},
     subgroup = "raw-resource",
     capsule_action =
     {

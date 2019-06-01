@@ -17,7 +17,7 @@ data:extend(
     description = "cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/cannon-shell-magazine.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     ammo_type =
     {
       category = "cannon-shell-magazine",
@@ -52,7 +52,7 @@ data:extend(
     description = "explosive-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/explosive-cannon-shell-magazine.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     ammo_type =
     {
       category = "cannon-shell-magazine",
@@ -87,7 +87,7 @@ data:extend(
     description = "uranium-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/uranium-cannon-shell-magazine.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     ammo_type =
     {
       category = "cannon-shell-magazine",
@@ -122,7 +122,7 @@ data:extend(
     description = "explosive-uranium-cannon-shell-magazine",
     icon = "__EndgameCombat__/graphics/icons/explosive-uranium-cannon-shell-magazine.png",
 	icon_size = 32,
-    flags = {"goes-to-main-inventory"},
+    flags = {},
     ammo_type =
     {
       category = "cannon-shell-magazine",
