@@ -2,13 +2,13 @@
 {
   {
     type = "recipe",
-    name = "power-armor-3",
+    name = "power-armor-mk3",
     enabled = false,
     energy_required = 60,
     ingredients = {
 		{"power-armor-mk2", 1},
 	},
-    result = "power-armor-3"
+    result = "power-armor-mk3"
   },
   
   {

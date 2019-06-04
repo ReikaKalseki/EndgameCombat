@@ -904,13 +904,11 @@ data:extend({
     light = nil,--{intensity = 0.5, size = 10},
     animation =
     {
-      filename = "__EndgameCombat__/graphics/entity/dummy-projectile.png",
+      filename = "__core__/graphics/empty.png",
       tint = {r=1.0, g=1.0, b=1.0},
       frame_count = 1,
-      width = 12,
-      height = 33,
-      priority = "high",
-      blend_mode = "additive"
+      width = 1,
+      height = 1,
     },
     speed = 0
   }

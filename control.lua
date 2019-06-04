@@ -509,6 +509,16 @@ local function onFinishedResearch(event)
 			entry.cost_factor = getCurrentDomeCostFactorByLevel(lvl)
 		end
 	end
+	if string.find(tech, "shield-dome-reboot", 1, true) then
+		local lvl = tonumber(string.match(tech, "%d+"))
+		--game.print("Dome reboot " .. lvl)
+		if egcombat.shield_domes[force] == nil then
+			egcombat.shield_domes[force] = {}
+		end
+		for _,entry in pairs(egcombat.shield_domes[force]) do
+			entry.reboot_threshold = getDomeRebotThresholdByLevel(lvl)
+		end
+	end
 end
 
 script.on_event(defines.events.on_put_item, function(event)	
@@ -609,6 +619,12 @@ local function onEntityAttacked(event)
 	local entity = event.entity
 	local source = event.cause
 	local egcombat = global.egcombat
+	
+	
+	if string.find(entity.name, "shield-dome-edge", 1, true) then
+		getShieldDomeFromEdge(egcombat, entity, false, source, event.final_damage_amount)
+		return
+	end
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
 		updateTurretMonitoring(egcombat, entity, true)

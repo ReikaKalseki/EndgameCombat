@@ -5,18 +5,18 @@ data:extend(
 {
     {
     type = "technology",
-    name = "power-armor-3",
+    name = "power-armor-mk3",
     icon = "__EndgameCombat__/graphics/technology/armor.png",
     prerequisites =
     {
       "military-4",
-      "power-armor-2",
+      "power-armor-mk2",
     },
 	effects =
     {
       {
         type = "unlock-recipe",
-        recipe = "power-armor-3"
+        recipe = "power-armor-mk3"
       },
     },
     unit =
@@ -41,7 +41,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/armor.png",
     prerequisites =
     {
-      "power-armor-3",
+      "power-armor-mk3",
 	  "discharge-defense-equipment",
 	  "personal-laser-defense-equipment",
 	  "night-vision-equipment",

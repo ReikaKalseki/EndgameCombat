@@ -1,48 +1,16 @@
 require "config"
 require "constants"
 
+require("__DragonIndustries__.cloning")
+
 --acts as a distractor of sorts, where biters will reach the "shield edge" (secretly entities) and attack those preferentially; if killed, they will move on to target the shield dome emitter itself(?); once down, they act as normal
 --so: scan biters in radius, redirect aggro; watch entity-died for shield-edge and use ref lookup for getting shield itself, decrement its shield energy by the health of that entity
 --try E:D shield mechanics:
 --if shield level reaches zero, shield deactivates (no effect, no visuals); stays offline until reaches some threshold (eg 25%); shield recharges slowly, consuming LOTS of power in the process
 
-local function createCircuitSprite()
-	local ret = {
-        filename = "__EndgameCombat__/graphics/entity/dome/circuit.png",
-        x = 0,
-        y = 0,
-        width = 61,
-        height = 50,
-        frame_count = 1,
-        shift = {0.140625, 0.140625},
-    }
-	return ret
-end
 
-local function createCircuitActivitySprite()
-	local ret = {
-        filename = "__base__/graphics/entity/combinator/activity-leds/constant-combinator-LED-S.png",
-        width = 11,
-        height = 11,
-        frame_count = 1,
-        shift = {-0.296875, -0.078125},
-    }
-	return ret
-end
-
-local function createCircuitConnections()
-	local ret = {
-        shadow = {
-          red = {0.375, 0.5625},
-          green = {-0.125, 0.5625}
-        },
-        wire = {
-          red = {0.375, 0.15625},
-          green = {-0.125, 0.15625}
-        }
-    }
-	return ret
-end
+local connection = createFixedSignalAnchor("dome-circuit-connection")
+connection.item_slot_count = 2
 
 data:extend({
   {
@@ -61,68 +29,15 @@ data:extend({
     subgroup = "virtual-signal-special",
     order = "shield",
   },
-  {
-    type = "constant-combinator",
-    name = "dome-circuit-connection",
-    icon = "__base__/graphics/icons/constant-combinator.png",
-	icon_size = 32,
-    flags = {"placeable-neutral", "player-creation", "not-on-map", "placeable-off-grid", "not-blueprintable", "not-deconstructable"},
-	order = "z",
-	max_health = 100,
-	destructible = false,
-	--collision_mask = {},
-
-    --collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
-    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
-
-    item_slot_count = 2,
-
-    sprites =
-    {
-      north = createCircuitSprite(),
-      west = createCircuitSprite(),
-      east = createCircuitSprite(),
-      south = createCircuitSprite(),
-    },
-
-    activity_led_sprites = {
-	  north = createCircuitActivitySprite(),
-      west = createCircuitActivitySprite(),
-      east = createCircuitActivitySprite(),
-      south = createCircuitActivitySprite(),
-    },
-
-    activity_led_light =
-    {
-      intensity = 0.8,
-      size = 1,
-    },
-
-    activity_led_light_offsets =
-    {
-      {-0.296875, -0.078125},
-      {-0.296875, -0.078125},
-      {-0.296875, -0.078125},
-      {-0.296875, -0.078125},
-    },
-
-    circuit_wire_connection_points = {
-      createCircuitConnections(),
-      createCircuitConnections(),
-      createCircuitConnections(),
-      createCircuitConnections(),
-    },
-
-    circuit_wire_max_distance = 7.5
-  }
+  connection
 })
 
 local function createEmptyAnimation()
 	local ret = {
-		filename = "__EndgameCombat__/graphics/entity/dome/trans.png",
+		filename = "__core__/graphics/empty.png",
         line_length = 1,
-		width = 258,
-		height = 186,
+		width = 1,
+		height = 1,
         frame_count = 1,
         axially_symmetrical = false,
         direction_count = 1,
@@ -194,10 +109,10 @@ local function createShieldDome(name, params)
 			{
 			  filename = "__EndgameCombat__/graphics/entity/dome/emitter-" .. name .. ".png",
 			  priority = "extra-high",
-			  width = 258,
-			  height = 186,
+			  width = 75,
+			  height = 150,
 			  scale = 1.5,
-			  shift = {4.25, -1.25},
+			  shift = {0, -2.05},
 			  frame_count = 1,
 			},
 			call_for_help_radius = 5,
@@ -255,10 +170,10 @@ local function createShieldDome(name, params)
 			--selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 			picture =
 			{
-			  filename = "__EndgameCombat__/graphics/entity/dome/trans.png",
+			  filename = "__core__/graphics/empty.png",
 			  priority = "high",
-			  width = 5,
-			  height = 5,
+			  width = 1,
+			  height = 1,
 			  apply_projection = false,
 			  frame_count = 1,
 			  line_length = 1,

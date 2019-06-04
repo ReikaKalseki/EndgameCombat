@@ -30,7 +30,7 @@ data:extend({
   flame_alpha = 0.35,
   flame_alpha_deviation = 0.05,
   
-  emissions_per_tick = 0.005,
+  emissions_per_second = 0.005*60,
   
   add_fuel_cooldown = 10,
   increase_duration_cooldown = 10,
@@ -164,7 +164,7 @@ data:extend({
   flame_alpha = 0.35,
   flame_alpha_deviation = 0.05,
   
-  emissions_per_tick = 0.025,
+  emissions_per_second = 0.025*60,
   
   add_fuel_cooldown = 10,
   increase_duration_cooldown = 10,

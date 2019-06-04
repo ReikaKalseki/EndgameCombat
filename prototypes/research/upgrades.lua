@@ -558,6 +558,87 @@ for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 	  },
 	})
 end
+--[[
+for i = 1,MAX_DOME_EFFICIENCY_TECH_LEVEL do
+	local ingredients = {
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+			{"military-science-pack", 1},
+			{"utility-science-pack", 1},
+	}
+	if i > 10 then
+		ingredients = {
+			{"automation-science-pack", 4},
+			{"logistic-science-pack", 4},
+			{"chemical-science-pack", 4},
+			{"military-science-pack", 4},
+			{"utility-science-pack", 4},
+			{"space-science-pack", 1}
+		}
+	end
+		  
+	data:extend({
+	  {
+		type = "technology",
+		name = "shield-dome-efficiency-" .. i,
+		icon = "__EndgameCombat__/graphics/technology/dome-efficiency.png",
+		effects =
+		{
+		  {
+			type = "nothing",
+			effect_description = {"modifier-description.shield-dome-efficiency", tostring(100*(1/getCurrentDomeEfficiencyFactorByLevel(i)-1)), tostring(100*math.floor((1/getTotalDomeEfficiencyFactorByLevel(i)-1)*10000+0.5)/10000)}
+		  }
+		},
+		prerequisites = {i == 1 and "shield-domes" or "shield-dome-efficiency-" .. (i-1)},
+		unit =
+		{
+		  count = i <= 5 and 200*i or 200*(i-5),
+		  ingredients = ingredients,
+		  time = 30
+		},
+		upgrade = true,
+		order = "e-n-e",
+		icon_size = 128,
+	  },
+	})
+end
+--]]
+
+for i = 1,MAX_DOME_REBOOT_TECH_LEVEL do
+	local ingredients = {
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+			{"military-science-pack", 1},
+			{"utility-science-pack", 1},
+	}
+		  
+	data:extend({
+	  {
+		type = "technology",
+		name = "shield-dome-reboot-" .. i,
+		icon = "__EndgameCombat__/graphics/technology/dome-reboot.png",
+		effects =
+		{
+		  {
+			type = "nothing",
+			effect_description = {"modifier-description.shield-dome-reboot", tostring(100*getDomeRebootThresholdByLevel(i)), tostring(100*getDomeRebootThresholdByLevel(i-1)), tostring(100*getDomeRebootThresholdByLevel(0))}
+		  }
+		},
+		prerequisites = {i == 1 and "shield-domes" or "shield-dome-reboot-" .. (i-1)},
+		unit =
+		{
+		  count = 50*i,
+		  ingredients = ingredients,
+		  time = 30
+		},
+		upgrade = true,
+		order = "e-n-e",
+		icon_size = 128,
+	  },
+	})
+end
 
 local i = 6
 while #REPAIR_CHANCES >= i do

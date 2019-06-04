@@ -31,7 +31,7 @@ for lifevar = RADIATION_LIFE_VAR_MIN,RADIATION_LIFE_VAR_MAX,RADIATION_LIFE_VAR_S
 	  flame_alpha = 0.125,
 	  flame_alpha_deviation = 0.0625,
 	  
-	  emissions_per_tick = 0,--0.005,
+	  emissions_per_second = 0,--0.005,
 	  
 	  add_fuel_cooldown = 100000,--10,
 	  increase_duration_cooldown = 10,
@@ -141,7 +141,7 @@ data:extend({
   flame_alpha_deviation = 0.05,
   
   tree_dying_factor = 0.0,
-  emissions_per_tick = 0,
+  emissions_per_second = 0,
   
   fade_in_duration = 1,
   fade_out_duration = 1,

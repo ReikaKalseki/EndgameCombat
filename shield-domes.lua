@@ -26,6 +26,10 @@ local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 	end
 end
 
+function getDomeRebootThresholdByLevel(level)
+	return SHIELD_REACTIVATE_FRACTION[level+1]
+end
+
 function getLevel100DomeStrengthBoost()
 	local inc = getCurrentDomeStrengthFactorByLevel(99)
 	local prev = getTotalDomeStrengthFactorByLevel(99)
@@ -80,6 +84,15 @@ function getCurrentDomeCostFactor(force)
 	return getCurrentDomeCostFactorByLevel(lvl)
 end
 
+function getCurrentDomeRebootThreshold(force)
+	local lvl = 1
+	while force.technologies["shield-dome-reboot-" .. lvl].researched and lvl < MAX_DOME_REBOOT_TECH_LEVEL do
+		lvl = lvl+1
+	end
+	lvl = lvl-1
+	return getDomeRebootThresholdByLevel(lvl)
+end
+
 function getShieldDomeStrength(entry)
 	if not entry.strength_factor then
 		entry.strength_factor = getCurrentDomeStrengthFactor(entry.dome.force)
@@ -92,6 +105,14 @@ function getShieldDomeRechargeCost(entry)
 		entry.cost_factor = getCurrentDomeCostFactor(entry.dome.force)
 	end
 	return math.max(1, math.ceil(SHIELD_DOMES[entry.index].energy_per_point*entry.cost_factor))*1000
+end
+
+function getShieldDomeRebootThreshold(entry)
+	if not entry.reboot_threshold then
+		entry.reboot_threshold = getCurrentDomeRebootThreshold(entry.dome.force)
+		game.print(entry.reboot_threshold)
+	end
+	return entry.reboot_threshold
 end
 
 local function setDomeCircuitStatus(entry)
@@ -174,14 +195,14 @@ function tickShieldDome(egcombat, entry, tick)
 			end
 		end
 	end
-	if entry.current_shield < getShieldDomeStrength(entry) then
+	local maxe = getShieldDomeStrength(entry)
+	if entry.current_shield < maxe then
 		local cost = getShieldDomeRechargeCost(entry)
-		local cycles = math.floor(entry.dome.energy/cost)
+		local cycles = math.min(maxe-entry.current_shield, math.floor(entry.dome.energy/cost))
 		if cycles > 1 then
 			entry.dome.energy = entry.dome.energy-cost*cycles
 			entry.current_shield = entry.current_shield+cycles
-			setDomeCircuitStatus(entry)
-			if entry.rebooting and entry.current_shield >= SHIELD_REACTIVATE_FRACTION*getShieldDomeStrength(entry) then
+			if entry.rebooting and entry.current_shield >= getShieldDomeRebootThreshold(entry)*getShieldDomeStrength(entry) then
 				entry.rebooting = false
 				--game.print("Shields back online @ " .. entry.current_shield)
 			end
@@ -191,9 +212,10 @@ function tickShieldDome(egcombat, entry, tick)
 		entry.current_shield = math.max(0, math.floor(entry.current_shield*0.95)) --lose energy if empty buffer
 		--game.print("Blackout! Shield depleting!")
 	end
+	setDomeCircuitStatus(entry)
 	if #entry.edges > 0 then
 		for biter,edge in pairs(entry.edges) do
-			if tick >= edge.life or entry.current_shield == 0 then
+			if tick >= edge.life or entry.current_shield == 0 or entry.rebooting then
 				if edge.entity.valid then
 					edge.entity.destroy()
 				end
@@ -216,9 +238,10 @@ function getShieldDomeFromEdge(egcombat, entity, destroy, killer, damage)
 		if egcombat.shield_domes[edge.force] and egcombat.shield_domes[edge.force][edge.entry_key] then
 			local entry = egcombat.shield_domes[edge.force][edge.entry_key]
 			if edge.entity.valid then
-				if destroy then
+				local maxh = game.entity_prototypes[entity.name].max_health
+				if destroy or (damage and damage >= maxh) then
 					entry.edges[killer.unit_number] = nil
-					attackShieldDome(entry, game.entity_prototypes[entity.name].max_health)
+					attackShieldDome(entry, maxh)
 					edge.entity.destroy()
 					if edge.effect and edge.effect.valid then
 						edge.effect.destroy()
@@ -241,7 +264,7 @@ function getShieldDomeFromEdge(egcombat, entity, destroy, killer, damage)
 			end
 			return entry
 		else
-			error("A shield dome edge in table (killer=" .. killer.unit_number .. ") (force=" .. edge.force .. ", key=" .. edge.entry_key .. " without an entry!?")
+			game.print("A shield dome edge in table (killer=" .. killer.unit_number .. ") (force=" .. edge.force .. ", key=" .. edge.entry_key .. " without an entry!?")
 			return nil
 		end
 	end
@@ -272,9 +295,9 @@ end
 
 function attackShieldDome(entry, damage)
 	--game.print("Damaging dome by " .. damage)
-	if entry.current_shield > 0 then
+	if entry.current_shield > 0 and not entry.rebooting then
 		entry.current_shield = math.max(0, entry.current_shield-damage)
-		--game.print("Destroying edge, subtracting " .. damage .. "health from shield. Shield health is now: " .. entry.current_shield)
+		--game.print("Subtracting " .. damage .. " health from shield. Shield health is now: " .. entry.current_shield)
 		if entry.current_shield == 0 then
 			onDomeFailure(entry)
 		end

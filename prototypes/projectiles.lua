@@ -154,8 +154,8 @@ data:extend({
     {
       filename = "__base__/graphics/entity/rocket/rocket-shadow.png",
       frame_count = 1,
-      width = 10,
-      height = 30,
+      width = 7,
+      height = 24,
       priority = "high"
     },
     smoke =
@@ -237,8 +237,8 @@ data:extend({
     {
       filename = "__base__/graphics/entity/rocket/rocket-shadow.png",
       frame_count = 1,
-      width = 10,
-      height = 30,
+      width = 7,
+      height = 24,
       priority = "high"
     },
     smoke =

@@ -26,14 +26,14 @@ if data.raw.item["titanium-plate"] then
 	addPlateToTurret("acid-turret", "aluminium", 20)
 	addPlateToTurret("lightning-turret", "tungsten", 10)
   
-  table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"copper-tungsten-alloy", 25})
-  table.insert(data.raw.technology["power-armor-3"].prerequisites, "tungsten-processing")
-  table.insert(data.raw.technology["power-armor-3"].prerequisites, "nitinol-processing")
+  table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"copper-tungsten-alloy", 25})
+  table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "tungsten-processing")
+  table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "nitinol-processing")
 else
 	turretArmorSteel = 50
 	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"steel-plate", 6})
   
-  table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"steel-plate", 100})
+  table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"steel-plate", 100})
 table.insert(data.raw["recipe"]["acid-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]40})
 end
 
@@ -43,9 +43,9 @@ table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"steel-plate", tur
 table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"steel-plate", math.floor(turretArmorSteel*0.8)})
 
 if data.raw.item["speed-module-5"] then
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"speed-module-5", 10})
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"effectivity-module-5", 10})
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"productivity-module-5", 10})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"speed-module-5", 10})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"effectivity-module-5", 10})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"productivity-module-5", 10})
 end
 
 if data.raw.item.resin then
@@ -85,10 +85,10 @@ else
 end
 
 if data.raw.item["advanced-processing-unit"] then
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"advanced-processing-unit", 50})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"advanced-processing-unit", 50})
 else
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"advanced-circuit", 20})
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients,{"processing-unit", 50})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"advanced-circuit", 20})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"processing-unit", 50})
 end
 
 if Config.spacePlasma then
@@ -118,7 +118,7 @@ end
 
 if data.raw.item["nitinol-alloy"] then
 	table.insert(data.raw["recipe"]["better-tank"].ingredients, {"nitinol-alloy", 25})
-	table.insert(data.raw["recipe"]["power-armor-3"].ingredients, {"nitinol-alloy", 25})
+	table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients, {"nitinol-alloy", 25})
 else
 	table.insert(data.raw["recipe"]["better-tank"].ingredients, {"plastic-bar", 50})
 end

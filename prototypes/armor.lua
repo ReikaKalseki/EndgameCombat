@@ -47,7 +47,7 @@ local function createCloudDumpEquipment(name, cname, ammo)
     {
       filename = "__EndgameCombat__/graphics/equipment/capsule-launcher-equipment.png",--"__EndgameCombat__/graphics/equipment/" .. name .. ".png",
       width = 64,
-      height = 96,
+      height = 64,
       priority = "medium"
     },
     shape =
@@ -144,8 +144,8 @@ data:extend(
 {
   {
     type = "armor",
-    name = "power-armor-3",
-    icon = "__EndgameCombat__/graphics/icons/power-armor-3.png",
+    name = "power-armor-mk3",
+    icon = "__EndgameCombat__/graphics/icons/power-armor-mk3.png",
 	icon_size = 32,
     flags = {},
     resistances =
@@ -181,7 +181,7 @@ data:extend(
     },
     durability = 40000,
     subgroup = "armor",
-    order = "e[power-armor-3]",
+    order = "e[power-armor-mk3]",
     stack_size = 1,
     equipment_grid = "huge-equipment-grid",
     inventory_size_bonus = 40

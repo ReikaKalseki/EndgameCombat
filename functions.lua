@@ -1,6 +1,9 @@
 require "constants"
 require "plasmabeam"
 
+require "__DragonIndustries__.mathhelper"
+require "__DragonIndustries__.arrays"
+
 function createCapsuleDamage(capsule, name, dtype)
 	if type(capsule) == "string" then capsule = data.raw["smoke-with-trigger"][capsule] end
 	local dat = CLOUD_DAMAGE_PROFILES[name]
@@ -108,12 +111,6 @@ function doRetaliation(attacker, raw, target, type)
 	attacker.damage(amt, force, "electric")
 end
 
-local function roundToGridBitShift(position, shift)
-	position.x = bit32.lshift(bit32.rshift(position.x, shift), shift)
-	position.y = bit32.lshift(bit32.rshift(position.y, shift), shift)
-	return position
-end
-
 function getPositionForBPEntity(entity)
 	local position = entity.position
 	
@@ -198,32 +195,6 @@ function doTissueDrops(egcombat, entity)
 			end
 		end
 	end
-end
-
-function getDistance(e1, e2)
-	local dx = e1.position.x-e2.position.x
-	local dy = e1.position.y-e2.position.y
-	return math.sqrt(dx*dx+dy*dy)
-end
-
-function isTableAnArray(t)
-	--are all indices numerical; count for later
-	local count = 0
-	for k,v in pairs(t) do
-		if type(k) ~= "number" then
-			return false
-		else
-			count = count+1
-		end
-	end
-	
-	--check if indices are 1->N in order
-	for i = 1,count do
-		if (not t[i]) and type(t[i]) ~= "nil" then --The value might be nil, have to check the type too
-			return false
-		end
-	end
-	return true
 end
 
 function spawnRadiationArea(entity)

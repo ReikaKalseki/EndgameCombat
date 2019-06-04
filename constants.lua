@@ -85,9 +85,10 @@ LIGHTNING_TURRET_HEALTH_THRESHOLD = 500
 LIGHTNING_TURRET_RECHARGE_TIME = 60*10 --17.5 second recharge time (set by charge sound length), then a 10-second sound was used instead
 LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH = 60*0.5 -- therefore down to 7.5s at level 5
 
-SHIELD_REACTIVATE_FRACTION = 0.2
+SHIELD_REACTIVATE_FRACTION = {0.4, 0.38, 0.35, 0.32, 0.29, 0.25, 0.2, 0.15, 0.1}
 MAX_DOME_STRENGTH_TECH_LEVEL = 100
 MAX_DOME_RECHARGE_TECH_LEVEL = 40
+MAX_DOME_REBOOT_TECH_LEVEL = #SHIELD_REACTIVATE_FRACTION-1
 
 local f = 2 --not needed to be big anymore, since have techs
 SHIELD_DOMES = { --energy per point in kJ, max recharge and idle drain in MW
