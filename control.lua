@@ -414,7 +414,7 @@ script.on_event(defines.events.on_tick, function(event)
 	if Config.rottingFlesh and math.random() < 0.1 then
 		for _,player in pairs(game.players) do
 			if math.random() < 0.2 then
-				local invs = {defines.inventory.player_main, defines.inventory.player_quickbar, defines.inventory.player_tools, defines.inventory.player_vehicle}
+				local invs = {defines.inventory.character_main, defines.inventory.character_quickbar, defines.inventory.character_tools, defines.inventory.character_vehicle}
 				--for _,inv in pairs(invs) do
 				local inv = invs[math.random(1, #invs)]
 					local iinv = player.get_inventory(inv)
@@ -530,7 +530,7 @@ script.on_event(defines.events.on_put_item, function(event)
 	end
 	
 	if stack.name == "orbital-manual-target" then
-		scheduleOrbitalStrike(player, player.get_inventory(defines.inventory_player_main), event.position)
+		scheduleOrbitalStrike(player, player.get_inventory(defines.inventory.character_main), event.position)
 		return
 	end
 	
@@ -654,8 +654,8 @@ end
 
 local function onAmmoChanged(event)
 	local player = game.players[event.player_index]
-	local inv1 = player.get_inventory(defines.inventory.player_guns)
-	local inv2 = player.get_inventory(defines.inventory.player_ammo)
+	local inv1 = player.get_inventory(defines.inventory.character_guns)
+	local inv2 = player.get_inventory(defines.inventory.character_ammo)
 	for i = 1,#inv2 do
 		if inv1[i] and inv1[i].valid_for_read and inv1[i].attack_parameters.ammo_category == "flamethrower" then
 			

@@ -132,7 +132,7 @@ local function fireOrbitalOnEntities(egcombat, target, entities, ownForce)
 			local dist = getDistance(entity, target)
 			if dist <= math.random(30, 40) then
 				local rock = isRock(entity)
-				if entity.type ~= "tree" and (not rock) and (entity.type == "player" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
+				if entity.type ~= "tree" and (not rock) and (entity.type == "character" or entity.type == "logistic-robot" or entity.type == "construction-robot" or (entity.force ~= target.force and (not target.force.get_cease_fire(entity.force)))) then
 					killEntity(egcombat, entity, dist, false)
 				else
 					if not rock then
