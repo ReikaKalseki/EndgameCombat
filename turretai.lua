@@ -252,6 +252,34 @@ function repairTurrets(egcombat, force)
 	end
 end
 
+local function simpleInterpolation(w1, v1, w2, v2)
+	return (v1*w1 + v2*w2)/(w1+w2)
+end
+
+local function getUnitHealth(unit)
+	local health = game.entity_prototypes[unit].max_health
+	local res = game.entity_prototypes[unit].resistances
+	if res and res[damage] and res[damage].percent then --simplified
+		health = health*(1+res[damage].percent*2)
+	end
+	return health
+end
+
+--roughly aligns to spawn curve: 0-0.3 = small only; 0.3-0.5 adds medium,0.5-0.9 adds big, 0.9+ = behemoth
+local function getAverageEnemyHealth(damage) --move this to a proper linear interpolate in 0.17 when can have centralized reference - probably want to cache into an array (2.5% granularity) for performance
+	local evo = game.forces.enemy.evolution_factor
+	local unit = nil
+	if evo < 0.3 then
+		return getUnitHealth("small-biter")
+	elseif evo < 0.5 then
+		return simpleInterpolation(0.5-evo,getUnitHealth("small-biter"),evo-0.3,getUnitHealth("medium-biter"))
+	elseif evo < 0.9 then
+		return simpleInterpolation(0.9-evo,getUnitHealth("medium-biter"),evo-0.5,getUnitHealth("big-biter"))
+	else
+		return simpleInterpolation(1.2-evo,getUnitHealth("big-biter"),evo-0.9,getUnitHealth("behemoth-biter"))--only ~33% behemoths at maximum evolution
+	end
+end
+
 function handleTurretLogistics(egcombat, force)
 	local auto = force.technologies["turret-auto-logistics"].researched
 	--game.print(#egcombat.placed_turrets[force.name])
@@ -264,11 +292,22 @@ function handleTurretLogistics(egcombat, force)
 			local logi = entry.logistic.get_inventory(defines.inventory.chest)
 			if auto then
 				if inv[1] and inv[1].valid_for_read then
-					local amt = math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))
-					if entry.turret.type == "artillery-turret" then
-						amt = math.max(2, amt/4)
-					end
-					entry.logistic.set_request_slot({name=inv[1].name, count=amt}, 1)
+					--local amt = math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))
+					--if entry.turret.type == "artillery-turret" then
+					--	amt = math.max(2, amt/4)
+					--end
+					--entry.logistic.set_request_slot({name=inv[1].name, count=amt}, 1)
+					local shots = inv[1].count*inv[1].prototype.magazine_size
+					local info = inv[1].prototype.get_ammo_type("turret")
+					local per, type = getAmmoTypeDamage(info)
+					per = per*entry.turret.prototype.attack_parameters.damage_modifier
+					local tech1 = 1+entry.turret.force.get_ammo_damage_modifier(info.category)
+					local tech2 = 1+entry.turret.force.get_turret_attack_modifier(entry.turret.name)
+					--game.print("Modifier " .. tech1 .. " for " .. info.category .. " and " .. tech2 .. " for turret")
+					local per2 = per*tech1*tech2
+					local lowAmmoThreshold = getAverageEnemyHealth(damage)*25
+					local requested = lowAmmoThreshold*2/per2/shots
+					entry.logistic.set_request_slot({name=inv[1].name, count=math.max(0,math.min(100, math.max(5, math.ceil(requested)))-inv[1].count-(inv[2] and inv[2].valid_for_read and inv[2].count or 0))}, 1)
 				else
 					entry.logistic.clear_request_slot(1)
 				end
