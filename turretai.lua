@@ -280,6 +280,45 @@ local function getAverageEnemyHealth(damage) --move this to a proper linear inte
 	end
 end
 
+local function getNestedTableValue(root, keys)
+	local val = root
+	for _,key in pairs(keys) do
+		val = val[key]
+		if not val then return nil end
+	end
+	return val
+end
+
+local function getDamageDealtThroughEffects(effects)
+	if not effects then return 0 end
+	local type = "physical"
+	local ret = 0
+	for _,effect in pairs(effects) do
+		if effect.damage then
+			ret = ret+effect.damage.amount
+			if effect.damage.type then
+				type = effect.damage.type
+			end
+		end
+	end
+	return ret, type
+end
+
+local function getAmmoTypeDamage(ammo)
+	--local ret = getNestedTableValue(ammo, {"action", 1, "action_delivery", 1, "target_effects", 2, "damage", "amount"})
+	--return ret and ret or 0
+	local root = getNestedTableValue(ammo, {"action", 1, "action_delivery", 1})
+	if root.projectile then
+		local effects = getNestedTableValue(game.entity_prototypes[root.projectile].attack_result, {1, "action_delivery", 1, "target_effects"})
+		return getDamageDealtThroughEffects(effects)
+	elseif root.beam then
+		local effects = getNestedTableValue(game.entity_prototypes[root.beam].attack_result, {1, "action_delivery", 1, "target_effects"})
+		return getDamageDealtThroughEffects(effects)
+	else
+		return getDamageDealtThroughEffects(root.target_effects)
+	end
+end
+
 function handleTurretLogistics(egcombat, force)
 	local auto = force.technologies["turret-auto-logistics"].researched
 	--game.print(#egcombat.placed_turrets[force.name])
