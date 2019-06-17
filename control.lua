@@ -445,7 +445,7 @@ local function onFinishedResearch(event)
 			egcombat.shield_domes[force] = {}
 		end
 		for _,entry in pairs(egcombat.shield_domes[force]) do
-			entry.reboot_threshold = getDomeRebotThresholdByLevel(lvl)
+			entry.reboot_threshold = getDomeRebootThresholdByLevel(lvl)
 		end
 	end
 end

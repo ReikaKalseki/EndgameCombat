@@ -36,6 +36,9 @@ function addCategoryResistance(category, type_, reduce, percent)
 end
 
 function addResistance(category, name, type_, reduce, percent)
+	if data.raw["damage-type"][type_] == nil then
+		log("Adding resistance to '" .. category .. "/" .. name .. "' with damage type '" .. type_ .. "', which does not exist!")
+	end
 	local obj = data.raw[category][name]
 	if obj.resistances == nil then
 		obj.resistances = {}
@@ -43,8 +46,8 @@ function addResistance(category, name, type_, reduce, percent)
 	local resistance = createResistance(type_, reduce, percent)
 	for k,v in pairs(obj.resistances) do
 		if v.type == type_ then --if resistance to that type already present, overwrite-with-max rather than have two for same type
-			v.decrease = math.max(v.decrease, reduce)
-			v.percent = math.max(v.percent, percent)
+			v.decrease = math.max(v.decrease and v.decrease or 0, reduce)
+			v.percent = math.max(v.percent and v.percent or 0, percent)
 			return
 		end
 	end

@@ -18,7 +18,7 @@ local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 			entry.edges[attacker.unit_number] = entry2
 			egcombat.shield_dome_edges[attacker.unit_number] = entry2
 			attacker.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
-		elseif attacker.type == "projectile" then
+		elseif attacker.type == "projectile" or attacker.type == "stream" then
 			--entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
 			attackShieldDome(entry, 25) --cannot get actual damage, so go for 25 (normally 10/20/30/50 for S/M/Bg/Bhm)
 			attacker.destroy()

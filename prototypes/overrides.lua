@@ -32,6 +32,7 @@ addCategoryResistance("ammo-turret", "radiation", 0, 100)
 addCategoryResistance("electric-turret", "radiation", 0, 100)
 addCategoryResistance("fluid-turret", "radiation", 0, 100)
 addCategoryResistance("wall", "radiation", 0, 100)
+addCategoryResistance("gate", "radiation", 0, 100)
 
 addCategoryResistance("cliff", "radiation", 0, 100)
 addCategoryResistance("simple-entity", "radiation", 0, 100)
