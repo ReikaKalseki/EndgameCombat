@@ -10,6 +10,8 @@ require "shield-domes"
 require "orbital-strikes"
 require "turret-alerts"
 
+require "tracker-hooks"
+
 function initGlobal(markDirty)
 	if not global.egcombat then
 		global.egcombat = {}
@@ -151,16 +153,17 @@ end
 addCommands()
 
 script.on_load(function()
-	
+	--setupTrackers()
 end)
 
 script.on_init(function()
 	initGlobal(true)
+	--setupTrackers()
 end)
 
 script.on_configuration_changed(function()
 	initGlobal(true)
-	
+	--setupTrackers()
 	convertTurretCache(global.egcombat)
 end)
 
@@ -294,6 +297,8 @@ script.on_event(defines.events.on_tick, function(event)
 		egcombat.dirty = false
 	end
 	
+	runTickHooks(egcombat, event.tick)
+	
 	if egcombat.orbital_targetable == nil then
 		egcombat.orbital_targetable = createOrbitalTargetableList()
 	end
@@ -312,82 +317,6 @@ script.on_event(defines.events.on_tick, function(event)
 					end
 					if force.technologies["turret-logistics"].researched and event.tick%120 == 0 then
 						handleTurretLogistics(egcombat, force)
-					end
-				end
-			end
-		end
-	end
-	
-	if egcombat.shockwave_turrets then
-		for k,force in pairs(game.forces) do
-			if force ~= game.forces.enemy then
-				if egcombat.shockwave_turrets[force.name] then
-					for i, entry in ipairs(egcombat.shockwave_turrets[force.name]) do
-						if entry.turret.valid then
-							tickShockwaveTurret(entry, event.tick)
-						else
-							table.remove(egcombat.shockwave_turrets[force.name], i)
-						end
-					end
-				end
-			end
-		end
-	end
-	
-	if egcombat.cannon_turrets then
-		for k,force in pairs(game.forces) do
-			if force ~= game.forces.enemy then
-				if egcombat.cannon_turrets[force.name] then
-					for i, entry in ipairs(egcombat.cannon_turrets[force.name]) do
-						if entry.turret.valid then
-							tickCannonTurret(entry, event.tick)
-						else
-							table.remove(egcombat.cannon_turrets[force.name], i)
-						end
-					end
-				end
-			end
-		end
-	end
-	
-	if egcombat.lightning_turrets then
-		for k,force in pairs(game.forces) do
-			if force ~= game.forces.enemy then
-				if egcombat.lightning_turrets[force.name] then
-					for unit, entry in pairs(egcombat.lightning_turrets[force.name]) do
-						if entry.turret.valid then
-							tickLightningTurret(entry, event.tick)
-						else
-							egcombat.lightning_turrets[force.name][unit] = nil
-						end
-					end
-				end
-			end
-		end
-	end
-	
-	if egcombat.shield_domes then
-		for k,force in pairs(game.forces) do
-			if force ~= game.forces.enemy then
-				if egcombat.shield_domes[force.name] then
-					for unit, entry in pairs(egcombat.shield_domes[force.name]) do
-						if entry.dome.valid then
-							tickShieldDome(egcombat, entry, event.tick)
-						else
-							for biter,edge in pairs(entry.edges) do
-								edge.entity.destroy()
-								edge.effect.destroy()
-								if edge.light and edge.light.valid then
-									edge.light.destroy()
-								end
-							end
-							if entry.circuit then
-								entry.circuit.disconnect_neighbour(defines.wire_type.red)
-								entry.circuit.disconnect_neighbour(defines.wire_type.green)
-								entry.circuit.destroy()
-							end
-							egcombat.shield_domes[force.name][unit] = nil
-						end
 					end
 				end
 			end
@@ -545,6 +474,8 @@ local function onEntityAdded(event)
 	local placer = event.player_index and game.players[event.player_index] or event.robot
 	local egcombat = global.egcombat
 	
+	trackEntityAddition(entity, egcombat)
+	
 	if entity.name == "orbital-manual-target" or entity.name == "orbital-scanner" then
 		game.players[event.player_index].insert{name = entity.name} --not placeable by robot, so can assume player
 		entity.destroy()
@@ -576,10 +507,7 @@ local function onEntityMined(event)
 	local entity = event.entity
 	local egcombat = global.egcombat
 	
-	removeShockwaveTurret(egcombat, entity)
-	removeCannonTurret(egcombat, entity)
-	removeShieldDome(egcombat, entity)
-	removeLightningTurret(egcombat, entity)
+	trackEntityRemoval(entity, egcombat)
 	
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
 		removeTurretFromCache(egcombat, entity)
@@ -590,10 +518,7 @@ local function onEntityRemoved(event)
 	local entity = event.entity
 	local egcombat = global.egcombat
 	
-	removeShockwaveTurret(egcombat, entity)
-	removeCannonTurret(egcombat, entity)
-	removeShieldDome(egcombat, entity)
-	removeLightningTurret(egcombat, entity)
+	trackEntityRemoval(entity, egcombat)
 	
 	if entity.name == "last-stand-turret" then
 		doLastStandDestruction(entity)
@@ -618,8 +543,7 @@ end
 local function onEntityAttacked(event)	
 	local entity = event.entity
 	local source = event.cause
-	local egcombat = global.egcombat
-	
+	local egcombat = global.egcombat	
 	
 	if string.find(entity.name, "shield-dome-edge", 1, true) then
 		getShieldDomeFromEdge(egcombat, entity, false, source, event.final_damage_amount)

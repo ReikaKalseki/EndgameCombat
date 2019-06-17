@@ -110,7 +110,7 @@ end
 function getShieldDomeRebootThreshold(entry)
 	if not entry.reboot_threshold then
 		entry.reboot_threshold = getCurrentDomeRebootThreshold(entry.dome.force)
-		game.print(entry.reboot_threshold)
+		--game.print(entry.reboot_threshold)
 	end
 	return entry.reboot_threshold
 end
@@ -233,6 +233,7 @@ end
 
 function getShieldDomeFromEdge(egcombat, entity, destroy, killer, damage)
 	if killer == nil then return end
+	if entity == nil or (not entity.valid) then return end
 	local edge = egcombat.shield_dome_edges[killer.unit_number]
 	if edge then
 		if egcombat.shield_domes[edge.force] and egcombat.shield_domes[edge.force][edge.entry_key] then
@@ -251,7 +252,9 @@ function getShieldDomeFromEdge(egcombat, entity, destroy, killer, damage)
 					end
 				else
 					attackShieldDome(entry, damage)
-					entity.health = game.entity_prototypes[entity.name].max_health
+					if entity.valid then
+						entity.health = game.entity_prototypes[entity.name].max_health
+					end
 				end
 			else
 				entry.edges[killer.unit_number] = nil --just remove, no effect
@@ -284,11 +287,18 @@ local function onDomeFailure(entry)
 	entry.rebooting = true
 	entry.dome.surface.create_entity({name="shield-dome-fail-effect-" .. entry.index, position = entry.dome.position, force=game.forces.neutral})
 	entry.dome.surface.create_entity({name="shield-dome-fail-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+	--game.print(serpent.block(entry.edges))
 	for k,v in pairs(entry.edges) do
 		if v and v.valid then
 			v.destroy()
 		end
 		entry.edges[k] = nil
+	end
+	
+	--bandaid fix
+	local r = SHIELD_DOMES[entry.index].radius*1.25
+	for _,e in pairs(entry.dome.surface.find_entities_filtered({name="shield-dome-edge-" .. entry.index, area = {{entry.dome.position.x-r, entry.dome.position.y-r}, {entry.dome.position.x+r, entry.dome.position.y+r}}})) do
+		e.destroy()
 	end
 	--game.print("Shield offline. Rebooting.")
 end
