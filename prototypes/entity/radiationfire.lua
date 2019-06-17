@@ -21,7 +21,7 @@ for lifevar = RADIATION_LIFE_VAR_MIN,RADIATION_LIFE_VAR_MAX,RADIATION_LIFE_VAR_S
 	  color = {r=0.4, g=1, b=0.3, a=0.25},
 	  damage_per_tick = {amount = 10, type = "radiation"},
 	  
-	  spawn_entity = "radiation-on-tree",
+	  spawn_entity = nil,
 	  
 	  spread_delay = 300,
 	  spread_delay_deviation = 180,
@@ -132,7 +132,7 @@ data:extend({
 
   damage_per_tick = {amount = 0, type = "radiation"},
   
-  spawn_entity = "radiation-on-tree",
+  spawn_entity = nil,
   maximum_spread_count = 0,
   
   spread_delay = 100000,
