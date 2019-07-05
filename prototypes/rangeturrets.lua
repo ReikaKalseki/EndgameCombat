@@ -2,6 +2,8 @@ require "config"
 require "constants"
 require "functions"
 
+require "__DragonIndustries__.tech"
+
 local MAKE_ITEMS = true--false
 
 local baseturrets = {}
@@ -102,7 +104,7 @@ if MAKE_ITEMS then
 end
 
 for _,tech in pairs(data.raw.technology) do
-	if tech.effects then
+	if tech.effects and not isCampaignOnlyTech(tech) then
 		local effectsToAdd = {}
 		for _,effect in pairs(tech.effects) do
 			if effect.type == "turret-attack" and effect.turret_id then

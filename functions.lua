@@ -336,6 +336,9 @@ function isTechnicalTurret(name)
 	if name == "AlienControlStation_Area" then
 		return true
 	end
+	if name == "se-meteor-defence-container" or name == "se-meteor-point-defence-container" then
+		return true
+	end
 	return false
 end
 

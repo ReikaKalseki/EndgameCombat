@@ -7,5 +7,5 @@
   "homepage": "",
   "factorio_version" : "0.17",
   "description": "Adds more powerful late and endgame combat capability to keep up with powerful enemies and huge biter bases.",
-  "dependencies": ["base", "DragonIndustries"]
+  "dependencies": ["base", "DragonIndustries", "? FactorioExtended-Plus-Equipment"]
 }

@@ -1,6 +1,8 @@
 require "config"
 require "constants"
 
+require "__DragonIndustries__.tech"
+
 local ammos = {}
 
 for name,base in pairs(data.raw.ammo) do
@@ -58,7 +60,7 @@ for _,ammo in pairs(ammos) do
 end
 
 for _,tech in pairs(data.raw.technology) do
-	if tech.effects then
+	if tech.effects and not isCampaignOnlyTech(tech) then
 		for _,ammo in pairs(ammos) do
 			for _,effect in pairs(tech.effects) do
 				if effect.type == "unlock-recipe" then

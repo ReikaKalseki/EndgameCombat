@@ -1,38 +1,10 @@
-function createPlasmaAttack()
-	local ret = {
-		type = "beam",
-		ammo_category = "electric",
-		cooldown = 12,
-		damage_modifier = 5,
-		--projectile_center = {0, -0.2},
-		--projectile_creation_distance = 1.4,
-		range = 30,
-		sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 },
-		ammo_type =
-		{
-		  category = "plasma-turret",
-		  energy_consumption = "600kJ",
-		  action =
-		  {
-			type = "direct",
-			action_delivery =
-			{
-			  type = "beam",
-			  beam = "laser-beam-purple",
-			  max_length = 30,
-			  duration = 12,
-			  source_offset = {0, -1.3},
-			}
-		  }
-		}
-	}
-	return ret
-end
+require "__DragonIndustries__.strings"
 
 function createPlasmaBeam()
-	local ret = table.deepcopy(data.raw.beam["laser-beam-red"])
+	local ret = table.deepcopy(data.raw.beam["laser-beam"])
+	ret.name = "plasma-beam"
 	local color = {r = 0.8, g = 0.0, b = 1.0}
-	ret.name = "laser-beam-purple"
+	ret.width = ret.width*3
 	ret.damage_interval = 12
 	ret.light = {intensity = 0.75, size = 10}
 	ret.working_sound = {
@@ -50,14 +22,25 @@ function createPlasmaBeam()
 		  }
 		  
 		}
-	ret.action.action_delivery.target_effects[1].damage.amount = 7.5
+	--ret.action.action_delivery.target_effects[1].damage.amount = 7.5 --vanilla laser is 10
 	
-	
+	ret.head.filename = literalReplace(ret.head.filename, "__base__", "__EndgameCombat__")
+	ret.head.height = 36
+	ret.body[1].filename = literalReplace(ret.body[1].filename, "__base__", "__EndgameCombat__")
+	ret.tail.height = 186
+	ret.tail.filename = literalReplace(ret.tail.filename, "__base__", "__EndgameCombat__")
+	ret.body[1].height = 36
+	ret.head_light.filename = literalReplace(ret.head_light.filename, "__base__", "__EndgameCombat__")
+	ret.body_light[1].filename = literalReplace(ret.body_light[1].filename, "__base__", "__EndgameCombat__")
+	ret.tail_light.filename = literalReplace(ret.tail_light.filename, "__base__", "__EndgameCombat__")
+
+--[[	
 	ret.head.tint = color
 	ret.start.tint = color
 	ret.ending.tint = color
 	ret.tail.tint = color
 	ret.body[1].tint = color
+	--]]
 
 	return ret
 end

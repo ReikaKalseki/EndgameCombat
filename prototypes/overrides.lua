@@ -93,13 +93,6 @@ if data.raw["locomotive"]["locomotive-2"] then
 	addResistance("fluid-wagon", "fluid-wagon-3", "impact", 400, 98)
 end
 
-if data.raw["beam"] and data.raw["beam"]["laser-beam-red"] then
-	data:extend({
-		createPlasmaBeam()
-	})  
-	data.raw["electric-turret"]["plasma-turret"].attack_parameters = createPlasmaAttack()
-end
-
 if mods["bobwarfare"] then
 	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "bob-pierce", 1, "fire", 5})
 	changeAmmoDamage("sulfur-heavy-bullet-magazine", {"physical", 18, "bob-pierce", 4, "fire", 9})

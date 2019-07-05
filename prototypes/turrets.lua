@@ -318,6 +318,32 @@ local patchimg = {
 	splash = create_sticky_pictures()
 }
 
+local function plasma_turret_shooting_glow()
+  return
+  {
+    filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-shooting-light.png",
+    line_length = 8,
+    width = 62,
+    height = 58,
+    frame_count = 1,
+    direction_count = 64,
+    blend_mode = "additive",
+    shift = util.by_pixel(0, -35),
+    hr_version =
+    {
+      filename = "__EndgameCombat__/graphics/entity/laser-turret/hr-laser-turret-shooting-light.png",
+      line_length = 8,
+      width = 122,
+      height = 116,
+      frame_count = 1,
+      direction_count = 64,
+      shift = util.by_pixel(-0.5, -35),
+      blend_mode = "additive",
+      scale = 0.5
+    }
+  }
+end
+
 data:extend(
 {
 acid, stream, sticky, stream2, patch, patchimg, tree,
@@ -565,11 +591,15 @@ acid, stream, sticky, stream2, patch, patchimg, tree,
       }
     },
     vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
+	energy_glow_animation = plasma_turret_shooting_glow(),
+    glow_light_intensity = 0.5, -- defaults to 0
     attack_parameters =
     {
-      type = "projectile",
+      type = "beam",
       ammo_category = "electric",
       cooldown = 12,
+      source_direction_count = 64,
+      source_offset = {0, -3.423489 / 4},
       projectile_center = {0, -0.2},
       projectile_creation_distance = 1.4,
       range = 30,
@@ -581,16 +611,14 @@ acid, stream, sticky, stream2, patch, patchimg, tree,
         energy_consumption = "600kJ",
         action =
         {
+          type = "direct",
+          action_delivery =
           {
-            type = "direct",
-            action_delivery =
-            {
-              {
-                type = "projectile",
-                projectile = "plasma-laser",
-                starting_speed = 0.28
-              }
-            }
+            type = "beam",
+            beam = "plasma-beam",
+            max_length = 30,
+            duration = 12,
+            source_offset = {0, -1.31439 }
           }
         }
       },

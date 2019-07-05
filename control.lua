@@ -343,7 +343,7 @@ script.on_event(defines.events.on_tick, function(event)
 	if Config.rottingFlesh and math.random() < 0.1 then
 		for _,player in pairs(game.players) do
 			if math.random() < 0.2 then
-				local invs = {defines.inventory.character_main, defines.inventory.character_quickbar, defines.inventory.character_vehicle}
+				local invs = {defines.inventory.character_main, defines.inventory.character_vehicle}
 				--for _,inv in pairs(invs) do
 				local inv = invs[math.random(1, #invs)]
 					local iinv = player.get_inventory(inv)
