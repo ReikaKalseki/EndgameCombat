@@ -30,9 +30,9 @@ function createPlasmaBeam()
 	ret.tail.height = 186
 	ret.tail.filename = literalReplace(ret.tail.filename, "__base__", "__EndgameCombat__")
 	ret.body[1].height = 36
-	ret.head_light.filename = literalReplace(ret.head_light.filename, "__base__", "__EndgameCombat__")
-	ret.body_light[1].filename = literalReplace(ret.body_light[1].filename, "__base__", "__EndgameCombat__")
-	ret.tail_light.filename = literalReplace(ret.tail_light.filename, "__base__", "__EndgameCombat__")
+	--ret.head_light.filename = literalReplace(ret.head_light.filename, "__base__", "__EndgameCombat__")
+	--ret.body_light[1].filename = literalReplace(ret.body_light[1].filename, "__base__", "__EndgameCombat__")
+	--ret.tail_light.filename = literalReplace(ret.tail_light.filename, "__base__", "__EndgameCombat__")
 
 --[[	
 	ret.head.tint = color

@@ -14,7 +14,10 @@ local function addPlateToTurret(turret, item, amt)
 	if not tech then error("Could not find tech for turret " .. turret) end
 	local pre = item .. "-processing"
 	if item == "cobalt-steel" then pre = "cobalt-processing" end
-	if not data.raw.technology[pre] then error("No such technology " .. pre .. "!") end
+	if not data.raw.technology[pre] then
+		pre = item .. "-mk01"
+	end
+	if not data.raw.technology[pre] then error("No technology for plate " .. item .. "!") end
 	if item == "cobalt-steel" and mods["FTweaks"] and data.raw.technology["cobalt-processing"] then pre = "cobalt-processing-2" end
 	table.insert(tech.prerequisites, pre)
 end

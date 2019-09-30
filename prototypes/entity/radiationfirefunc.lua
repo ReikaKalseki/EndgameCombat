@@ -14,6 +14,34 @@ function radiationfireutil.foreach(table_, fun_)
   return table_
 end
 
+function radiationfireutil.create_fallout_pictures(opts)
+  local fire_blend_mode = opts.blend_mode or "additive"
+  local fire_animation_speed = opts.animation_speed or 0.5
+  local fire_scale =  opts.scale or 1
+  local fire_tint = {r=1,g=1,b=1,a=0.25}
+  local fire_flags = { "compressed" }
+  local retval = {
+    { 
+      filename = "__EndgameCombat__/graphics/entity/radiation/radiation_final_tinted.png",
+      line_length = 16,
+      width = 256,
+      height = 181,
+      frame_count = 128,
+      axially_symmetrical = false,
+      direction_count = 1,
+      blend_mode = fire_blend_mode,
+      animation_speed = fire_animation_speed,
+      scale = fire_scale,
+      tint = fire_tint,
+      flags = fire_flags,
+      --shift = { -0.0390625, -0.90625 }
+    }
+  }
+  return fireutil.foreach(retval, function(tab)
+    if tab.shift and tab.scale then tab.shift = { tab.shift[1] * tab.scale, tab.shift[2] * tab.scale } end
+  end)
+end
+
 function radiationfireutil.create_fire_pictures(opts)
   local fire_blend_mode = opts.blend_mode or "additive"
   local fire_animation_speed = opts.animation_speed or 0.5

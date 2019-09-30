@@ -179,10 +179,11 @@ data:extend(
         percent = 90
       }
     },
-    durability = 40000,
+    --durability = 40000,
     subgroup = "armor",
     order = "e[power-armor-mk3]",
     stack_size = 1,
+    infinite = true
     equipment_grid = "huge-equipment-grid",
     inventory_size_bonus = 40
   },

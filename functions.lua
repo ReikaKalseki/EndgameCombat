@@ -214,6 +214,12 @@ function spawnRadiationArea(entity)
 		local neighbors = entity.surface.find_entities_filtered({area = {{fx-2, fy-2}, {fx+2, fy+2}}, type = "fire"})
 		if #neighbors <= 1 then
 			entity.surface.create_entity{name = "radiation-fire-" .. lifevar, position = {x = fx, y = fy}, force = game.forces.neutral}
+
+			if math.random(0, 2) ~= 0 then
+				local list = {["small"] = 4, ["medium"] = 7, ["big"] = 10, ["huge"] = 8}
+				local size = getCustomWeightedRandom(list)
+				entity.surface.create_entity{name = "fallout-" .. size .. "-" .. math.random(0, 6), position = {x = fx, y = fy}, force = game.forces.neutral}
+			end
 		end
 	end
 end

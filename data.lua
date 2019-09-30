@@ -22,6 +22,7 @@ table.insert(data.raw['projectile']['explosive-cannon-projectile']['action']['ac
 
 require("prototypes.entity.fire2")
 require("prototypes.entity.radiationfire")
+require("prototypes.entity.fallout")
 
 require("prototypes.item.flamethrower2")
 

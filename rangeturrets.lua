@@ -40,6 +40,7 @@ local function replaceTurretKeepingContents(turret, newname)
 	local e = turret.energy
 	local dmg = turret.damage_dealt
 	local kills = turret.kills
+	local user = turret.last_user
 	local inv = turret.get_inventory(defines.inventory.turret_ammo)
 	local items = nil
 	if inv ~= nil then
@@ -72,6 +73,7 @@ local function replaceTurretKeepingContents(turret, newname)
 	repl.kills = kills
 	repl.damage_dealt = dmg
 	repl.health = h
+	repl.last_user = user
 	if items ~= nil then
 		for i = 1,#items do
 			local stack = items[i]
