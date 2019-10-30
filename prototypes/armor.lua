@@ -183,7 +183,7 @@ data:extend(
     subgroup = "armor",
     order = "e[power-armor-mk3]",
     stack_size = 1,
-    infinite = true
+    infinite = true,
     equipment_grid = "huge-equipment-grid",
     inventory_size_bonus = 40
   },

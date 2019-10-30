@@ -15,8 +15,15 @@ for _,v in pairs(data.raw["fluid-turret"]) do
 	table.insert(baseturrets, v)
 end
 
+local function isUnsafeModdedTurret(name)
+	if (name == "at_CR_b" or name == "at_CR_s1" or name == "at_CR_s2" or name == "at_A1_b" or name == "at_A1_b" or name == "at_A2_b")
+		return true
+	return false
+end
+
 local function shouldCreateRangeTurret(base)
 	if isTechnicalTurret(base.name) then return false end
+	if isUnsafeModdedTurret(base.name) then return false end
 	if string.find(base.name, "rangeboost") then return false end
 	if base.type == "artillery-turret" or base.type == "artillery-wagon" then return false end
 	return base.name ~= "last-stand-turret" and (not string.find(base.name, "shield-dome", 1, true)) and base.minable and base.minable.result --skip technicals

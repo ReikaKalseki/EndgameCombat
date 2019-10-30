@@ -73,7 +73,9 @@ local function replaceTurretKeepingContents(turret, newname)
 	repl.kills = kills
 	repl.damage_dealt = dmg
 	repl.health = h
-	repl.last_user = user
+	if user then
+		repl.last_user = user
+	end
 	if items ~= nil then
 		for i = 1,#items do
 			local stack = items[i]
