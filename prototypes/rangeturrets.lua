@@ -16,8 +16,9 @@ for _,v in pairs(data.raw["fluid-turret"]) do
 end
 
 local function isUnsafeModdedTurret(name)
-	if (name == "at_CR_b" or name == "at_CR_s1" or name == "at_CR_s2" or name == "at_A1_b" or name == "at_A1_b" or name == "at_A2_b")
+	if (name == "at_CR_b" or name == "at_CR_s1" or name == "at_CR_s2" or name == "at_A1_b" or name == "at_A1_b" or name == "at_A2_b") then
 		return true
+	end
 	return false
 end
 
