@@ -18,11 +18,18 @@ local function createCloudDumpEquipment(name, cname, ammo)
 		cname = nil
 	end
 	local capsule = cname and data.raw.capsule[cname] or nil
-	local shot = tempshot and tempshot or (capsule and util.table.deepcopy(data.raw.projectile[capsule.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile]) or nil)
-	local cloud = shot and util.table.deepcopy(data.raw["smoke-with-trigger"][shot.action.action_delivery.target_effects.entity_name]) or nil
+	if not capsule then error("Capsule '" .. cname .. "' does not exist!") end
+	local proj = capsule.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile
+	local shot = tempshot and tempshot or (capsule and table.deepcopy(data.raw.projectile[proj]) or nil)
+	if not shot then error("Capsule '" .. cname .. "' returned null shot ('" .. proj .. "')!") end
+	local key = shot.action[1].action_delivery.target_effects[1].entity_name
+	if not key then error("Capsule '" .. cname .. "' returned null cloud name (" .. serpent.block(shot.action) .. ") !") end
+	local cloud = shot and table.deepcopy(data.raw["smoke-with-trigger"][key]) or nil
+	if not cloud then error("Capsule '" .. cname .. "' returned null cloud lookup ('" .. key .. "') !") end
+	if not cloud.action then error("Error creating cloud dump for capsule '" .. cname .. "': cloud '" .. cloud.name .. "' has no action!" .. serpent.block(cloud)) end
 	shot.name = shot.name .. "-auto"
 	cloud.name = cloud.name .. "-auto"
-	shot.action.action_delivery.target_effects.entity_name = cloud.name
+	shot.action[1].action_delivery.target_effects[1].entity_name = cloud.name
 	cloud.duration = cloud.duration == 1 and 1 or math.max(10, math.floor(cloud.duration/10))
 	cloud.fade_away_duration = cloud.fade_away_duration == 1 and 1 or math.max(4, math.floor(cloud.fade_away_duration/10))
 	cloud.spread_duration = cloud.spread_duration == 1 and 1 or math.max(4, math.floor(cloud.spread_duration/10))
@@ -120,25 +127,13 @@ createCloudDumpEquipment("poison-cloud-equipment", "poison-capsule")
 createCloudDumpEquipment("acid-spraying-equipment", "acid-capsule")
 createCloudDumpEquipment("radiation-spraying-equipment", "radiation-capsule")
 
-local firecapsule = table.deepcopy(data.raw.projectile["poison-capsule"])
-local firecloud = table.deepcopy(data.raw["smoke-with-trigger"]["poison-cloud"])
-firecapsule.name = "fire-capsule"
-firecapsule.icon = "__EndgameCombat__/graphics/icons/fire-capsule.png"
-firecapsule.icon_size = 32
-firecapsule.animation.filename = "__EndgameCombat__/graphics/icons/fire-capsule.png"
-firecloud.name = "fire-cloud"
---firecapsule.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile
-firecapsule.action.action_delivery.target_effects.entity_name = firecloud.name
-firecapsule.action.action_delivery.target_effects.trigger_created_entity = "true"
-firecloud.duration = 1
-firecloud.fade_away_duration = 1
-firecloud.spread_duration = 1
-firecloud.color = {r=1,g=0,b=0}
-firecloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount = 0
-firecloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.type = "fire"
-data:extend({firecapsule, firecloud})
+local firecap = createDerivedCapsule("fire", nil, nil, 1, {r=1,g=0,b=0}, true)
+firecap.cloud.fade_away_duration = 0
+firecap.cloud.fade_in_duration = 0
+firecap.cloud.spread_duration = 0
+registerObjectArray(firecap)
 
-createCloudDumpEquipment("fire-spraying-equipment", firecapsule, data.raw.ammo["flamethrower-ammo"])
+createCloudDumpEquipment("fire-spraying-equipment", firecap.item.name, data.raw.ammo["flamethrower-ammo"])
 
 data:extend(
 {

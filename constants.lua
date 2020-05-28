@@ -128,3 +128,4 @@ end
 
 addCapsuleDamage("acid", 1.6, 2/3, 3.6, 12/11)
 addCapsuleDamage("radiation", 6, 1/3, 15, 1.6)
+addCapsuleDamage("fire", 0, 1, 0, 0)

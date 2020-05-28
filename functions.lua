@@ -3,10 +3,12 @@ require "plasmabeam"
 
 require "__DragonIndustries__.mathhelper"
 require "__DragonIndustries__.arrays"
+require "__DragonIndustries__.cloning"
+require "__DragonIndustries__.strings"
 
-function createCapsuleDamage(capsule, name, dtype)
-	if type(capsule) == "string" then capsule = data.raw["smoke-with-trigger"][capsule] end
+local function createCapsuleDamage(cloud, name, dtype)
 	local dat = CLOUD_DAMAGE_PROFILES[name]
+	if not dat then error("Capsule type '" .. name .. "' has no specified damage profile!") end
 	local base = data.raw["smoke-with-trigger"]["poison-cloud"]
 	local action = table.deepcopy(base.action)
     action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
@@ -14,10 +16,53 @@ function createCapsuleDamage(capsule, name, dtype)
 	newdmg = newdmg*dat.dps*dat.tickrate
     action.action_delivery.target_effects.action.action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
 	table.insert(action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
-	capsule.action = action
-	capsule.action_cooldown = base.action_cooldown*dat.tickrate
-	capsule.duration = base.duration*dat.total/dat.dps
-	capsule.animation.scale = base.animation.scale*dat.radius
+	cloud.action = action
+	cloud.action_cooldown = base.action_cooldown*dat.tickrate
+	cloud.duration = base.duration*dat.total/dat.dps
+	cloud.animation.scale = (base.animation.scale and base.animation.scale or 1)*dat.radius
+end
+
+function createDerivedCapsule(typename, range, cooldown, duration, color, trigger)
+	local newname = typename .. "-capsule"
+	local ret = copyObject("capsule", "poison-capsule", newname)
+	ret.icon = "__EndgameCombat__/graphics/icons/" .. newname .. ".png"
+	ret.icon_size = 32
+	ret.icon_mipmaps = 0
+	if range then
+		ret.capsule_action.attack_parameters.range = range
+	end
+	if cooldown then
+		ret.capsule_action.attack_parameters.cooldown = cooldown
+	end
+	ret.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile = newname
+	local proj = copyObject("projectile", "poison-capsule", newname)
+	local cloudname = typename .. "-cloud"
+	proj.action[1].action_delivery.target_effects[1].entity_name = cloudname
+	if trigger then
+		proj.action[1].action_delivery.target_effects[1].trigger_created_entity = "true"
+	end
+	replaceSpritesDynamic("EndgameCombat", "poison-cloud", proj)
+	local cloud = copyObject("smoke-with-trigger", "poison-cloud", cloudname)
+	cloud.duration = 60 * duration
+	if cloud.duration < 120 then
+		cloud.cyclic = false
+	end
+	cloud.spread_duration = 10
+	cloud.color = color	
+	cloud.show_when_smoke_off = true
+	createCapsuleDamage(cloud, typename, typename)
+	--log("Created capsule " .. newname .. " with cloud " .. serpent.block(cloud))
+	return {item = ret, projectile = proj, cloud = cloud}
+end
+
+function createDerivedTurret(category, name, newname)
+	local entity = copyObject(category, name, newname)
+	local item = copyObject("item", name, newname)
+	reparentSprites("base", "EndgameCombat", entity)
+	reparentSprites("base", "EndgameCombat", item)
+	entity.icon_size = 32
+	item.icon_size = 32
+	return {entity=entity, item=item}
 end
 
 function createTotalResistance()

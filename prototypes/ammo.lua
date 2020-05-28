@@ -1,3 +1,7 @@
+require "functions"
+
+require "__DragonIndustries__.registration"
+
 data:extend(
 {
   {
@@ -336,82 +340,10 @@ data:extend(
     order = "c",
     stack_size = 100
   },
-  
-    {
-    type = "capsule",
-    name = "radiation-capsule",
-    icon = "__EndgameCombat__/graphics/icons/radiation-capsule.png",
-	icon_size = 32,
-    flags = {},
-    capsule_action =
-    {
-      type = "throw",
-      attack_parameters =
-      {
-        type = "projectile",
-        ammo_category = "capsule",
-        cooldown = 20,
-        projectile_creation_distance = 0.6,
-        range = 40,
-        ammo_type =
-        {
-          category = "capsule",
-          target_type = "position",
-          action =
-          {
-            type = "direct",
-            action_delivery =
-            {
-              type = "projectile",
-              projectile = "radiation-capsule",
-              starting_speed = 0.3
-            }
-          }
-        }
-      }
-    },
-    subgroup = "capsule",
-    order = "b[radiation-capsule]",
-    stack_size = 100
-   },
-   
-       {
-    type = "capsule",
-    name = "acid-capsule",
-    icon = "__EndgameCombat__/graphics/icons/acid-capsule.png",
-	icon_size = 32,
-    flags = {},
-    capsule_action =
-    {
-      type = "throw",
-      attack_parameters =
-      {
-        type = "projectile",
-        ammo_category = "capsule",
-        cooldown = 20,
-        projectile_creation_distance = 0.6,
-        range = 30,
-        ammo_type =
-        {
-          category = "capsule",
-          target_type = "position",
-          action =
-          {
-            type = "direct",
-            action_delivery =
-            {
-              type = "projectile",
-              projectile = "acid-capsule",
-              starting_speed = 0.3
-            }
-          }
-        }
-      }
-    },
-    subgroup = "capsule",
-    order = "b[acid-capsule]",
-    stack_size = 100
-   },
 }
 )
+
+  
+registerObjectArray(createDerivedCapsule("radiation", 40, 20, 7.5, { r = 0.8, g = 0.7, b = 0.1 }))
+registerObjectArray(createDerivedCapsule("acid", 30, 20, 12, { r = 0.6, g = 0.0, b = 1.0 }))
 

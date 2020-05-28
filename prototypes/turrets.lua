@@ -1,4 +1,5 @@
 require "constants"
+require "functions"
 
 local function laststand_turret_sheet()
 return
@@ -44,30 +45,115 @@ return
 }
 end
 
+data.raw["ammo-turret"]["gun-turret"].fast_replaceable_group =  "gun-turret"
+data.raw["electric-turret"]["laser-turret"].fast_replaceable_group =  "laser-turret"
+
+local concuss = createDerivedTurret("ammo-turret", "gun-turret", "concussion-turret")
+local plasma = createDerivedTurret("electric-turret", "laser-turret", "plasma-turret")
+local acid = createDerivedTurret("fluid-turret", "flamethrower-turret", "acid-turret")
+local sticky = createDerivedTurret("fluid-turret", "flamethrower-turret", "sticky-turret")
+
+acid.entity.resistances[1].type = "acid"
+acid.entity.max_health = 1600
+acid.entity.attack_parameters.ammo_category = "acid-stream"
+acid.entity.attack_parameters.fluids = {{type = "sulfuric-acid", damage_modifier = 1}}
+acid.entity.attack_parameters.ammo_type.category = "acid-stream"
+acid.entity.attack_parameters.ammo_type.action.action_delivery.stream = "acid-stream"
+acid.entity.muzzle_animation = nil
+
+sticky.entity.max_health = 600
+sticky.entity.attack_parameters.ammo_category = "sticky-stream"
+sticky.entity.attack_parameters.fluids = {{type = "sticky", damage_modifier = 0}}
+sticky.entity.attack_parameters.ammo_type.category = "sticky-stream"
+sticky.entity.attack_parameters.ammo_type.action.action_delivery.stream = "sticky-stream"
+sticky.entity.muzzle_animation = nil
+sticky.entity.muzzle_light = nil
+sticky.entity.attack_parameters.min_range = 10
+sticky.entity.attack_parameters.range = 24 --from 30
+
+concuss.entity.max_health = 2000
+concuss.entity.rotation_speed = 0.015
+concuss.entity.preparing_speed = 0.08
+concuss.entity.folding_speed = 0.08
+concuss.entity.inventory_size = 2
+concuss.entity.automated_ammo_count = 10
+concuss.entity.attacking_speed = 0.5
+concuss.entity.call_for_help_radius = 50
+concuss.entity.resistances = {
+      {
+        type = "physical",
+        decrease = 0,
+        percent = 10
+      },
+      {
+        type = "acid",
+        decrease = 0,
+        percent = 10
+      },
+}
+concuss.entity.attack_parameters.cooldown = 6
+concuss.entity.attack_parameters.damage_modifier = 2
+concuss.entity.attack_parameters.range = 22
+concuss.entity.attack_parameters.shell_particle = {
+        name = "shell-particle",
+        direction_deviation = 0.1,
+        speed = 0.1,
+        speed_deviation = 0.03,
+        center = {0, 0},
+        creation_distance = -1.925,
+        starting_frame_speed = 0.2,
+        starting_frame_speed_deviation = 0.1
+}
+
+plasma.entity.max_health = 2000
+plasma.entity.rotation_speed = 0.01
+plasma.entity.preparing_speed = 0.05
+plasma.entity.folding_speed = 0.05
+plasma.entity.call_for_help_radius = 60
+plasma.entity.resistances = {
+      {
+        type = "physical",
+        decrease = 0,
+        percent = 10
+      },
+      {
+        type = "acid",
+        decrease = 0,
+        percent = 10
+      },
+}
+plasma.entity.energy_source.buffer_capacity = "1.6MJ"
+plasma.entity.energy_source.input_flow_limit = "9.6MW"
+plasma.entity.energy_source.drain = "80kW"
+plasma.entity.glow_light_intensity = 0.5
+plasma.entity.attack_parameters.cooldown = 12
+plasma.entity.attack_parameters.range = 30
+plasma.entity.attack_parameters.damage_modifier = 5
+plasma.entity.attack_parameters.ammo_type = {
+        type = "projectile",
+        category = "plasma-turret",
+        energy_consumption = "600kJ",
+        action =
+        {
+          type = "direct",
+          action_delivery =
+          {
+            type = "beam",
+            beam = "plasma-beam",
+            max_length = 30,
+            duration = 12,
+            source_offset = {0, -1.31439 }
+          }
+        }
+}
+plasma.entity.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 },
+
 data:extend(
 {
-  {
-    type = "item",
-    name = "concussion-turret",
-    icon = "__EndgameCombat__/graphics/icons/gun-turret.png",
-	icon_size = 32,
-    flags = {},
-    subgroup = "defensive-structure",
-    order = "f[gun-turret]-f[concussion-turret-1-2]",
-    place_result = "concussion-turret",
-    stack_size = 50
-  },
-    {
-    type = "item",
-    name = "plasma-turret",
-    icon = "__EndgameCombat__/graphics/icons/laser-turret.png",
-	icon_size = 32,
-    flags = {},
-    subgroup = "defensive-structure",
-    order = "f[laser-turret]-f[plasma-turret-1-2]",
-    place_result = "plasma-turret",
-    stack_size = 50
-  },
+  concuss.item,
+  plasma.item,
+  acid.item,
+  sticky.item,
     {
     type = "item",
     name = "cannon-turret",
@@ -114,17 +200,6 @@ data:extend(
   },
   {
     type = "item",
-    name = "acid-turret",
-    icon = "__EndgameCombat__/graphics/icons/acid-turret.png",
-	icon_size = 32,
-    flags = {},
-    subgroup = "defensive-structure",
-    order = "f[gun-turret]-f[acid-turret-1-2]",
-    place_result = "acid-turret",
-    stack_size = 10
-  },
-  {
-    type = "item",
     name = "lightning-turret",
     icon = "__EndgameCombat__/graphics/icons/lightning-turret.png",
 	icon_size = 32,
@@ -133,33 +208,9 @@ data:extend(
     order = "f[gun-turret]-f[lightning-turret-1-2]",
     place_result = "lightning-turret",
     stack_size = 10
-  },
-  {
-    type = "item",
-    name = "sticky-turret",
-    icon = "__EndgameCombat__/graphics/icons/sticky-turret.png",
-	icon_size = 32,
-    flags = {},
-    subgroup = "defensive-structure",
-    order = "f[gun-turret]-f[sticky-turret-1-2]",
-    place_result = "sticky-turret",
-    stack_size = 10
   }
 }
 )
-
-
-local acid = table.deepcopy(data.raw["fluid-turret"]["flamethrower-turret"])
-acid.icon = data.raw.item["acid-turret"].icon
-acid.name = "acid-turret"
-acid.minable.result = acid.name
-acid.resistances[1].type = "acid"
-acid.max_health = 1600
-acid.attack_parameters.ammo_category = "acid-stream"
-acid.attack_parameters.fluids = {{type = "sulfuric-acid", damage_modifier = 1}}
-acid.attack_parameters.ammo_type.category = "acid-stream"
-acid.attack_parameters.ammo_type.action.action_delivery.stream = "acid-stream"
-acid.muzzle_animation = nil
 
 local stream = table.deepcopy(data.raw.stream["flamethrower-fire-stream"])
 stream.name = "acid-stream"
@@ -183,20 +234,6 @@ stream.action = {
 }
 stream.spine_animation.filename = "__EndgameCombat__/graphics/entity/acid-turret/stream.png"
 stream.particle.filename = "__EndgameCombat__/graphics/entity/acid-turret/puff.png"
-
-local sticky = table.deepcopy(data.raw["fluid-turret"]["flamethrower-turret"])
-sticky.icon = data.raw.item["sticky-turret"].icon
-sticky.name = "sticky-turret"
-sticky.minable.result = sticky.name
-sticky.max_health = 600
-sticky.attack_parameters.ammo_category = "sticky-stream"
-sticky.attack_parameters.fluids = {{type = "sticky", damage_modifier = 0}}
-sticky.attack_parameters.ammo_type.category = "sticky-stream"
-sticky.attack_parameters.ammo_type.action.action_delivery.stream = "sticky-stream"
-sticky.muzzle_animation = nil
-sticky.muzzle_light = nil
-sticky.attack_parameters.min_range = 10
-sticky.attack_parameters.range = 24 --from 30
 
 local stream2 = table.deepcopy(data.raw.stream["flamethrower-fire-stream"])
 stream2.name = "sticky-stream"
@@ -346,286 +383,7 @@ end
 
 data:extend(
 {
-acid, stream, sticky, stream2, patch, patchimg, tree,
-{
-    type = "ammo-turret",
-    name = "concussion-turret",
-    icon = "__EndgameCombat__/graphics/icons/gun-turret.png",
-	icon_size = 32,
-    flags = {"placeable-player", "player-creation"},
-    minable = {mining_time = 0.5, result = "concussion-turret"},
-    max_health = 2000,
-    corpse = "medium-remnants",
-    collision_box = {{-0.7, -0.7 }, {0.7, 0.7}},
-    selection_box = {{-1, -1 }, {1, 1}},
-    rotation_speed = 0.015,
-    preparing_speed = 0.08,
-    folding_speed = 0.08,
-	fast_replaceable_group =  "gun-turret",
-    dying_explosion = "medium-explosion",
-    inventory_size = 2,
-    automated_ammo_count = 10,
-    attacking_speed = 0.5,
-    call_for_help_radius = 50,
-    resistances =
-    {
-      {
-        type = "physical",
-        decrease = 0,
-        percent = 10
-      },
-      {
-        type = "acid",
-        decrease = 0,
-        percent = 10
-      },
-    },
-    folded_animation = 
-    {
-      layers =
-      {
-        gun_turret_extension{frame_count=1, line_length = 1},
-        gun_turret_extension_mask{frame_count=1, line_length = 1},
-        gun_turret_extension_shadow{frame_count=1, line_length = 1}
-      }
-    },
-    preparing_animation = 
-    {
-      layers =
-      {
-        gun_turret_extension{},
-        gun_turret_extension_mask{},
-        gun_turret_extension_shadow{}
-      }
-    },
-    prepared_animation = gun_turret_attack{frame_count=1},
-    attacking_animation = gun_turret_attack{},
-    folding_animation = 
-    { 
-      layers = 
-      { 
-        gun_turret_extension{run_mode = "backward"},
-        gun_turret_extension_mask{run_mode = "backward"},
-        gun_turret_extension_shadow{run_mode = "backward"}
-      }
-    },
-    base_picture =
-    {
-      layers =
-      {
-        {
-          filename = "__EndgameCombat__/graphics/entity/gun-turret/gun-turret-base.png",
-          priority = "high",
-          width = 90,
-          height = 75,
-          axially_symmetrical = false,
-          frame_count = 1,
-          direction_count = 1,
-          shift = {0.0625, -0.046875},
-        },
-        {
-          filename = "__EndgameCombat__/graphics/entity/gun-turret/gun-turret-base-mask.png",
-          line_length = 1,
-          width = 52,
-          height = 47,
-          frame_count = 1,
-          axially_symmetrical = false,
-          direction_count = 1,
-          shift = {0.0625, -0.234375},
-          apply_runtime_tint = true
-        }
-      }
-    },
-    vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
-    attack_parameters =
-    {
-      type = "projectile",
-      ammo_category = "bullet",
-      cooldown = 6,
-      projectile_creation_distance = 1.39375,
-      projectile_center = {0.0625, -0.0875}, -- same as gun_turret_attack shift
-      damage_modifier = 2,--5, --this value is a multiplier against the ammo; gun turrets have 1x --more DPS than plasma turret, but physical (and thus resisted against), so balanced
-      shell_particle =
-      {
-        name = "shell-particle",
-        direction_deviation = 0.1,
-        speed = 0.1,
-        speed_deviation = 0.03,
-        center = {0, 0},
-        creation_distance = -1.925,
-        starting_frame_speed = 0.2,
-        starting_frame_speed_deviation = 0.1
-      },
-      range = 22,
-      sound = make_heavy_gunshot_sounds(),
-    }
-  },
-  {
-    type = "electric-turret",
-    name = "plasma-turret",
-    icon = "__EndgameCombat__/graphics/icons/laser-turret.png",
-	icon_size = 32,
-    flags = { "placeable-player", "placeable-enemy", "player-creation"},
-    minable = { mining_time = 0.5, result = "plasma-turret" },
-    max_health = 2000,
-    corpse = "medium-remnants",
-    collision_box = {{ -0.7, -0.7}, {0.7, 0.7}},
-    selection_box = {{ -1, -1}, {1, 1}},
-    rotation_speed = 0.01,
-    preparing_speed = 0.05,
-	fast_replaceable_group =  "laser-turret",
-    dying_explosion = "medium-explosion",
-    folding_speed = 0.05,
-    call_for_help_radius = 60,
-    resistances =
-    {
-      {
-        type = "physical",
-        decrease = 0,
-        percent = 10
-      },
-      {
-        type = "acid",
-        decrease = 0,
-        percent = 10
-      },
-    },
-    energy_source =
-    {
-      type = "electric",
-      buffer_capacity = "1.6MJ",
-      input_flow_limit = "9.6MW",
-      drain = "80kW",
-      usage_priority = "primary-input"
-    },
-    folded_animation =
-    {
-      layers =
-      {
-        laser_turret_extension{frame_count=1, line_length = 1},
-        laser_turret_extension_shadow{frame_count=1, line_length=1},
-        laser_turret_extension_mask{frame_count=1, line_length=1}
-      }
-    },
-    preparing_animation =
-    {
-      layers =
-      {
-        laser_turret_extension{},
-        laser_turret_extension_shadow{},
-        laser_turret_extension_mask{}
-      }
-    },
-    prepared_animation =
-    {
-      layers =
-      {
-        {
-          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun.png",
-          line_length = 8,
-          width = 68,
-          height = 68,
-          frame_count = 1,
-          axially_symmetrical = false,
-          direction_count = 64,
-          shift = {0.0625, -1}
-        },
-        {
-          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun-mask.png",
-          line_length = 8,
-          width = 54,
-          height = 44,
-          frame_count = 1,
-          axially_symmetrical = false,
-          apply_runtime_tint = true,
-          direction_count = 64,
-          shift = {0.0625, -1.3125},
-        },
-        {
-          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-gun-shadow.png",
-          line_length = 8,
-          width = 88,
-          height = 52,
-          frame_count = 1,
-          axially_symmetrical = false,
-          direction_count = 64,
-          draw_as_shadow = true,
-          shift = {1.59375, 0}
-        }
-      }
-    },
-    folding_animation = 
-    {
-      layers =
-      {
-        laser_turret_extension{run_mode = "backward"},
-        laser_turret_extension_shadow{run_mode = "backward"},
-        laser_turret_extension_mask{run_mode = "backward"}
-      }
-    },
-    base_picture =
-    {
-      layers =
-      {
-        {
-          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-base.png",
-          priority = "high",
-          width = 98,
-          height = 82,
-          axially_symmetrical = false,
-          frame_count = 1,
-          direction_count = 1,
-          shift = { 0.109375, 0.03125 }
-        },
-        {
-          filename = "__EndgameCombat__/graphics/entity/laser-turret/laser-turret-base-mask.png",
-          line_length = 1,
-          width = 54,
-          height = 46,
-          frame_count = 1,
-          axially_symmetrical = false,
-          apply_runtime_tint = true,
-          direction_count = 1,
-          shift = {0.046875, -0.109375},
-        },
-      }
-    },
-    vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
-	energy_glow_animation = plasma_turret_shooting_glow(),
-    glow_light_intensity = 0.5, -- defaults to 0
-    attack_parameters =
-    {
-      type = "beam",
-      ammo_category = "electric",
-      cooldown = 12,
-      source_direction_count = 64,
-      source_offset = {0, -3.423489 / 4},
-      projectile_center = {0, -0.2},
-      projectile_creation_distance = 1.4,
-      range = 30,
-      damage_modifier = 5,
-      ammo_type =
-      {
-        type = "projectile",
-        category = "plasma-turret",
-        energy_consumption = "600kJ",
-        action =
-        {
-          type = "direct",
-          action_delivery =
-          {
-            type = "beam",
-            beam = "plasma-beam",
-            max_length = 30,
-            duration = 12,
-            source_offset = {0, -1.31439 }
-          }
-        }
-      },
-      sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 },
-    }
-  },
-  
+concuss.entity, plasma.entity, acid.entity, stream, sticky.entity, stream2, patch, patchimg, tree, 
   {
     type = "ammo-turret",
     name = "cannon-turret",
