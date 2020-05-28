@@ -48,6 +48,10 @@ gate.resistances = {
 }
 reparentSprites("base", "EndgameCombat", gate)
 reparentSprites("base", "EndgameCombat", gateitem)
+gateitem.icon_size = 32
+gateitem.icon_mipmaps = 0
+gate.icon_size = 32
+gate.icon_mipmaps = 0
 
 data:extend({
 gate, gateitem

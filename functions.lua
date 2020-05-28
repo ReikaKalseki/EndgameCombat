@@ -358,6 +358,8 @@ function createDerivedTurret(category, name, newname)
 	reparentSprites("base", "EndgameCombat", item)
 	entity.icon_size = 32
 	item.icon_size = 32
+	item.icon = "__EndgameCombat__/graphics/icons/" .. newname .. ".png"
+	entity.icon = item.icon
 	return {entity=entity, item=item}
 end
 

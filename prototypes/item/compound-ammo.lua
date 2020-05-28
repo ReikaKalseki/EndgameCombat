@@ -13,7 +13,7 @@ for name,base in pairs(data.raw.ammo) do
 		ammo.stack_size = 100 --halve the total stack size, but still 5x as much ammo per slot
 		ammo.localised_name = {"ammo-crate.name", {"item-name." .. name}}
 		ammo.icons = {
-			{icon=ammo.icon}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png"}
+			{icon=ammo.icon, icon_size = ammo.icon_size}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png", icon_size = 32}
 		}
 		--do damage behavior later
 		table.insert(ammos, {item=ammo, original=base})
