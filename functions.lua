@@ -42,6 +42,8 @@ function createDerivedCapsule(typename, range, cooldown, duration, color, trigge
 		proj.action[1].action_delivery.target_effects[1].trigger_created_entity = "true"
 	end
 	replaceSpritesDynamic("EndgameCombat", "poison-cloud", proj)
+	replaceSpritesDynamic("EndgameCombat", "poison-capsule", proj)
+	replaceSpritesDynamic("EndgameCombat", "poison-capsule", ret)
 	local cloud = copyObject("smoke-with-trigger", "poison-cloud", cloudname)
 	cloud.duration = 60 * duration
 	if cloud.duration < 120 then
@@ -53,6 +55,300 @@ function createDerivedCapsule(typename, range, cooldown, duration, color, trigge
 	createCapsuleDamage(cloud, typename, typename)
 	--log("Created capsule " .. newname .. " with cloud " .. serpent.block(cloud))
 	return {item = ret, projectile = proj, cloud = cloud}
+end
+
+local function createWallPictures(name)
+    local pictures =
+    {
+      single =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-single.png",
+            priority = "extra-high",
+            width = 22,
+            height = 42,
+            shift = {0, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-single-shadow.png",
+            priority = "extra-high",
+            width = 47,
+            height = 32,
+            shift = {0.359375, 0.5},
+            draw_as_shadow = true
+          }
+        }
+      },
+      straight_vertical =
+      {
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-1.png",
+              priority = "extra-high",
+              width = 22,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-shadow.png",
+              priority = "extra-high",
+              width = 47,
+              height = 60,
+              shift = {0.390625, 0.625},
+              draw_as_shadow = true
+            }
+          }
+        },
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-2.png",
+              priority = "extra-high",
+              width = 22,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-shadow.png",
+              priority = "extra-high",
+              width = 47,
+              height = 60,
+              shift = {0.390625, 0.625},
+              draw_as_shadow = true
+            }
+          }
+        },
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-3.png",
+              priority = "extra-high",
+              width = 22,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-vertical-shadow.png",
+              priority = "extra-high",
+              width = 47,
+              height = 60,
+              shift = {0.390625, 0.625},
+              draw_as_shadow = true
+            }
+          }
+        }
+      },
+      straight_horizontal =
+      {
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-1.png",
+              priority = "extra-high",
+              width = 32,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-shadow.png",
+              priority = "extra-high",
+              width = 59,
+              height = 32,
+              shift = {0.421875, 0.5},
+              draw_as_shadow = true
+            }
+          }
+        },
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-2.png",
+              priority = "extra-high",
+              width = 32,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-shadow.png",
+              priority = "extra-high",
+              width = 59,
+              height = 32,
+              shift = {0.421875, 0.5},
+              draw_as_shadow = true
+            }
+          }
+        },
+        {
+          layers =
+          {
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-3.png",
+              priority = "extra-high",
+              width = 32,
+              height = 42,
+              shift = {0, -0.15625}
+            },
+            {
+              filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-straight-horizontal-shadow.png",
+              priority = "extra-high",
+              width = 59,
+              height = 32,
+              shift = {0.421875, 0.5},
+              draw_as_shadow = true
+            }
+          }
+        }
+      },
+      corner_right_down =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-corner-right-down.png",
+            priority = "extra-high",
+            width = 27,
+            height = 42,
+            shift = {0.078125, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-corner-right-down-shadow.png",
+            priority = "extra-high",
+            width = 53,
+            height = 61,
+            shift = {0.484375, 0.640625},
+            draw_as_shadow = true
+          }
+        }
+      },
+      corner_left_down =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-corner-left-down.png",
+            priority = "extra-high",
+            width = 27,
+            height = 42,
+            shift = {-0.078125, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-corner-left-down-shadow.png",
+            priority = "extra-high",
+            width = 53,
+            height = 60,
+            shift = {0.328125, 0.640625},
+            draw_as_shadow = true
+          }
+        }
+      },
+      t_up =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-t-down.png",
+            priority = "extra-high",
+            width = 32,
+            height = 42,
+            shift = {0, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-t-down-shadow.png",
+            priority = "extra-high",
+            width = 71,
+            height = 61,
+            shift = {0.546875, 0.640625},
+            draw_as_shadow = true
+          }
+        }
+      },
+      ending_right =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-ending-right.png",
+            priority = "extra-high",
+            width = 27,
+            height = 42,
+            shift = {0.078125, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-ending-right-shadow.png",
+            priority = "extra-high",
+            width = 53,
+            height = 32,
+            shift = {0.484375, 0.5},
+            draw_as_shadow = true
+          }
+        }
+      },
+      ending_left =
+      {
+        layers =
+        {
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-ending-left.png",
+            priority = "extra-high",
+            width = 27,
+            height = 42,
+            shift = {-0.078125, -0.15625}
+          },
+          {
+            filename = "__EndgameCombat__/graphics/entity/" .. name .. "/wall-ending-left-shadow.png",
+            priority = "extra-high",
+            width = 53,
+            height = 32,
+            shift = {0.328125, 0.5},
+            draw_as_shadow = true
+          }
+        }
+      }
+    }
+	return pictures
+end
+
+function createDerivedWall(newname, health, attackparams, resistances, repairSpeed)
+	local entity = copyObject("wall", "stone-wall", newname)
+	local item = copyObject("item", "stone-wall", newname)
+	entity.icon_size = 32
+	item.icon_size = 32
+	item.icon = "__EndgameCombat__/graphics/icons/" .. newname .. ".png"
+	item.icon_mipmaps = 0
+	entity.max_health = health
+	if attackparams then
+		entity.attack_reaction = {{
+			range = 2,
+			damage_type = "physical",
+			reaction_modifier = attackparams.modifier,
+			action = {
+				type = "direct",
+				action_delivery = {
+					type = "instant",
+					target_effects = {
+						type = "damage",
+						damage = {amount = attackparams.amount, type = attackparams.type}
+					}
+				}
+			},
+		}}
+	end
+	if repairSpeed then
+		entity.repair_speed_modifier = repairSpeed
+	end
+	if resistances then
+		entity.resistances = resistances
+	end
+	entity.pictures = createWallPictures(entity.name)
+	return {entity=entity, item=item}
 end
 
 function createDerivedTurret(category, name, newname)
