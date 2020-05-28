@@ -497,7 +497,7 @@ local function onEntityAdded(event)
 		local orig_name = entity.name
 		local turret = trackNewTurret(egcombat, entity)
 		if turret.name ~= orig_name then
-			script.raise_event(defines.events.script_raised_built, {mod_name = "EndgameCombat", created_entity = turret, player_index = event.player_index, stack = event.stack})
+			script.raise_event(defines.events.script_raised_built, {entity = turret, player_index = event.player_index, stack = event.stack})
 		end
 		return
 	end

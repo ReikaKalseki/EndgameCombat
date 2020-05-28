@@ -40,6 +40,9 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			table.insert(turret.flags, "hidden")
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
+			if turret.attack_parameters.type == "beam" then
+				turret.attack_parameters.ammo_type.action.action_delivery.max_length = turret.attack_parameters.range
+			end
 			--[[
 			if base.name == "shockwave-turret" then
 				turret.attack_parameters.range = base.attack_parameters.range+math.ceil(TURRET_RANGE_BOOST_SUMS[i]/2)
