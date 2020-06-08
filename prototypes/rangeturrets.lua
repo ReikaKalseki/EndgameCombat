@@ -3,6 +3,7 @@ require "constants"
 require "functions"
 
 require "__DragonIndustries__.tech"
+require "__DragonIndustries__.registration"
 
 local MAKE_ITEMS = true--false
 
@@ -40,7 +41,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			table.insert(turret.flags, "hidden")
 			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
 			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
-			if turret.attack_parameters.type == "beam" then
+			if turret.attack_parameters.type == "beam" and turret.attack_parameters.ammo_type then
 				turret.attack_parameters.ammo_type.action.action_delivery.max_length = turret.attack_parameters.range
 			end
 			--[[
@@ -70,12 +71,7 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 	end
 end
 
-for k,turret in pairs(turrets) do
-	data:extend(
-	{
-		turret
-	})
-end
+registerObjectArray(turrets)
 
 --[[
 for _,base in pairs(baseturrets) do
@@ -106,12 +102,7 @@ end
 --]]
 
 if MAKE_ITEMS then
-	for k,item in pairs(items) do
-		data:extend(
-		{
-			item
-		})
-	end
+	registerObjectArray(items)
 end
 
 for _,tech in pairs(data.raw.technology) do

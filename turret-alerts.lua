@@ -408,7 +408,7 @@ local function raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
 			--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
 			table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
 			if not (first and Config.continueAlarms) then
-				player.play_sound{path=alerts[alarm].sound}
+				player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5}
 			end
 		end
 	end

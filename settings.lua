@@ -107,4 +107,11 @@ data:extend({
             default_value = true,
             order = "r",
         },
+		{
+            type = "bool-setting",
+            name = "plastic-shockwave",
+            setting_type = "startup",
+            default_value = false,
+            order = "r",
+        },
 })

@@ -1,5 +1,7 @@
 require "config"
 
+require "__DragonIndustries__.recipe"
+
 local turretArmorSteel = 10
 
 local function addPlateToTurret(turret, item, amt)
@@ -20,6 +22,13 @@ local function addPlateToTurret(turret, item, amt)
 	if not data.raw.technology[pre] then error("No technology for plate " .. item .. "!") end
 	if item == "cobalt-steel" and mods["FTweaks"] and data.raw.technology["cobalt-processing"] then pre = "cobalt-processing-2" end
 	table.insert(tech.prerequisites, pre)
+end
+
+if Config.plasticShockwave then
+	table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"advanced-circuit", 10})
+	table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"electronic-circuit", 10})
+else
+	table.insert(data.raw["recipe"]["shockwave-turret"].ingredients,{"electronic-circuit", 40})
 end
 
 if data.raw.item["titanium-plate"] then
