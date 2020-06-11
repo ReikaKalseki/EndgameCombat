@@ -146,7 +146,45 @@ plasma.entity.attack_parameters.ammo_type = {
           }
         }
 }
-plasma.entity.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 },
+plasma.entity.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 }
+
+local function generatePlasmaSpriteDef(name, line, dirs)
+	return {
+		filename = "__EndgameCombat__/graphics/entity/laser-turret/" .. name .. ".png",
+		priority = "medium-high",
+		width = 128,
+		height = 128,
+		shift = {0.5, -0.75},
+		frame_count = 1,
+		line_length = line,
+		direction_count = dirs,
+		axially_symmetrical = false
+	}
+end
+
+local function generatePlasmaAxisSprite()
+	local data = {
+		generatePlasmaSpriteDef("axial", 1, 8),
+		generatePlasmaSpriteDef("axial-shadow", 1, 8),
+		generatePlasmaSpriteDef("axial-mask", 1, 8)
+	}
+	return {layers = data}
+end
+
+local function generatePlasmaRotationSprite()
+	local data = {
+		generatePlasmaSpriteDef("animation", 16, 64),
+		generatePlasmaSpriteDef("animation-shadow", 16, 64),
+		generatePlasmaSpriteDef("animation-mask", 16, 64)
+	}
+	return {layers = data}
+end
+
+plasma.entity.folded_animation = generatePlasmaAxisSprite()
+plasma.entity.folding_animation = generatePlasmaAxisSprite()
+plasma.entity.folding_animation.run_mode = "backward"
+plasma.entity.preparing_animation = generatePlasmaAxisSprite()
+plasma.entity.prepared_animation = generatePlasmaRotationSprite()
 
 data:extend(
 {
