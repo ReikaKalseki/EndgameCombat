@@ -765,6 +765,9 @@ for l = 1,#SHOCKWAVE_RANGE_BOOSTS do
 	local prereq = {}
 	table.insert(prereq, "turret-range-" .. (l-1)*2+2)
 	table.insert(prereq, "military-" .. (l+1))
+	if l > 1 then
+		table.insert(prereq, "shockwave-range-" .. (l-1))
+	end
 	
 	if l >= 2 then
 		packs[#packs+1] = {"utility-science-pack", 1}

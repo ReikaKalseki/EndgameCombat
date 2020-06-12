@@ -10,7 +10,7 @@ local function tickShockwaveTurrets(egcombat, tick)
 				if egcombat.shockwave_turrets[force.name] then
 					for i, entry in ipairs(egcombat.shockwave_turrets[force.name]) do
 						if entry.turret.valid then
-							tickShockwaveTurret(entry, tick)
+							tickShockwaveTurret(egcombat, entry, tick)
 						else
 							table.remove(egcombat.shockwave_turrets[force.name], i)
 						end
@@ -28,7 +28,7 @@ local function tickLightningTurrets(egcombat, tick)
 				if egcombat.lightning_turrets[force.name] then
 					for unit, entry in pairs(egcombat.lightning_turrets[force.name]) do
 						if entry.turret.valid then
-							tickLightningTurret(entry, tick)
+							tickLightningTurret(egcombat, entry, tick)
 						else
 							egcombat.lightning_turrets[force.name][unit] = nil
 						end
@@ -46,7 +46,7 @@ local function tickCannonTurrets(egcombat, tick)
 				if egcombat.cannon_turrets[force.name] then
 					for i, entry in ipairs(egcombat.cannon_turrets[force.name]) do
 						if entry.turret.valid then
-							tickCannonTurret(entry, tick)
+							tickCannonTurret(egcombat, entry, tick)
 						else
 							table.remove(egcombat.cannon_turrets[force.name], i)
 						end

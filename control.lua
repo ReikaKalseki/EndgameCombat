@@ -61,6 +61,9 @@ function initGlobal(markDirty)
 	if global.egcombat.orbital_targetable == nil then
 		global.egcombat.orbital_targetable = createOrbitalTargetableList()
 	end
+	if global.egcombat.range_cache == nil then
+		global.egcombat.range_cache = {}
+	end
 	global.egcombat.dirty = markDirty
 	
 	if remote.interfaces["silo-script"] then

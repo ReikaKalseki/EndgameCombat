@@ -49,7 +49,7 @@ function rechargeLightningTurret(egcombat, entity)
 	end
 end
 
-function tickLightningTurret(entry, tick)
+function tickLightningTurret(egcombat, entry, tick)
 	local mintime = getLightningRechargeTime(entry.turret.force)-entry.delay*2
 
 	if entry.turret.energy < LIGHTNING_TURRET_DISCHARGE_ENERGY then
@@ -89,7 +89,7 @@ function tickLightningTurret(entry, tick)
 			end
 			return
 		end
-		local dr = getTurretRangeBoost(entry.turret.force)
+		local dr = getTurretRangeBoost(egcombat, entry.turret.force)
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 60
 		local search = LIGHTNING_TURRET_SCAN_RADIUS+dr
@@ -127,14 +127,14 @@ function tickLightningTurret(entry, tick)
 	end
 end
 
-function tickCannonTurret(entry, tick)
+function tickCannonTurret(egcombat, entry, tick)
 	if tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
 		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and string.find(entry.turret.shooting_target.name, "spitter", 1, true) then
 			return
 		end
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 60
-		local search = CANNON_TURRET_RANGE+getTurretRangeBoost(entry.turret.force)
+		local search = CANNON_TURRET_RANGE+getTurretRangeBoost(egcombat, entry.turret.force)
 		if scan then
 			search = search+5
 		end
@@ -163,29 +163,12 @@ function tickCannonTurret(entry, tick)
 	end
 end
 
-function getShockwaveRangeBoost(force)
-	local level = getShockwaveRangeResearch(force)
-	return level > 0 and SHOCKWAVE_RANGE_BOOST_SUMS[level] or 0
-end
-
-function getShockwaveRangeResearch(force)
-	if not force.technologies["shockwave-range-1"].researched then return 0 end
-	local level = 1
-	for i = #SHOCKWAVE_RANGE_BOOSTS, 1, -1 do
-		if force.technologies["shockwave-range-" .. i].researched then
-			level = i
-			break
-		end
-	end
-	return level
-end
-
-function tickShockwaveTurret(entry, tick)
+function tickShockwaveTurret(egcombat, entry, tick)
 	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 40 or tick%(12*entry.delay) == 0
 		--game.print(entry.delay .. " -> " .. (scan and "scan" or "flat"))
-		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getShockwaveRangeBoost(entry.turret.force)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getShockwaveRangeBoost(egcombat, entry.turret.force)+getTurretRangeBoost(egcombat, entry.turret.force), entry.turret.force)
 		if #enemies > 0 then
 			local flag = false
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)

@@ -2,13 +2,33 @@ require "constants"
 require "plasmabeam"
 require "functions"
 
-function getTurretRangeBoost(force)
-	local level = getTurretRangeResearch(force)
+local function getCachedRange(egcombat, force, key)
+	local cache = egcombat.range_cache[force.name]
+	--game.print(serpent.block(cache))
+	if not cache then egcombat.range_cache[force.name] = {} end
+	local get = cache and cache[key] or nil
+	if get then
+		if force.technologies[key .. "-range-" .. get].researched then
+			--game.print("Returning cached " .. key .. " of " .. get .. " for " .. force.name)
+			return get
+		else
+			cache[key] = nil
+			return nil
+		end
+	else
+		return nil
+	end
+end
+
+function getTurretRangeBoost(egcombat, force)
+	local level = getTurretRangeResearch(egcombat, force)
 	return level > 0 and TURRET_RANGE_BOOST_SUMS[level] or 0
 end
 
-function getTurretRangeResearch(force)
+function getTurretRangeResearch(egcombat, force)
 	if not force.technologies["turret-range-1"].researched then return 0 end
+	local cache = getCachedRange(egcombat, force, "turret")
+	if cache then return cache end
 	local level = 1
 	for i = #TURRET_RANGE_BOOSTS, 1, -1 do
 		if force.technologies["turret-range-" .. i].researched then
@@ -16,6 +36,27 @@ function getTurretRangeResearch(force)
 			break
 		end
 	end
+	egcombat.range_cache[force.name].turret = level
+	return level
+end
+
+function getShockwaveRangeBoost(egcombat, force)
+	local level = getShockwaveRangeResearch(egcombat, force)
+	return level > 0 and SHOCKWAVE_RANGE_BOOST_SUMS[level] or 0
+end
+
+function getShockwaveRangeResearch(egcombat, force)
+	if not force.technologies["shockwave-range-1"].researched then return 0 end
+	local cache = getCachedRange(egcombat, force, "shockwave")
+	if cache then return cache end
+	local level = 1
+	for i = #SHOCKWAVE_RANGE_BOOSTS, 1, -1 do
+		if force.technologies["shockwave-range-" .. i].researched then
+			level = i
+			break
+		end
+	end
+	egcombat.range_cache[force.name].shockwave = level
 	return level
 end
 
