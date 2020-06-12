@@ -755,6 +755,55 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 	i = i+1
 end
 
+for l = 1,#SHOCKWAVE_RANGE_BOOSTS do
+	local packs = {
+		{"automation-science-pack", 1},
+		{"logistic-science-pack", 1},
+		{"military-science-pack", 1}
+	}
+	
+	local prereq = {}
+	table.insert(prereq, "turret-range-" .. (l-1)*2+2)
+	table.insert(prereq, "military-" .. (l+1))
+	
+	if l >= 2 then
+		packs[#packs+1] = {"utility-science-pack", 1}
+		table.insert(prereq, "utility-science-pack")
+	end
+	if l >= 3 then
+		packs[#packs+1] = {"space-science-pack", 1}
+		table.insert(prereq, "space-science-pack")
+	end
+		
+	data:extend(
+	{	
+		{
+			type = "technology",
+			name = "shockwave-range-" .. l,
+			icon = "__EndgameCombat__/graphics/technology/shockwave-range.png",
+			--localised_description = {"technology-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},
+			effects =
+			{
+			  {
+				type = "nothing",
+				effect_description = {"modifier-description.shockwave-range", tostring(SHOCKWAVE_RANGE_BOOSTS[l]), tostring(SHOCKWAVE_RANGE_BOOST_SUMS[l])},	
+			  }
+			},
+			prerequisites = prereq,
+			unit =
+			{
+			  count = math.ceil(250*(4^(l-1))),
+			  ingredients = packs,
+			  time = 60+30*(l-1)
+			},
+			upgrade = true,
+			order = "a-f",
+			icon_size = 128,
+		},
+	})
+	i = i+1
+end
+
 local function make_modifier_icon(name)
   return
   {

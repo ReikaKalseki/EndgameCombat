@@ -163,12 +163,29 @@ function tickCannonTurret(entry, tick)
 	end
 end
 
+function getShockwaveRangeBoost(force)
+	local level = getShockwaveRangeResearch(force)
+	return level > 0 and SHOCKWAVE_RANGE_BOOST_SUMS[level] or 0
+end
+
+function getShockwaveRangeResearch(force)
+	if not force.technologies["shockwave-range-1"].researched then return 0 end
+	local level = 1
+	for i = #SHOCKWAVE_RANGE_BOOSTS, 1, -1 do
+		if force.technologies["shockwave-range-" .. i].researched then
+			level = i
+			break
+		end
+	end
+	return level
+end
+
 function tickShockwaveTurret(entry, tick)
 	if tick%entry.delay == 0 and entry.turret.energy >= SHOCKWAVE_TURRET_DISCHARGE_ENERGY then
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
 		local scan = entry.delay >= 40 or tick%(12*entry.delay) == 0
 		--game.print(entry.delay .. " -> " .. (scan and "scan" or "flat"))
-		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
+		local enemies = entry.turret.surface.find_enemy_units(entry.turret.position, (scan and SHOCKWAVE_TURRET_SCAN_RADIUS or SHOCKWAVE_TURRET_RADIUS)+getShockwaveRangeBoost(entry.turret.force)+getTurretRangeBoost(entry.turret.force), entry.turret.force)
 		if #enemies > 0 then
 			local flag = false
 			local f = getShockwaveTurretDamageFactor(entry.turret.force)
