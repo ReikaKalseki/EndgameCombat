@@ -199,7 +199,7 @@ local function trackNewTurret(egcombat, turret)
 			egcombat.placed_turrets[force.name] = {}
 		end
 		if turret.force.technologies["turret-range-1"].researched then
-			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(turret.force), true)
+			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(egcombat, turret.force), true)
 		end
 		track_turret(egcombat.placed_turrets[force.name], turret)
 	
@@ -230,7 +230,7 @@ local function reloadRangeTech()
 					for id,entry in pairs(egcombat.placed_turrets[force.name]) do
 						if entry.turret.valid then
 							--game.print("Converting turret @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y)
-							entry.turret = upgradeTurretForRange(egcombat, entry.turret, getTurretRangeResearch(force))
+							entry.turret = upgradeTurretForRange(egcombat, entry.turret, getTurretRangeResearch(egcombat, force))
 							--game.print("Recaching upgraded turret " .. entry.turret.name .. " @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y .. " with new entry " .. (entry and "nonnull" or "nil"))
 							--trackNewTurret(egcombat, entry.turret)
 							--replaceTurretInCache(egcombat, force, entry.turret, id, entry)
