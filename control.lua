@@ -12,6 +12,8 @@ require "turret-alerts"
 
 require "tracker-hooks"
 
+require "__DragonIndustries__.arrays"
+
 function initGlobal(markDirty)
 	if not global.egcombat then
 		global.egcombat = {}
@@ -72,14 +74,31 @@ function initGlobal(markDirty)
 	end
 end
 
-local function convertTurretCache(egcombat)
+local function convertTurretCache(egcombat, doprint)
 	for k,force in pairs(game.forces) do
 		if egcombat.placed_turrets[force.name] == nil then
 			egcombat.placed_turrets[force.name] = {}
 			--game.print("Adding force " .. force.name .. " to turret table")
 		end
-		if #egcombat.placed_turrets[force.name] > 0 then
-			if egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
+		egcombat.range_cache[force.name] = {}
+		local n = getTableSize(egcombat.placed_turrets[force.name])
+		if doprint then
+			force.print("EGCombat: Reloading turret cache of size " .. n .. ".")
+		end
+		if n > 0 then
+			for k,entry in pairs(egcombat.placed_turrets[force.name]) do
+				local lvl = getTurretRangeBoost(egcombat, force)
+				--game.print("Attempting to convert ID " .. k .. " to " .. lvl .. ": " .. (entry.turret.valid and "valid" or "invalid"))
+				if entry.turret.valid then
+					--game.print("Converting " .. entry.turret.name .. " @ "  .. entry.turret.position.x .. ", " .. entry.turret.position.y .. " to tier " .. lvl)
+					local ret = convertTurretForRangeWhileKeepingSpecialCaches(egcombat, entry.turret, lvl, false)
+					--repl[ret.unit_number] = entry
+					entry.turret = ret
+				else
+					egcombat.placed_turrets[force][k] = nil
+				end
+			end
+			if egcombat.placed_turrets[force.name] and egcombat.placed_turrets[force.name][1] and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
 				game.print("Converting turret cache to entries.")
 				local repl = {}
 				for _,turret in pairs(egcombat.placed_turrets[force.name]) do
@@ -167,7 +186,7 @@ end)
 script.on_configuration_changed(function()
 	initGlobal(true)
 	--setupTrackers()
-	convertTurretCache(global.egcombat)
+	convertTurretCache(global.egcombat, true)
 end)
 
 local function track_turret(entity_list, turret)
@@ -402,6 +421,12 @@ local function onFinishedResearch(event)
 			egcombat.placed_turrets[force][data.unit] = data.entry
 			--game.print("Recached " .. data.entry.turret.name .. " ID " .. data.unit)
 		end
+		if not egcombat.range_cache[force.name] then egcombat.range_cache[force.name] = {} end
+		egcombat.range_cache[force.name].turret = lvl
+	end
+	if string.find(tech, "shockwave-range", 1, true) then
+		if not egcombat.range_cache[force.name] then egcombat.range_cache[force.name] = {} end
+		egcombat.range_cache[force.name].shockwave = lvl
 	end
 	if tech == "turret-logistics" then
 		if egcombat.placed_turrets[force] == nil then

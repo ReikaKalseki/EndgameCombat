@@ -67,6 +67,17 @@ addRetaliation("radar", 6, 5, 5, 50)
 addRetaliation("radar", 7, 10, 10, 100)
 addRetaliation("radar", 8, 25, 10, 250)
 
+TURRET_HEALTH_PRIORITY = {
+	["ammo-turret"] = {
+		["gun-turret"] = -10,
+		["concussion-turret"] = 25,
+	},
+	["electric-turret"] = {
+		["laser-turret"] = 100,
+		["plasma-turret"] = 400,
+	}
+}
+
 NAPALM_RADIUS = 36
 RADIATION_RADIUS = 80--60--45
 

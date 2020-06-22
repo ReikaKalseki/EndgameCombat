@@ -767,6 +767,8 @@ for l = 1,#SHOCKWAVE_RANGE_BOOSTS do
 	table.insert(prereq, "military-" .. (l+1))
 	if l > 1 then
 		table.insert(prereq, "shockwave-range-" .. (l-1))
+	else
+		table.insert(prereq, "shockwave-turrets")
 	end
 	
 	if l >= 2 then

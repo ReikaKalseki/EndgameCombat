@@ -128,6 +128,13 @@ table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")
 
 table.insert(data.raw.technology["military-3"].effects, {type = "unlock-recipe", recipe = "supercavitating-bullet-magazine"})
 
+for cat,values in pairs(TURRET_HEALTH_PRIORITY) do
+	for name,val in pairs(values) do
+		log("Adding health priority " .. val .. " to turret " .. name)
+		data.raw["electric-turret"]["laser-turret"].attack_parameters.health_penalty = -val
+	end
+end
+
 if data.raw.car["heli-entity-_-"] then
 	for name,car in pairs(data.raw.car) do
 		if string.find(name, "heli", 1, true) then
