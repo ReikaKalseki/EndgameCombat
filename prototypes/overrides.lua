@@ -64,6 +64,20 @@ addCategoryResistance("constant-combinator", "radiation", 0, 100)
 addCategoryResistance("decider-combinator", "radiation", 0, 100)
 addCategoryResistance("arithmetic-combinator", "radiation", 0, 100)
 
+for _,cat in pairs(entityCategories) do
+	for name,proto in pairs(data.raw[cat]) do
+		local resist = proto.resistances
+		if resist and #resist > 0 then
+			for _,e in pairs(resist) do
+				if e.type == "fire" and e.percent == 100 then
+					log("Entity type '" .. name .. "' fireproofing copied over to napalm.")
+					addResistance(cat, name, "napalm", e.decrease, e.percent)
+				end
+			end
+		end
+	end
+end
+
 --increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
 data.raw["locomotive"]["locomotive"].weight = data.raw["locomotive"]["locomotive"].weight*HEAVY_TRAIN_FACTOR --was 2000
 data.raw["locomotive"]["locomotive"].braking_force = data.raw["locomotive"]["locomotive"].braking_force*HEAVY_TRAIN_FACTOR
@@ -111,6 +125,7 @@ for i = 1,10 do
 		for _,effect in pairs(tech.effects) do
 			effect.modifier = i/10
 		end
+		--table.insert(tech.effects, { type = "ammo-damage", ammo_category = "plasma-turret", modifier = i/10 })
 	end
 end
 

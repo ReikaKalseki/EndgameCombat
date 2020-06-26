@@ -57,5 +57,9 @@ data:extend(
     type = "damage-type",
     name = "sticky" --a marker for sticky turrets
   },
+  {
+    type = "damage-type",
+    name = "napalm" --bypasses fire resist
+  },
 }
 )

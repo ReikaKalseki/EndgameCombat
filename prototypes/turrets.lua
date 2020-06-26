@@ -107,8 +107,8 @@ concuss.entity.attack_parameters.shell_particle = {
 
 plasma.entity.max_health = 2000
 plasma.entity.rotation_speed = 0.01
-plasma.entity.preparing_speed = 0.05
-plasma.entity.folding_speed = 0.05
+plasma.entity.preparing_speed = 3--0.05
+plasma.entity.folding_speed = 3--0.05
 plasma.entity.call_for_help_radius = 60
 plasma.entity.resistances = {
       {
@@ -146,7 +146,19 @@ plasma.entity.attack_parameters.ammo_type = {
           }
         }
 }
-plasma.entity.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasmashot.ogg", volume = 0.75 }
+plasma.entity.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasma/shot.ogg", volume = 0.75 }
+plasma.entity.preparing_sound = {
+	{ filename = "__EndgameCombat__/sounds/plasma/turn-01.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/turn-02.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/turn-03.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/turn-04.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/turn-05.ogg", volume = 0.7 },
+}
+plasma.entity.folding_sound = {
+	{ filename = "__EndgameCombat__/sounds/plasma/shutdown-01.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/shutdown-02.ogg", volume = 0.7 },
+	{ filename = "__EndgameCombat__/sounds/plasma/shutdown-03.ogg", volume = 0.7 }
+}
 
 local function generatePlasmaSpriteDef(name, line, dirs)
 	local ret = {

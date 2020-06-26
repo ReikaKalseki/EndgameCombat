@@ -91,7 +91,7 @@ data:extend(
     },
     unit =
     {
-      count = 500,
+      count = 250,
       ingredients =
       {
         {"automation-science-pack", 4},

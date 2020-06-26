@@ -17,6 +17,7 @@ Config.cratedAmmoBoost = settings.startup["crated-ammo-boost"].value--10
 Config.rottingFlesh = settings.startup["rotting-flesh"].value--true
 
 Config.superBiters = settings.startup["super-biters"].value--true
+Config.superWorms = settings.startup["super-worms"].value--true
 
 Config.lowAmmoThreshold = settings.global and settings.global["low-ammo-warning"].value or 0
 

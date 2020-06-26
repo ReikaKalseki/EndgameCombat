@@ -65,7 +65,7 @@
 	category = "advanced-crafting",
     ingredients =
     {
-      {"explosives", 4},
+      {"explosives", 2},
       {"plastic-bar", 1},
       {"piercing-rounds-magazine", 10},
     },
@@ -104,63 +104,117 @@
     type = "recipe",
     name = "neutron-shell",
     enabled = "false",
-    energy_required = 45,
 	category = "advanced-crafting",
-    ingredients =
-    {
-      {"steel-plate", 10},
-	  {"processing-unit", 5},
-	  {"uranium-235", 1},
-	  {"explosives", 100}
-    },
+	normal = {
+		energy_required = 45,
+		ingredients =
+		{
+		  {"steel-plate", 10},
+		  {"processing-unit", 4},
+		  {"uranium-235", 1},
+		  {"explosives", 80}
+		},
     result = "neutron-shell"
+	},
+	expensive = {
+		energy_required = 60,
+		ingredients =
+		{
+		  {"steel-plate", 10},
+		  {"processing-unit", 5},
+		  {"uranium-235", 1},
+		  {"explosives", 100}
+		},
+    result = "neutron-shell"
+	},
   },
       {
     type = "recipe",
     name = "neutron-rocket",
     enabled = "false",
-    energy_required = 45,
 	category = "advanced-crafting",
-    ingredients =
-    {
-	  {"rocket", 1},
-      {"steel-plate", 5},
-	  {"processing-unit", 5},
-	  {"uranium-235", 1},
-	  {"explosives", 100}
-    },
+	normal = {
+		energy_required = 45,
+		ingredients =
+		{
+		  {"steel-plate", 10},
+		  {"processing-unit", 4},
+		  {"uranium-235", 1},
+		  {"explosives", 80},
+		{"rocket", 1}
+		},
     result = "neutron-rocket"
+	},
+	expensive = {
+		energy_required = 60,
+		ingredients =
+		{
+		  {"steel-plate", 10},
+		  {"processing-unit", 5},
+		  {"uranium-235", 1},
+		  {"explosives", 100},
+		{"rocket", 1}
+		},
+    result = "neutron-rocket"
+	},
   },
       {
     type = "recipe",
     name = "napalm-shell",
     enabled = "false",
-    energy_required = 45,
 	category = "advanced-crafting",
-    ingredients =
-    {
-      {"flamethrower-ammo", 20},
-	  {"steel-plate", 20},
-	  {"explosives", 25},
-      {"plastic-bar", 10}
-    },
+	normal = {
+		energy_required = 45,
+		ingredients =
+		{
+		  {"flamethrower-ammo", 4},
+		  {"steel-plate", 10},
+		  {"explosives", 20},
+		  {"plastic-bar", 8}
+		},
     result = "napalm-shell"
+	},
+	expensive = {
+		energy_required = 60,
+		ingredients =
+		{
+		  {"flamethrower-ammo", 10},
+		  {"steel-plate", 20},
+		  {"explosives", 25},
+		  {"plastic-bar", 10}
+		},
+    result = "napalm-shell"
+	},
   },
         {
     type = "recipe",
     name = "napalm-rocket",
     enabled = "false",
-    energy_required = 45,
 	category = "advanced-crafting",
-    ingredients =
-    {
-      {"flamethrower-ammo", 20},
-	  {"steel-plate", 15},
-	  {"explosives", 25},
-      {"plastic-bar", 10},
-      {"rocket", 1}
-    },
-    result = "napalm-rocket"
+	normal = {
+		energy_required = 45,
+		ingredients =
+		{
+		  {"flamethrower-ammo", 4},
+		  {"steel-plate", 10},
+		  {"explosives", 20},
+		  {"plastic-bar", 8},
+		{"rocket", 1}
+		},
+    result = "napalm-rocket",
+	},
+	expensive = {
+		energy_required = 60,
+		ingredients =
+		{
+		  {"flamethrower-ammo", 10},
+		  {"steel-plate", 20},
+		  {"explosives", 25},
+		  {"plastic-bar", 10},
+			{"rocket", 1}
+		},
+    result = "napalm-rocket",
+	},
   },
     {
     type = "recipe",

@@ -32,11 +32,12 @@ local function duplicateTurretDamageBoost(tech, from, to)
 		eff.turret_id = to
 		eff.ammo_category = to
 		table.insert(tech.effects, eff)
+		log("Adding effect " .. serpent.block(eff) .. " to tech '" .. tech.name .. "'")
 	end
 end
 
 for name,tech in pairs(data.raw.technology) do
-	if string.find(name, "turret-damage", 1, true) or string.find(name, "turret-speed", 1, true) then
+	if string.find(name, "turret-damage", 1, true) or string.find(name, "turret-speed", 1, true) or string.find(name, "weapons-damage", 1, true) or string.find(name, "weapon-shooting-speed", 1, true) then
 		duplicateTurretDamageBoost(tech, "gun-turret", "concussion-turret")
 		duplicateTurretDamageBoost(tech, "laser-turret", "plasma-turret")
 	end
@@ -386,7 +387,7 @@ data:extend(
     {
 		createShockwaveDmgUpgrade(4)
     },
-    prerequisites = {"shockwave-turret-damage-3"},
+    prerequisites = {"shockwave-turret-damage-3", "military-3"},
     unit =
     {
       count = 300,
@@ -411,7 +412,7 @@ data:extend(
     {
 		createShockwaveDmgUpgrade(5)
     },
-    prerequisites = {"shockwave-turret-damage-4"},
+    prerequisites = {"shockwave-turret-damage-4", "military-4"},
     unit =
     {
       count = 500,

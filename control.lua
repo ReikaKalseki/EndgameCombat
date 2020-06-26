@@ -99,7 +99,7 @@ local function convertTurretCache(egcombat, doprint)
 				end
 			end
 			if egcombat.placed_turrets[force.name] and egcombat.placed_turrets[force.name][1] and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
-				game.print("Converting turret cache to entries.")
+				if doprint then force.print("Converting turret cache to entries.") end
 				local repl = {}
 				for _,turret in pairs(egcombat.placed_turrets[force.name]) do
 					local entry = createTurretEntry(turret)
@@ -109,7 +109,7 @@ local function convertTurretCache(egcombat, doprint)
 				end
 				egcombat.placed_turrets[force.name] = repl
 			elseif isTableAnArray(egcombat.placed_turrets[force.name]) then --using int keys, not unit_number
-				game.print("Converting turret cache to unit-based indexing.")
+				if doprint then force.print("Converting turret cache to unit-based indexing.") end
 				local entries = {}
 				for _,entry in pairs(egcombat.placed_turrets[force.name]) do
 					entries[entry.turret.unit_number] = entry
@@ -421,12 +421,12 @@ local function onFinishedResearch(event)
 			egcombat.placed_turrets[force][data.unit] = data.entry
 			--game.print("Recached " .. data.entry.turret.name .. " ID " .. data.unit)
 		end
-		if not egcombat.range_cache[force.name] then egcombat.range_cache[force.name] = {} end
-		egcombat.range_cache[force.name].turret = lvl
+		if not egcombat.range_cache[force] then egcombat.range_cache[force] = {} end
+		egcombat.range_cache[force].turret = lvl
 	end
 	if string.find(tech, "shockwave-range", 1, true) then
-		if not egcombat.range_cache[force.name] then egcombat.range_cache[force.name] = {} end
-		egcombat.range_cache[force.name].shockwave = lvl
+		if not egcombat.range_cache[force] then egcombat.range_cache[force] = {} end
+		egcombat.range_cache[force].shockwave = lvl
 	end
 	if tech == "turret-logistics" then
 		if egcombat.placed_turrets[force] == nil then

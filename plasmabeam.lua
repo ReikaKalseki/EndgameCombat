@@ -9,15 +9,15 @@ function createPlasmaBeam()
 	ret.light = {intensity = 0.75, size = 10}
 	ret.working_sound = {
 		  {
-			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-01.ogg",
+			filename = "__EndgameCombat__/sounds/plasma/laser-beam-01.ogg",
 			volume = 0.9
 		  },
 		  {
-			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-02.ogg",
+			filename = "__EndgameCombat__/sounds/plasma/laser-beam-02.ogg",
 			volume = 0.9
 		  },
 		  {
-			filename = "__EndgameCombat__/sounds/laserbeam/laser-beam-03.ogg",
+			filename = "__EndgameCombat__/sounds/plasma/laser-beam-03.ogg",
 			volume = 0.9
 		  }
 		  

@@ -89,7 +89,11 @@ data:extend(
             },
             {
               type = "damage",
-              damage = { amount = 14 , type = "cavitation"}
+              damage = { amount = 9 , type = "cavitation"}
+            },
+            {
+              type = "damage",
+              damage = { amount = 6 , type = "physical"}
             },
           }
         }

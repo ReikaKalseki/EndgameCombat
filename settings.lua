@@ -80,6 +80,13 @@ data:extend({
             order = "r",
         },
 		{
+            type = "bool-setting",
+            name = "super-worms",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
+		{
             type = "int-setting",
             name = "low-ammo-warning",
             setting_type = "runtime-global",
