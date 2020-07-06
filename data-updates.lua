@@ -18,7 +18,12 @@ if Config.superBiters then
 end
 
 if Config.superWorms then
-	data.raw.turret["behemoth-worm-turret"].max_health = 2500--data.raw.unit["behemoth-biter"].max_health
+	data.raw.turret["behemoth-worm-turret"].max_health = data.raw.unit["behemoth-biter"].max_health
 end
 
 table.insert(data.raw.technology["discharge-defense-equipment"].prerequisites, "electrical-discharges")
+
+data.raw.wall["stone-wall"].next_upgrade = "tough-wall"
+data.raw.gate.gate.next_upgrade = "tough-gate"
+data.raw["ammo-turret"]["gun-turret"].next_upgrade = "concussion-turret"
+data.raw["electric-turret"]["laser-turret"].next_upgrade = "plasma-turret"

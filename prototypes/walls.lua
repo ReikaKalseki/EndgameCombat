@@ -33,6 +33,9 @@ registerObjectArray(createDerivedWall("tough-spiked-wall", 5000, {modifier = 0.4
 },
 12))
 
+data.raw.wall["tough-wall"].next_upgrade = "tough-spiked-wall"
+data.raw.wall["spiked-wall"].next_upgrade = "tough-spiked-wall"
+
 local gate = copyObject("gate", "gate", "tough-gate")
 local gateitem = copyObject("item", "gate", "tough-gate")
 gate.max_health = 2000
