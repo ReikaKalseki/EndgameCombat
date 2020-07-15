@@ -398,7 +398,7 @@ local function onFinishedResearch(event)
 	convertTurretCache(egcombat)
 	if string.find(tech, "turret-range", 1, true) then
 		local lvl = tonumber(string.match(tech, "%d+"))
-		--game.print("Turret range " .. lvl)
+		game.print("Turret range " .. lvl)
 		if egcombat.placed_turrets[force] == nil then
 			egcombat.placed_turrets[force] = {}
 		end

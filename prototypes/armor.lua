@@ -19,7 +19,7 @@ local function createCloudDumpEquipment(name, cname, ammo)
 	end
 	local capsule = cname and data.raw.capsule[cname] or nil
 	if not capsule then error("Capsule '" .. cname .. "' does not exist!") end
-	local proj = capsule.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile
+	local proj = capsule.capsule_action.attack_parameters.ammo_type.action[1].action_delivery.projectile
 	local shot = tempshot and tempshot or (capsule and table.deepcopy(data.raw.projectile[proj]) or nil)
 	if not shot then error("Capsule '" .. cname .. "' returned null shot ('" .. proj .. "')!") end
 	local key = shot.action[1].action_delivery.target_effects[1].entity_name

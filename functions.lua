@@ -12,11 +12,19 @@ local function createCapsuleDamage(cloud, name, dtype)
 	if not dat then error("Capsule type '" .. name .. "' has no specified damage profile!") end
 	local base = data.raw["smoke-with-trigger"]["poison-cloud"]
 	local action = table.deepcopy(base.action)
-    action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
-	local newdmg = action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount
-	newdmg = newdmg*dat.dps*dat.tickrate
-    action.action_delivery.target_effects.action.action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
-	table.insert(action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
+	if action.action_delivery.target_effects.action.action_delivery then
+		action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
+		local newdmg = action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount
+		newdmg = newdmg*dat.dps*dat.tickrate
+		action.action_delivery.target_effects.action.action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
+		table.insert(action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
+	else
+		action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
+		local newdmg = action.action_delivery.target_effects.action[1].action_delivery.target_effects.damage.amount
+		newdmg = newdmg*dat.dps*dat.tickrate	
+		action.action_delivery.target_effects.action[1].action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
+		table.insert(action.action_delivery.target_effects.action[1].entity_flags, "placeable-enemy")
+	end
 	cloud.action = action
 	cloud.action_cooldown = base.action_cooldown*dat.tickrate
 	cloud.duration = base.duration*dat.total/dat.dps
@@ -35,7 +43,12 @@ function createDerivedCapsule(typename, range, cooldown, duration, color, trigge
 	if cooldown then
 		ret.capsule_action.attack_parameters.cooldown = cooldown
 	end
-	ret.capsule_action.attack_parameters.ammo_type.action.action_delivery.projectile = newname
+	local effects = ret.capsule_action.attack_parameters.ammo_type.action
+	if effects.action_delivery then
+		effects.action_delivery.projectile = newname
+	else
+		effects[1].action_delivery.projectile = newname
+	end
 	local proj = copyObject("projectile", "poison-capsule", newname)
 	local cloudname = typename .. "-cloud"
 	proj.action[1].action_delivery.target_effects[1].entity_name = cloudname
