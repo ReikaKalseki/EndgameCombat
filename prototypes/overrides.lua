@@ -77,7 +77,7 @@ for _,cat in pairs(entityCategories) do
 		end
 	end
 end
-
+--[[
 --increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
 data.raw["locomotive"]["locomotive"].weight = data.raw["locomotive"]["locomotive"].weight*HEAVY_TRAIN_FACTOR --was 2000
 data.raw["locomotive"]["locomotive"].braking_force = data.raw["locomotive"]["locomotive"].braking_force*HEAVY_TRAIN_FACTOR
@@ -106,7 +106,7 @@ if data.raw["locomotive"]["locomotive-2"] then
 	addResistance("cargo-wagon", "cargo-wagon-3", "impact", 400, 98)
 	addResistance("fluid-wagon", "fluid-wagon-3", "impact", 400, 98)
 end
-
+--]]
 if mods["bobwarfare"] then
 	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "bob-pierce", 1, "fire", 5})
 	changeAmmoDamage("sulfur-heavy-bullet-magazine", {"physical", 18, "bob-pierce", 4, "fire", 9})

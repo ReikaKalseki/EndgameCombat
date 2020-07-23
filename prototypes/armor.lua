@@ -135,6 +135,19 @@ registerObjectArray(firecap)
 
 createCloudDumpEquipment("fire-spraying-equipment", firecap.item.name, data.raw.ammo["flamethrower-ammo"])
 
+local plasmalaser = table.deepcopy(data.raw["active-defense-equipment"]["personal-laser-defense-equipment"])
+plasmalaser.name = "advanced-laser-defense-equipment"
+plasmalaser.sprite = {filename = "__EndgameCombat__/graphics/equipment/advanced-laser-defense-equipment.png", width = 64, height = 96, priority = "medium"}
+plasmalaser.shape = {width = 2, height = 3, type = "full"}
+plasmalaser.energy_source.buffer_capacity = "750kJ"
+plasmalaser.attack_parameters.damage_modifier = 8
+plasmalaser.attack_parameters.cooldown = 20
+plasmalaser.attack_parameters.range = 20
+plasmalaser.attack_parameters.sound = { filename = "__EndgameCombat__/sounds/plasma/shot.ogg", volume = 0.75 }
+plasmalaser.attack_parameters.ammo_type.category = "plasma-turret"
+plasmalaser.attack_parameters.ammo_type.energy_consumption = "100kJ"
+plasmalaser.attack_parameters.ammo_type.action.action_delivery = {type = "beam", beam = "plasma-beam", max_length = 20, duration = 12, source_offset = {0, -0.5}}
+
 data:extend(
 {
   {
@@ -194,65 +207,6 @@ data:extend(
     order = "d[active-defense]-a[advanced-laser-defense-equipment]",
     stack_size = 20
   },  
-  
-    {
-    type = "active-defense-equipment",
-    name = "advanced-laser-defense-equipment",
-    sprite =
-    {
-      filename = "__EndgameCombat__/graphics/equipment/advanced-laser-defense-equipment.png",
-      width = 64,
-      height = 96,
-      priority = "medium"
-    },
-    shape =
-    {
-      width = 2,
-      height = 3,
-      type = "full"
-    },
-    energy_source =
-    {
-      type = "electric",
-      usage_priority = "secondary-input",
-      buffer_capacity = "400kJ"
-    },
-    categories = {"armor"},
-    attack_parameters =
-    {
-      type = "projectile",
-      ammo_category = "electric",
-      cooldown = 20,
-      damage_modifier = 36,
-      projectile_center = {0, 0},
-      projectile_creation_distance = 0.6,
-      range = 20,
-      sound = make_laser_sounds(),
-      ammo_type =
-      {
-        type = "projectile",
-        category = "electric",
-        energy_consumption = "300kJ",
-        projectile = "laser",
-        speed = 1,
-        action =
-        {
-          {
-            type = "direct",
-            action_delivery =
-            {
-              {
-                type = "projectile",
-                projectile = "laser",
-                starting_speed = 0.28
-              }
-            }
-          }
-        }
-      }
-    },
-    automatic = true
-  },
-   
+plasmalaser,   
 }
 )

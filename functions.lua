@@ -645,7 +645,7 @@ function checkAndCacheTurret(egcombat, turret, force)
 			egcombat.shield_domes[force.name] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
-		local conn = turret.surface.create_entity({name="dome-circuit-connection", position = {turret.position.x+0.75, turret.position.y+0.75}, force=force})
+		local conn = turret.surface.create_entity({name="dome-circuit-connection", position = {turret.position.x-0.125, turret.position.y+0.25}, force=force})
 		conn.operable = false
 		egcombat.shield_domes[force.name][turret.unit_number] = {dome=turret, circuit = conn, delay = 60, index = idx, current_shield = 0, strength_factor = getCurrentDomeStrengthFactor(force), cost_factor = getCurrentDomeCostFactor(force), edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)

@@ -111,7 +111,7 @@
 		{
 		  {"steel-plate", 10},
 		  {"processing-unit", 4},
-		  {"uranium-235", 1},
+		  {"uranium-235", 12},
 		  {"explosives", 80}
 		},
     result = "neutron-shell"
@@ -122,7 +122,7 @@
 		{
 		  {"steel-plate", 10},
 		  {"processing-unit", 5},
-		  {"uranium-235", 1},
+		  {"uranium-235", 20},
 		  {"explosives", 100}
 		},
     result = "neutron-shell"
@@ -139,7 +139,7 @@
 		{
 		  {"steel-plate", 10},
 		  {"processing-unit", 4},
-		  {"uranium-235", 1},
+		  {"uranium-235", 12},
 		  {"explosives", 80},
 		{"rocket", 1}
 		},
@@ -151,7 +151,7 @@
 		{
 		  {"steel-plate", 10},
 		  {"processing-unit", 5},
-		  {"uranium-235", 1},
+		  {"uranium-235", 20},
 		  {"explosives", 100},
 		{"rocket", 1}
 		},

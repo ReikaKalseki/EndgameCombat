@@ -2,6 +2,7 @@ require "config"
 require "constants"
 
 require("__DragonIndustries__.cloning")
+require("__DragonIndustries__.arrays")
 
 --acts as a distractor of sorts, where biters will reach the "shield edge" (secretly entities) and attack those preferentially; if killed, they will move on to target the shield dome emitter itself(?); once down, they act as normal
 --so: scan biters in radius, redirect aggro; watch entity-died for shield-edge and use ref lookup for getting shield itself, decrement its shield energy by the health of that entity
@@ -107,13 +108,41 @@ local function createShieldDome(name, params)
 			preparing_animation = createEmptyAnimation(),
 			base_picture =
 			{
-			  filename = "__EndgameCombat__/graphics/entity/dome/emitter-" .. name .. ".png",
-			  priority = "extra-high",
-			  width = 75,
-			  height = 150,
-			  scale = 1.5,
-			  shift = {0, -2.05},
-			  frame_count = 1,
+				layers = {
+					{
+						filename = "__EndgameCombat__/graphics/entity/dome/emitter-new.png",
+						priority = "extra-high",
+						width = 105,
+						height = 140,
+						scale = 1.0,
+						shift = {0, -1.25},
+						frame_count = 45,
+						frame_sequence = getArrayOf({1}, 45)
+					},
+					{
+						  filename = "__EndgameCombat__/graphics/entity/dome/ambient-glow-" .. name .. ".png",
+						  line_length = 9,
+						  width = 56,
+						  height = 94,
+						  frame_count = 45,
+						  animation_speed = 0.5,
+						  shift = util.by_pixel(1, -18),
+						  blend_mode = "additive",
+						  hr_version =
+						  {
+							filename = "__EndgameCombat__/graphics/entity/dome/hr-ambient-glow-" .. name .. ".png",
+							line_length = 9,
+							width = 110,
+							height = 186,
+							frame_count = 45,
+							animation_speed = 0.5,
+							scale = 0.5,
+							shift = util.by_pixel(0.5, -18),
+							blend_mode = "additive",
+							frame_sequence = getLinearArray(45),
+						  }
+					}
+				}
 			},
 			call_for_help_radius = 5,
 			energy_source =
