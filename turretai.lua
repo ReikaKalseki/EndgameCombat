@@ -264,7 +264,11 @@ function handleTurretLogistics(egcombat, force)
 			local logi = entry.logistic.get_inventory(defines.inventory.chest)
 			if auto then
 				if inv[1] and inv[1].valid_for_read then
-					entry.logistic.set_request_slot({name=inv[1].name, count=math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))}, 1)
+					local amt = math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))
+					if entry.turret.type == "artillery-turret" then
+						amt = math.max(1, amt/4)
+					end
+					entry.logistic.set_request_slot({name=inv[1].name, count=amt}, 1)
 				else
 					entry.logistic.clear_request_slot(1)
 				end

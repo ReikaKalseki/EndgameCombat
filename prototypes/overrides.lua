@@ -1,6 +1,8 @@
 require("functions")
 require "constants"
 
+require "prototypes.artillery-overrides"
+
 data.raw["ammo-turret"]["gun-turret"].fast_replaceable_group = "gun-turret"
 data.raw["electric-turret"]["laser-turret"].fast_replaceable_group = "laser-turret"
 data.raw["radar"]["radar"].fast_replaceable_group = "radar"

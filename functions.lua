@@ -668,7 +668,10 @@ function createLogisticInterface(turret)
 	if (turret.type == "ammo-turret" or turret.type == "artillery-turret") and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
 		local pos = turret.position
 		local surface = turret.surface
-		local logi = surface.create_entity({name="turret-logistic-interface", position={pos.x+0.5, pos.y+0.5}, force=force})
+		local box = turret.prototype.collision_box
+		local dx = math.ceil((box.right_bottom.x-box.left_top.x)-1)/2
+		local dy = math.ceil((box.right_bottom.y-box.left_top.y)-1)/2
+		local logi = surface.create_entity({name="turret-logistic-interface", position={pos.x+dx, pos.y+dy}, force=force})
 		return logi
 	end
 	return nil

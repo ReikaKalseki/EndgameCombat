@@ -121,4 +121,11 @@ data:extend({
             default_value = false,
             order = "r",
         },
+		{
+            type = "double-setting",
+            name = "artillery-range",
+            setting_type = "startup",
+            default_value = 15.0,
+            order = "r",
+        },
 })
