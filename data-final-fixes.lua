@@ -21,3 +21,12 @@ for name,ammo in pairs(data.raw.ammo) do
 		end
 	end
 end
+
+--[[
+if data.raw.item["advanced-satellite"] then
+	local amt = data.raw.technology["orbital-destroyer"].unit.ingredients[6][2]
+	if amt > 1 then
+		data.raw.technology["orbital-destroyer"].unit.ingredients[6][2] = amt*2
+	end
+end
+--]]

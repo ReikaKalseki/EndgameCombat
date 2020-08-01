@@ -74,6 +74,22 @@ function initGlobal(markDirty)
 	end
 end
 
+local function rebuildTurretCache(egcombat)
+	for k,force in pairs(game.forces) do
+		egcombat.placed_turrets[force.name] = {}
+	end
+	local turrets = game.surfaces.nauvis.find_entities_filtered{type = {"ammo-turret", "electric-turret", "fluid-turret", "artillery-turret", "turret"}}
+	for _,turret in pairs(turrets) do
+		turret = deconvertTurretForRange(egcombat, turret)
+		removeTurretFromCache(egcombat, turret)
+		trackNewTurret(egcombat, turret)
+	end
+	for k,force in pairs(game.forces) do
+		local n = getTableSize(egcombat.placed_turrets[force.name])
+		force.print("EndgameCombat: Rebuilt turret cache of size " .. n)
+	end
+end
+
 local function convertTurretCache(egcombat, doprint)
 	for k,force in pairs(game.forces) do
 		if egcombat.placed_turrets[force.name] == nil then
@@ -186,58 +202,8 @@ end)
 script.on_configuration_changed(function()
 	initGlobal(true)
 	--setupTrackers()
-	convertTurretCache(global.egcombat, true)
+	rebuildTurretCache(global.egcombat, true)
 end)
-
-local function track_turret(entity_list, turret)
-    entity_list[turret.unit_number] = createTurretEntry(turret)
-end
-
-local function removeTurretFromCache(egcombat, turret)
-	local entity_list = egcombat.placed_turrets[turret.force.name]
-	--game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
-	if not entity_list then return end
-	--game.print(#entity_list)
-    local entry =  entity_list[turret.unit_number]
-	if not entry then --[[game.print("Turret " .. turret.name .. " had no entry?!")--]] return end --this is normal when rangeboost is enabled
-	entity_list[turret.unit_number] = nil
-	if entry.logistic then
-		local inv = entry.logistic.get_inventory(defines.inventory.chest)
-		for name,count in pairs(inv.get_contents()) do
-			entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)
-		end
-		inv.clear()
-		entry.logistic.destroy()
-	end
-end
-
-local function trackNewTurret(egcombat, turret)
-	local force = turret.force
-	if force ~= game.forces.enemy then
-		if egcombat.placed_turrets[force.name] == nil then
-			egcombat.placed_turrets[force.name] = {}
-		end
-		if turret.force.technologies["turret-range-1"].researched then
-			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(egcombat, turret.force), true)
-		end
-		track_turret(egcombat.placed_turrets[force.name], turret)
-	
-		checkAndCacheTurret(egcombat, turret, force)
-		--[[
-		if string.find(turret.name, "shockwave-turret", 1, true) then
-			if egcombat.shockwave_turrets[force.name] == nil then
-				egcombat.shockwave_turrets[force.name] = {}
-			end
-			table.insert(egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
-			--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
-		end
-		--]]
-
-		--game.print("Adding " .. turret.name .. " ID " .. turret.unit_number .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for force " .. force.name .. " to turret table")
-	end
-	
-	return turret
-end
 
 local function reloadRangeTech()
 	local egcombat = global.egcombat
@@ -561,7 +527,7 @@ local function onEntityRemoved(event)
 	if (entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" or entity.type == "turret" or entity.type == "artillery-turret") then
 		removeTurretFromCache(egcombat, entity)
 		entity = deconvertTurretForRange(egcombat, entity)
-		entity.die()
+		entity.die() --the probable cause of the exploding
 		return
 	end
 	

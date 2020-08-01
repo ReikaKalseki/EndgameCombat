@@ -799,7 +799,7 @@ data:extend({
 	icon_size = 32,
     flags = { "placeable-player", "placeable-enemy", "player-creation"},
     minable = { mining_time = 0.5, result = "lightning-turret" },
-    max_health = 400, --glass cannon
+    max_health = 600, --glass cannon -> 2y later: except they have to be frontline due to their range -> solution: make resist spitters but not biters
     corpse = "medium-remnants",
     collision_box = {{ -1.2, -1.2}, {1.2, 1.2}},
     selection_box = {{ -1.5, -1.5}, {1.5, 1.5}},
@@ -811,7 +811,16 @@ data:extend({
     call_for_help_radius = LIGHTNING_TURRET_RANGE,
     resistances = --glass cannon
     {
-
+		{
+			type = "physical",
+			decrease = 0,
+			percent = -50
+		},
+		{
+			type = "acid",
+			decrease = 4,
+			percent = 50
+		}
     },
     energy_source =
     {

@@ -135,8 +135,8 @@ end
 
 function tickShieldDome(egcombat, entry, tick)
 	if not entry.delay then entry.delay = 60 end
-	if entry.current_shield > 0 and not entry.rebooting then
-		if tick%entry.delay == 0 then
+	if entry.current_shield > 0 then
+		if tick%entry.delay == 0 and not entry.rebooting then
 			local scan = entry.delay >= 30
 			--game.print("Ticking dome @ " .. entry.dome.position.x .. "," .. entry.dome.position.y)
 			local r = SHIELD_DOMES[entry.index].radius+1.5
@@ -150,7 +150,7 @@ function tickShieldDome(egcombat, entry, tick)
 					for _,biter in pairs(enemies) do
 						if biter.valid and biter.health > 0 then
 							local d = getDistance(biter, entry.dome)
-							if math.abs(d-r) <= 3 then --only ones with targets inside? does not make so much sense, and hard to code
+							if d < r+1.5 then --only ones with targets inside? does not make so much sense, and hard to code
 								createAndAddEdgeForAttack(egcombat, entry, r, tick, biter)
 							end
 						end
@@ -172,18 +172,23 @@ function tickShieldDome(egcombat, entry, tick)
 				entry.delay = math.min(60, entry.delay+10)
 			end
 		end
-		if tick%30 == 0 then
-			if entry.current_shield < getShieldDomeStrength(entry) then
+		local n = entry.rebooting and 20 or 30
+		if tick%n == 0 then
+			if entry.rebooting then
+				entry.dome.surface.create_trivial_smoke({name="shield-dome-rebooting-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+			elseif entry.current_shield < getShieldDomeStrength(entry) then
 				entry.dome.surface.create_trivial_smoke({name="shield-dome-charging-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 			else
 				if tick%120 == 0 then
 					entry.dome.surface.create_trivial_smoke({name="shield-dome-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
 				end
 			end
-			entry.dome.surface.create_entity({name="shield-dome-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+			if not entry.rebooting then
+				entry.dome.surface.create_entity({name="shield-dome-effect-light-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
+			end
 		end
 		local step = 5*math.min(3, math.max(1, 4-entry.dome.last_user.mod_settings["render-quality"].value))
-		if tick%step == 0 then --spawn some edges to show radius, and to look cool
+		if tick%step == 0 and not entry.rebooting then --spawn some edges to show radius, and to look cool
 			local num = entry.index == "small" and 1 or (entry.index == "medium" and 2 or 3)
 			for i = 1,num do
 				local ang = math.random()*360

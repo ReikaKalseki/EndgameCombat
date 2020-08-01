@@ -154,7 +154,7 @@ data:extend({
   color = {r=1, g=0.9, b=0.3, a=0.65},
   damage_per_tick = {amount = fire2_damage_per_tick, type = "napalm"},
   
-  spawn_entity = "fire-flame-on-tree",--Config.napalmTrees and "fire-flame-on-tree" or "null-flame-on-tree",
+  spawn_entity = Config.napalmTrees and "fire-flame-on-tree" or nil,
   
   spread_delay = Config.napalmTrees and 300 or 9999999,
   spread_delay_deviation = 180,
@@ -528,7 +528,7 @@ data:extend(
     duration_in_ticks = 30 * 60*5,
     target_movement_modifier = 0.8,
     damage_per_tick = { amount = 150 / 60, type = "napalm" },
-    spread_fire_entity = "fire-flame-on-tree",
+    spread_fire_entity = Config.napalmTrees and "fire-flame-on-tree" or nil,
     fire_spread_cooldown = Config.napalmTrees and 30 or 255,
     fire_spread_radius = Config.napalmTrees and 0.75 or 0
   }

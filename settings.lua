@@ -127,5 +127,14 @@ data:extend({
             setting_type = "startup",
             default_value = 15.0,
             order = "r",
-        },
+        },--[[
+		{
+            type = "int-setting",
+            name = "orbital-launches",
+            setting_type = "startup",
+            default_value = 2,
+			minimum_value = 1,
+			maximum_value = 10,
+            order = "r",
+        },--]]
 })

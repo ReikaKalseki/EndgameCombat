@@ -10,26 +10,23 @@ require "__DragonIndustries__.entities"
 local function createCapsuleDamage(cloud, name, dtype)
 	local dat = CLOUD_DAMAGE_PROFILES[name]
 	if not dat then error("Capsule type '" .. name .. "' has no specified damage profile!") end
-	local base = data.raw["smoke-with-trigger"]["poison-cloud"]
-	local action = table.deepcopy(base.action)
-	if action.action_delivery.target_effects.action.action_delivery then
-		action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
-		local newdmg = action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount
-		newdmg = newdmg*dat.dps*dat.tickrate
-		action.action_delivery.target_effects.action.action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
-		table.insert(action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
-	else
-		action.action_delivery.target_effects.action.radius = action.action_delivery.target_effects.action.radius*dat.radius
-		local newdmg = action.action_delivery.target_effects.action[1].action_delivery.target_effects.damage.amount
-		newdmg = newdmg*dat.dps*dat.tickrate	
-		action.action_delivery.target_effects.action[1].action_delivery.target_effects.damage = {amount = newdmg, type = dtype}
-		table.insert(action.action_delivery.target_effects.action[1].entity_flags, "placeable-enemy")
+	cloud.created_effect[2].distance = cloud.created_effect[2].distance*dat.radius
+	if dat.radius >= 1 then
+		cloud.created_effect[2].cluster_count = math.ceil(cloud.created_effect[2].cluster_count*dat.radius*dat.radius)
 	end
-	cloud.action = action
-	cloud.action_cooldown = base.action_cooldown*dat.tickrate
-	cloud.duration = base.duration*dat.total/dat.dps
-	cloud.animation.scale = (base.animation.scale and base.animation.scale or 1)*dat.radius
-end
+	cloud.action.action_delivery.target_effects.action.radius = cloud.action.action_delivery.target_effects.action.radius*dat.radius
+	cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.type = dtype
+	local newdmg = cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount
+	newdmg = newdmg*dat.dps*dat.tickrate
+	cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount = newdmg
+	table.insert(cloud.action.action_delivery.target_effects.action.entity_flags, "placeable-enemy")
+	cloud.action_cooldown = cloud.action_cooldown*dat.tickrate
+	cloud.duration = dat.dps > 0 and cloud.duration*dat.total/dat.dps or 0
+	cloud.animation.scale = (cloud.animation.scale and cloud.animation.scale or 1)*dat.radius
+	cloud.fade_away_duration = math.min(cloud.fade_away_duration, math.floor(cloud.duration/2.5))
+	cloud.spread_duration = math.min(cloud.spread_duration, math.floor(cloud.duration/2.5))
+	cloud.fade_in_duration = cloud.spread_duration
+end;
 
 function createDerivedCapsule(typename, range, cooldown, duration, color, trigger)
 	local newname = typename .. "-capsule"
@@ -50,7 +47,7 @@ function createDerivedCapsule(typename, range, cooldown, duration, color, trigge
 		effects[1].action_delivery.projectile = newname
 	end
 	local proj = copyObject("projectile", "poison-capsule", newname)
-	local cloudname = typename .. "-cloud"
+	local cloudname = typename .. "-capsule-cloud"
 	proj.action[1].action_delivery.target_effects[1].entity_name = cloudname
 	if trigger then
 		proj.action[1].action_delivery.target_effects[1].trigger_created_entity = "true"
@@ -59,16 +56,35 @@ function createDerivedCapsule(typename, range, cooldown, duration, color, trigge
 	replaceSpritesDynamic("EndgameCombat", "poison-capsule", proj)
 	replaceSpritesDynamic("EndgameCombat", "poison-capsule", ret)
 	local cloud = copyObject("smoke-with-trigger", "poison-cloud", cloudname)
+	local clouddummy = copyObject("smoke-with-trigger", "poison-cloud-visual-dummy", cloudname .. "-visual-dummy")
 	cloud.duration = 60 * duration
 	if cloud.duration < 120 then
 		cloud.cyclic = false
+		clouddummy.cyclic = false
 	end
 	cloud.spread_duration = 10
 	cloud.color = color	
 	cloud.show_when_smoke_off = true
+	clouddummy.spread_duration = 10
+	clouddummy.color = color	
+	clouddummy.show_when_smoke_off = true
+	cloud.created_effect[1].action_delivery.target_effects[1].entity_name = clouddummy.name
+	cloud.created_effect[2].action_delivery.target_effects[1].entity_name = clouddummy.name
 	createCapsuleDamage(cloud, typename, typename)
+	if cloud.duration <= 0 then
+		cloud.duration = 1
+		cloud.spread_duration = 0
+		cloud.fade_away_duration = 0
+	end
+	clouddummy.duration = cloud.duration
 	--log("Created capsule " .. newname .. " with cloud " .. serpent.block(cloud))
-	return {item = ret, projectile = proj, cloud = cloud}
+	--log(serpent.block(proj))
+	--log(serpent.block(ret))
+	--log(serpent.block(clouddummy))
+	clouddummy.fade_away_duration = math.min(clouddummy.fade_away_duration, math.floor(clouddummy.duration/2.5))
+	clouddummy.spread_duration = math.min(clouddummy.spread_duration, math.floor(clouddummy.duration/2.5))
+	clouddummy.fade_in_duration = clouddummy.spread_duration
+	return {item = ret, projectile = proj, cloud = cloud, clouddummy = clouddummy}
 end
 
 local function createWallPictures(name)
@@ -333,10 +349,12 @@ end
 function createDerivedWall(newname, health, attackparams, resistances, repairSpeed)
 	local entity = copyObject("wall", "stone-wall", newname)
 	local item = copyObject("item", "stone-wall", newname)
-	entity.icon_size = 32
 	item.icon_size = 32
 	item.icon = "__EndgameCombat__/graphics/icons/" .. newname .. ".png"
 	item.icon_mipmaps = 0
+	entity.icon_size = item.icon_size
+	entity.icon_mipmaps = item.icon_mipmaps
+	entity.icon = item.icon
 	entity.max_health = health
 	if attackparams then
 		entity.attack_reaction = {{
@@ -377,8 +395,7 @@ function createDerivedTurret(category, name, newname)
 	return {entity=entity, item=item}
 end
 
-function Modify_Power(train, factor)
-	local obj = data.raw.locomotive[train]
+function Modify_Power(obj, factor)
 	local pow = obj.max_power
 	local num = string.sub(pow, 1, -3)
 	local endmult = string.sub(pow, -2, -1)
@@ -552,10 +569,13 @@ function spawnCapsuleFireArea(entity)
 end
 
 function spawnFireArea(entity)
-	local nfire = 320+math.random(320) --was 180/160 then 240/220 then 240/360
+	local nfire = 480+math.random(160) --was 180/160 then 240/220 then 240/360, then 320/320
 	for i = 1, nfire do
 		local ang = math.random()*2*math.pi
 		local r = (math.random())^(1/2)*NAPALM_RADIUS
+		if math.random() < 0.5 then
+			r = r*0.67
+		end
 		local dx = r*math.cos(ang)
 		local dy = r*math.sin(ang)
 		local fx = entity.position.x+dx
@@ -681,4 +701,54 @@ function createTurretEntry(turret)
 	if not turret.valid then return nil end
 	local ret = {type = turret.type, turret=turret, logistic=createLogisticInterface(turret)}
 	return ret
+end
+
+function removeTurretFromCache(egcombat, turret)
+	local entity_list = egcombat.placed_turrets[turret.force.name]
+	--game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
+	if not entity_list then return end
+	--game.print(#entity_list)
+    local entry =  entity_list[turret.unit_number]
+	if not entry then --[[game.print("Turret " .. turret.name .. " had no entry?!")--]] return end --this is normal when rangeboost is enabled
+	entity_list[turret.unit_number] = nil
+	if entry.logistic then
+		local inv = entry.logistic.get_inventory(defines.inventory.chest)
+		for name,count in pairs(inv.get_contents()) do
+			entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)
+		end
+		inv.clear()
+		entry.logistic.destroy()
+	end
+end
+
+local function track_turret(entity_list, turret)
+    entity_list[turret.unit_number] = createTurretEntry(turret)
+end
+
+function trackNewTurret(egcombat, turret)
+	local force = turret.force
+	if force ~= game.forces.enemy then
+		if egcombat.placed_turrets[force.name] == nil then
+			egcombat.placed_turrets[force.name] = {}
+		end
+		if turret.force.technologies["turret-range-1"].researched then
+			turret = convertTurretForRange(egcombat, turret, getTurretRangeResearch(egcombat, turret.force), true)
+		end
+		track_turret(egcombat.placed_turrets[force.name], turret)
+	
+		checkAndCacheTurret(egcombat, turret, force)
+		--[[
+		if string.find(turret.name, "shockwave-turret", 1, true) then
+			if egcombat.shockwave_turrets[force.name] == nil then
+				egcombat.shockwave_turrets[force.name] = {}
+			end
+			table.insert(egcombat.shockwave_turrets[force.name], {turret=turret, delay=60})
+			--game.print("Shockwave turret @ " .. turret.position.x .. ", " .. turret.position.y)
+		end
+		--]]
+
+		--game.print("Adding " .. turret.name .. " ID " .. turret.unit_number .. " @ " .. turret.position.x .. ", " .. turret.position.y .. " for force " .. force.name .. " to turret table")
+	end
+	
+	return turret
 end

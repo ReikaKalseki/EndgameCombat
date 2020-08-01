@@ -84,6 +84,7 @@ data.raw["artillery-projectile"]["artillery-projectile"].action.action_delivery.
             {
               type = "area",
               radius = Config.artilleryRange,
+			 entity_flags = {"placeable-enemy"},
               action_delivery =
               {
                 type = "instant",

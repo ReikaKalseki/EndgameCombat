@@ -30,9 +30,9 @@ local function createCloudDumpEquipment(name, cname, ammo)
 	shot.name = shot.name .. "-auto"
 	cloud.name = cloud.name .. "-auto"
 	shot.action[1].action_delivery.target_effects[1].entity_name = cloud.name
-	cloud.duration = cloud.duration == 1 and 1 or math.max(10, math.floor(cloud.duration/10))
-	cloud.fade_away_duration = cloud.fade_away_duration == 1 and 1 or math.max(4, math.floor(cloud.fade_away_duration/10))
-	cloud.spread_duration = cloud.spread_duration == 1 and 1 or math.max(4, math.floor(cloud.spread_duration/10))
+	cloud.duration = cloud.duration <= 1 and 1 or math.max(10, math.floor(cloud.duration/10))
+	cloud.fade_away_duration = cloud.fade_away_duration <= 1 and 0 or math.max(4, math.floor(cloud.fade_away_duration/10))
+	cloud.spread_duration = cloud.spread_duration <= 1 and 0 or math.max(4, math.floor(cloud.spread_duration/10))
 	cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount = cloud.action.action_delivery.target_effects.action.action_delivery.target_effects.damage.amount/3 --since spamming them
 	data:extend({shot, cloud})
   

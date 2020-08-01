@@ -31,6 +31,8 @@ Config.plasticShockwave = settings.startup["plastic-shockwave"].value
 
 Config.artilleryRange = settings.startup["artillery-range"].value
 
+--Config.orbitalLaunches = settings.startup["orbital-launches"].value
+
 Config.error = function(msg)
 	msg = msg .. " [This error can be silenced in the EndgameCombat config.lua]"
 	log(msg) --change 'error' to 'log' (or remove this line entirely) to have the game not halt. DO NOTE THAT THIS RISKS CRASHES LATER ON!

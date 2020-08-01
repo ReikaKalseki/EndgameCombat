@@ -1,6 +1,8 @@
 require("functions")
 require "constants"
 
+require "__DragonIndustries__.entities"
+
 require "prototypes.artillery-overrides"
 
 data.raw["ammo-turret"]["gun-turret"].fast_replaceable_group = "gun-turret"
@@ -79,36 +81,31 @@ for _,cat in pairs(entityCategories) do
 		end
 	end
 end
---[[
---increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
-data.raw["locomotive"]["locomotive"].weight = data.raw["locomotive"]["locomotive"].weight*HEAVY_TRAIN_FACTOR --was 2000
-data.raw["locomotive"]["locomotive"].braking_force = data.raw["locomotive"]["locomotive"].braking_force*HEAVY_TRAIN_FACTOR
---data.raw["locomotive"]["locomotive"].max_power = data.raw["locomotive"]["locomotive"].max_power*HEAVY_TRAIN_FACTOR
-Modify_Power("locomotive", HEAVY_TRAIN_FACTOR)
-data.raw["locomotive"]["locomotive"].burner.effectivity = data.raw["locomotive"]["locomotive"].burner.effectivity*HEAVY_TRAIN_FACTOR
-addResistance("locomotive", "locomotive", "impact", 400, 99)
-addResistance("cargo-wagon", "cargo-wagon", "impact", 400, 98)
-addResistance("fluid-wagon", "fluid-wagon", "impact", 400, 98)
-if data.raw["locomotive"]["locomotive-2"] then
-	data.raw["locomotive"]["locomotive-2"].weight = data.raw["locomotive"]["locomotive-2"].weight*HEAVY_TRAIN_FACTOR*1.6 --was 2000
-	data.raw["locomotive"]["locomotive-2"].braking_force = data.raw["locomotive"]["locomotive-2"].braking_force*HEAVY_TRAIN_FACTOR*1.6
-	--data.raw["locomotive"]["locomotive-2"].max_power = data.raw["locomotive"]["locomotive-2"].max_power*HEAVY_TRAIN_FACTOR*1.6
-	Modify_Power("locomotive-2", HEAVY_TRAIN_FACTOR*1.6)
-	data.raw["locomotive"]["locomotive-2"].burner.effectivity = data.raw["locomotive"]["locomotive-2"].burner.effectivity*HEAVY_TRAIN_FACTOR*1.6
-	addResistance("locomotive", "locomotive-2", "impact", 400, 99)
-	addResistance("cargo-wagon", "cargo-wagon-2", "impact", 400, 98)
-	addResistance("fluid-wagon", "fluid-wagon-2", "impact", 400, 98)
 
-	data.raw["locomotive"]["locomotive-3"].weight = data.raw["locomotive"]["locomotive-3"].weight*HEAVY_TRAIN_FACTOR*2.4 --was 2000
-	data.raw["locomotive"]["locomotive-3"].braking_force = data.raw["locomotive"]["locomotive-3"].braking_force*HEAVY_TRAIN_FACTOR*2.4
-	--data.raw["locomotive"]["locomotive-3"].max_power = data.raw["locomotive"]["locomotive-3"].max_power*HEAVY_TRAIN_FACTOR*2.4
-	Modify_Power("locomotive-3", HEAVY_TRAIN_FACTOR*2.4)
-	data.raw["locomotive"]["locomotive-3"].burner.effectivity = data.raw["locomotive"]["locomotive-3"].burner.effectivity*HEAVY_TRAIN_FACTOR*2.4
-	addResistance("locomotive", "locomotive-3", "impact", 400, 99)
-	addResistance("cargo-wagon", "cargo-wagon-3", "impact", 400, 98)
-	addResistance("fluid-wagon", "fluid-wagon-3", "impact", 400, 98)
+--increase train weights (for more penetrative power in collisions; requires also increasing torque/braking and compensating fuel efficiency to match)
+for name,proto in pairs(data.raw.locomotive) do
+	local tier = getObjectTier(proto)
+	if not tier then tier = 1 end
+	local f = math.pow(1.6, tier-1)
+	local f2 = HEAVY_TRAIN_FACTOR*f
+	proto.energy_per_hit_point = proto.energy_per_hit_point/f2
+	proto.weight = proto.weight*f2
+	proto.braking_force = proto.braking_force*f2
+	--proto.max_power = proto.max_power*f2
+	proto.burner.effectivity = proto.burner.effectivity*f2
+	Modify_Power(proto, f2)
+	addResistance("locomotive", name, "impact", 400, 99)
+	log("Increasing train " .. name .. " (detected as tier " .. tier .. ") impact power " .. f2 .. " times.") 
 end
---]]
+
+for name,proto in pairs(data.raw["cargo-wagon"]) do
+	addResistance("cargo-wagon", name, "impact", 400, 98)
+end
+
+for name,proto in pairs(data.raw["fluid-wagon"]) do
+	addResistance("fluid-wagon", name, "impact", 400, 98)
+end
+
 if mods["bobwarfare"] then
 	changeAmmoDamage("sulfur-bullet-magazine", {"physical", 5, "bob-pierce", 1, "fire", 5})
 	changeAmmoDamage("sulfur-heavy-bullet-magazine", {"physical", 18, "bob-pierce", 4, "fire", 9})

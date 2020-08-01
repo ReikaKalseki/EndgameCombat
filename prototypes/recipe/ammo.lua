@@ -110,7 +110,7 @@
 		ingredients =
 		{
 		  {"steel-plate", 10},
-		  {"processing-unit", 4},
+		  {"rocket-control-unit", 1},
 		  {"uranium-235", 12},
 		  {"explosives", 80}
 		},
@@ -121,7 +121,7 @@
 		ingredients =
 		{
 		  {"steel-plate", 10},
-		  {"processing-unit", 5},
+		  {"rocket-control-unit", 4},
 		  {"uranium-235", 20},
 		  {"explosives", 100}
 		},

@@ -211,9 +211,9 @@ data:extend(
     prerequisites =
     {
       "military-4",
-	  "rocket-silo",
 	  "plasma-turrets",
 	  "nuclear-power",
+	  "space-science-pack",
     },
 	effects =
     {
@@ -244,7 +244,7 @@ data:extend(
         {"chemical-science-pack", 1},
         {"military-science-pack", 1},
         {"utility-science-pack", 1},
-        {"space-science-pack", (Config.spacePlasma or Config.spaceNukes) and 10 or 1},
+        {"space-science-pack", (Config.spacePlasma or Config.spaceNukes) and 2 or 1},
       },
       time = 90
     },
