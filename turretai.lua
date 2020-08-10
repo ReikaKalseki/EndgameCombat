@@ -266,7 +266,7 @@ function handleTurretLogistics(egcombat, force)
 				if inv[1] and inv[1].valid_for_read then
 					local amt = math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))
 					if entry.turret.type == "artillery-turret" then
-						amt = math.max(1, amt/4)
+						amt = math.max(2, amt/4)
 					end
 					entry.logistic.set_request_slot({name=inv[1].name, count=amt}, 1)
 				else

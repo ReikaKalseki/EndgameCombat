@@ -74,19 +74,23 @@ function initGlobal(markDirty)
 	end
 end
 
-local function rebuildTurretCache(egcombat)
+local function rebuildTurretCache(egcombat, forceCheck)
 	for k,force in pairs(game.forces) do
-		egcombat.placed_turrets[force.name] = {}
+		if forceCheck and forceCheck.name == k then
+			egcombat.placed_turrets[force.name] = {}
+		end
 	end
-	local turrets = game.surfaces.nauvis.find_entities_filtered{type = {"ammo-turret", "electric-turret", "fluid-turret", "artillery-turret", "turret"}}
+	local turrets = game.surfaces.nauvis.find_entities_filtered{type = {"ammo-turret", "electric-turret", "fluid-turret", "artillery-turret", "turret"}, force = forceCheck}
 	for _,turret in pairs(turrets) do
-		turret = deconvertTurretForRange(egcombat, turret)
-		removeTurretFromCache(egcombat, turret)
+		--turret = deconvertTurretForRange(egcombat, turret)
+		--removeTurretFromCache(egcombat, turret)
 		trackNewTurret(egcombat, turret)
 	end
 	for k,force in pairs(game.forces) do
-		local n = getTableSize(egcombat.placed_turrets[force.name])
-		force.print("EndgameCombat: Rebuilt turret cache of size " .. n)
+		if forceCheck and forceCheck.name == k then
+			local n = getTableSize(egcombat.placed_turrets[force.name])
+			force.print("EndgameCombat: Rebuilt turret cache of size " .. n)
+		end
 	end
 end
 
@@ -186,6 +190,10 @@ local function addCommands()
 			game.print("EndgameCombat: Unmuting " .. count .. " turret alerts.")
 		end
 	end)
+	
+	commands.add_command("rebuildCaches", {"cmd.rebuild-cache-help"}, function(event)
+		rebuildTurretCache(global.egcombat, game.players[event.player_index].force)
+	end)
 end
 
 addCommands()
@@ -202,7 +210,7 @@ end)
 script.on_configuration_changed(function()
 	initGlobal(true)
 	--setupTrackers()
-	rebuildTurretCache(global.egcombat, true)
+	rebuildTurretCache(global.egcombat)
 end)
 
 local function reloadRangeTech()

@@ -682,16 +682,51 @@ function isTechnicalTurret(name)
 	return false
 end
 
+local function getOrCreateLogiChest(turret, force)
+	local surface = turret.surface
+	local pos = turret.position
+	local box = turret.prototype.collision_box
+	local dx = math.ceil((box.right_bottom.x-box.left_top.x)-1)/2
+	local dy = math.ceil((box.right_bottom.y-box.left_top.y)-1)/2
+	local p2 = {pos.x+dx, pos.y+dy}
+	local scan = {{p2[1]-0.5, p2[2]-0.5}, {p2[1]+0.5, p2[2]+0.5}}
+	local has = surface.find_entities_filtered{name = "turret-logistic-interface", force = force, area = scan}
+	local items = nil
+	--force.print(serpent.block(has))
+	if has and #has > 0 then
+		if #has == 1 then
+			return has[1]
+		else
+			items = {}
+			for _,e in pairs(has) do
+				local inv = e.get_inventory(defines.inventory.chest)
+				inv.sort_and_merge()
+				for name,amt in pairs(inv.get_contents()) do
+					local count = items[name] and items[name] or 0
+					items[name] = amt+count
+				end
+				e.destroy()
+			end
+		end
+	end
+	local ret = surface.create_entity({name="turret-logistic-interface", position=p2, force=force})
+	if items then
+		for name,amt in pairs(items) do
+			local inv = ret.get_inventory(defines.inventory.chest)
+			local left = amt-inv.insert({name = name, count = amt})
+			if left > 0 then
+				surface.spill_item_stack(pos, {name = name, count = left}, true, force, false)
+			end
+		end
+	end
+	return ret
+end
+
 function createLogisticInterface(turret)
 	if isTechnicalTurret(turret.name) then return false end --technical entity
 	local force = turret.force
 	if (turret.type == "ammo-turret" or turret.type == "artillery-turret") and force.technologies["turret-logistics"].researched and #turret.get_inventory(defines.inventory.turret_ammo) > 0 then
-		local pos = turret.position
-		local surface = turret.surface
-		local box = turret.prototype.collision_box
-		local dx = math.ceil((box.right_bottom.x-box.left_top.x)-1)/2
-		local dy = math.ceil((box.right_bottom.y-box.left_top.y)-1)/2
-		local logi = surface.create_entity({name="turret-logistic-interface", position={pos.x+dx, pos.y+dy}, force=force})
+		local logi = getOrCreateLogiChest(turret, force)
 		return logi
 	end
 	return nil
@@ -706,9 +741,11 @@ end
 function removeTurretFromCache(egcombat, turret)
 	local entity_list = egcombat.placed_turrets[turret.force.name]
 	--game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
-	if not entity_list then return end
+	--log(serpent.block(entity_list))
+	if not entity_list or getTableSize(entity_list) == 0 then return end
 	--game.print(#entity_list)
     local entry =  entity_list[turret.unit_number]
+	--game.print(serpent.block(entry))
 	if not entry then --[[game.print("Turret " .. turret.name .. " had no entry?!")--]] return end --this is normal when rangeboost is enabled
 	entity_list[turret.unit_number] = nil
 	if entry.logistic then
