@@ -137,4 +137,11 @@ data:extend({
 			maximum_value = 10,
             order = "r",
         },--]]
+		{
+            type = "bool-setting",
+            name = "orbital-radar-each",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
+        },
 })

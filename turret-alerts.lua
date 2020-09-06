@@ -403,13 +403,11 @@ local function raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
 		cancelLessImportantAlarms(egcombat.turret_alarms[turret.force.name][turret.unit_number], alarm)
 	end
 	
-	for _,player in pairs(game.connected_players) do
-		if player.force == turret.force then
-			--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
-			table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
-			if not (first and Config.continueAlarms) then
-				player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5}
-			end
+	for _,player in pairs(turret.force.connected_players) do
+		--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
+		table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
+		if not (first and Config.continueAlarms) then
+			player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5}
 		end
 	end
 end

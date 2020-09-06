@@ -31,6 +31,8 @@ Config.plasticShockwave = settings.startup["plastic-shockwave"].value
 
 Config.artilleryRange = settings.startup["artillery-range"].value
 
+Config.satellitePerOrbitalRadar = settings.startup["orbital-radar-each"].value
+
 --Config.orbitalLaunches = settings.startup["orbital-launches"].value
 
 Config.error = function(msg)

@@ -46,18 +46,18 @@ function getOrCreateIndexForOrbital(entity)
 	return egcombat.orbital_indices[entity.unit_number].index
 end
 
-function scheduleOrbitalStrike(placer, inv, target)
+function scheduleOrbitalStrike(force, surface, inv, target, delay)
 	--inv.insert({name="orbital-manual-target", count=1})
 	if not global.egcombat.scheduled_orbital then
 		global.egcombat.scheduled_orbital = {}
 	end
-	if placer.force.get_item_launched("destroyer-satellite") > 0 and placer.force.is_chunk_visible(placer.surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #placer.surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-20, target.y-20},{target.x+20, target.y+20}}}) == 0 then
-		local entity = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force})
-		local loc = placer.surface.create_entity({name="orbital-manual-target-secondary", position=target, force=placer.force}) --just for location
+	if force.get_item_launched("destroyer-satellite") > 0 and force.is_chunk_visible(surface, {math.floor(target.x/32), math.floor(target.y/32)}) and #surface.find_entities_filtered({name="orbital-manual-target-secondary", area={{target.x-20, target.y-20},{target.x+20, target.y+20}}}) == 0 then
+		local entity = surface.create_entity({name="orbital-manual-target-secondary", position=target, force=force})
+		local loc = surface.create_entity({name="orbital-manual-target-secondary", position=target, force=force}) --just for location
 		entity.destructible = false
 		loc.destructible = false
-		local fx = placer.surface.create_trivial_smoke{name = "orbital-manual-target-effect", position=target}
-		table.insert(global.egcombat.scheduled_orbital, {location = loc, next = entity, effect=fx, delay = 180, shots = 0})
+		local fx = surface.create_trivial_smoke{name = "orbital-manual-target-effect", position=target}
+		table.insert(global.egcombat.scheduled_orbital, {location = loc, next = entity, effect=fx, delay = delay and delay or 180, shots = 0})
 		for _,player in pairs (game.connected_players) do
 			player.add_custom_alert(entity, {type = "item", name = "orbital-manual-target"}, {"orbital-strike-incoming"}, true)
 		end

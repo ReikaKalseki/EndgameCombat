@@ -115,7 +115,7 @@ local function convertTurretCache(egcombat, doprint)
 					--repl[ret.unit_number] = entry
 					entry.turret = ret
 				else
-					egcombat.placed_turrets[force][k] = nil
+					egcombat.placed_turrets[force.name][k] = nil
 				end
 			end
 			if egcombat.placed_turrets[force.name] and egcombat.placed_turrets[force.name][1] and egcombat.placed_turrets[force.name][1].surface then --if is made of pure entities, not entries containing entities
@@ -248,7 +248,7 @@ script.on_event(defines.events.on_sector_scanned, function(event)
 	if event.radar.name == "orbital-destroyer" then
 		local index = getOrCreateIndexForOrbital(event.radar)
 		--game.print("Got index " .. index .. " for orbital # " .. event.radar.unit_number .. " @ " .. event.radar.position.x .. ", " .. event.radar.position.y .. "; is out of " .. force.get_item_launched("destroyer-satellite"))
-		if force.get_item_launched("destroyer-satellite") > index then
+		if (not Config.satellitePerOrbitalRadar) or force.get_item_launched("destroyer-satellite") > index then
 			fireOrbitalWeapon(force, event.radar)
 		end
 	end
@@ -461,7 +461,7 @@ script.on_event(defines.events.on_put_item, function(event)
 	end
 	
 	if stack.name == "orbital-manual-target" then
-		scheduleOrbitalStrike(player, player.get_inventory(defines.inventory.character_main), event.position)
+		scheduleOrbitalStrike(player.force, player.surface, player.get_inventory(defines.inventory.character_main), event.position)
 		return
 	end
 	
@@ -614,5 +614,16 @@ script.on_event(defines.events.on_built_entity, onEntityAdded)
 script.on_event(defines.events.on_robot_built_entity, onEntityAdded)
 
 script.on_event(defines.events.on_research_finished, onFinishedResearch)
+
+script.on_event(defines.events.on_biter_base_built, function(event)
+	if game.forces.player.technologies["orbital-destroyer"].researched then
+		for _,player in pairs(game.forces.player.connected_players) do
+			player.add_custom_alert(event.entity, {type = "virtual", name = "orbital-detect-nest-spawn"}, {"virtual-signal-name.orbital-detect-nest-spawn"}, true)
+			player.force.chart(event.entity.surface, {{event.entity.position.x-16, event.entity.position.y-16}, {event.entity.position.x+16, event.entity.position.y+16}})
+			--player.play_sound{path=?, volume_modifier = 0.5}
+		end
+		scheduleOrbitalStrike(game.forces.player, event.entity.surface, nil, event.entity, 60*math.random(15, 300))
+	end
+end)
 
 --script.on_event(defines.events.on_player_ammo_inventory_changed, onAmmoChanged)
