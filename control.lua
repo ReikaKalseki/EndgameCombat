@@ -622,7 +622,7 @@ script.on_event(defines.events.on_biter_base_built, function(event)
 			player.force.chart(event.entity.surface, {{event.entity.position.x-16, event.entity.position.y-16}, {event.entity.position.x+16, event.entity.position.y+16}})
 			--player.play_sound{path=?, volume_modifier = 0.5}
 		end
-		scheduleOrbitalStrike(game.forces.player, event.entity.surface, nil, event.entity, 60*math.random(15, 300))
+		scheduleOrbitalStrike(game.forces.player, event.entity.surface, nil, event.entity.position, 60*math.random(15, 300))
 	end
 end)
 
