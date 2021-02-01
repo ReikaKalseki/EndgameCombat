@@ -111,7 +111,7 @@ data:extend(
     {
 	  "fire-ammo",
       "military-3",
-	  "tanks"
+	  "tank"
     },
 	effects =
     {
@@ -173,7 +173,7 @@ data:extend(
     prerequisites =
     {
 	  "explosives",
-      "tanks",
+      "tank",
     },
 	effects =
     {

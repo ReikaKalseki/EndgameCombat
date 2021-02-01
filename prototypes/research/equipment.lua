@@ -80,7 +80,7 @@ data:extend(
     prerequisites =
     {
       "military-4",
-      "tanks",
+      "tank",
     },
 	effects =
     {

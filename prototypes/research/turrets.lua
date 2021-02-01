@@ -11,7 +11,7 @@ data:extend(
     {
 	  "military-2",
       "electronics",
-      "turrets",
+      "gun-turret",
     },
 	effects =
     {
@@ -48,7 +48,7 @@ data:extend(
     },
     prerequisites =
     {
-      "laser-turrets",
+      "laser-turret",
 	  "better-turrets",
 	  "military-3",
 	  "advanced-electronics-2"
@@ -169,7 +169,7 @@ data:extend(
       "explosives",
 	  "better-turrets",
 	  "military-3",
-	  "tanks",
+	  "tank",
     },
     unit =
     {

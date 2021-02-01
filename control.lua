@@ -452,7 +452,7 @@ local function onFinishedResearch(event)
 	end
 end
 
-script.on_event(defines.events.on_put_item, function(event)	
+script.on_event(defines.events.on_pre_build, function(event)	
 	local player = game.players[event.player_index]
 	local stack = player.cursor_stack
 	

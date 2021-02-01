@@ -118,7 +118,7 @@ data:extend(
         effect_description = {"modifier-description.turret-monitoring"},
       }
     },
-    prerequisites = {"turrets", "electronics", "automation"},
+    prerequisites = {"gun-turret", "electronics", "automation"},
     unit =
     {
       count = 20,
@@ -713,7 +713,7 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 	if l > 1 then
 		table.insert(prereq, "turret-range-" .. (l-1))
 	else
-		table.insert(prereq, "turrets")
+		table.insert(prereq, "gun-turret")
 		table.insert(prereq, "military")
 	end
 	
