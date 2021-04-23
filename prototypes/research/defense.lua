@@ -10,7 +10,7 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/spiked-walls.png",
     prerequisites =
     {
-	  "stone-walls",
+	  "stone-wall",
 	  "steel-processing",
       "military-3",
     },
@@ -41,11 +41,11 @@ data:extend(
     icon = "__EndgameCombat__/graphics/technology/tough-walls.png",
     prerequisites =
     {
-	  "stone-walls",
+	  "stone-wall",
 	  "steel-processing",
 	  "concrete",
       "military-2",
-	  "gates",
+	  "gate",
     },
 	effects =
     {
@@ -293,7 +293,7 @@ for type,vals in pairs(RETALIATIONS) do
 				end
 			elseif type == "robot" then
 				table.insert(prerequisites, "logistic-robotics")
-				table.insert(prerequisites, "combat-robotics")
+				table.insert(prerequisites, "defender")
 			end
 		end
 		

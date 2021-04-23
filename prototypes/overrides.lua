@@ -119,7 +119,7 @@ else
 end
 
 for i = 1,10 do
-	local tech = data.raw.technology["laser-turret-damage-" .. i]
+	local tech = data.raw.technology["laser-damage-" .. i]
 	if tech then
 		for _,effect in pairs(tech.effects) do
 			effect.modifier = i/10
