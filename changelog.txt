@@ -1,4 +1,106 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.105.1
+Date: Apr 28 2021
+	- Update to 1.1
+---------------------------------------------------------------------------------------------------
+Version: 1.18.24
+Date: Nov 15 2020
+	- Added option to require a unique orbital destroyer launch for each automated orbital destroyer unit on the ground
+	- Biters building new bases now automatically schedules new orbital strikes there, as well as an alert
+---------------------------------------------------------------------------------------------------
+Version: 1.18.18
+Date: Aug 10 2020
+	- Doubled effect of lightning turret recharge tech
+	- Further improved turret cache reliability
+	- Reimplemented capsule dump equipment
+	- Increased napalm shell AoE
+	- Added shield dome reboot FX
+	- Fixed artillery AoE damaging friendly structures
+	- Re-added train mass increase (with modern improvements) after witnessing a high-speed train stop dead in its tracks after hitting some biters (https://youtu.be/dDFYW5yVjMM)
+	- Changed some recipe and tech costs
+	- Lightning turrets now take massively increased damage from biters but reduced damage from spitters
+	- Fixed turret logi chest stacking due to repeated recreation
+	- Slightly increased artillery logi request
+---------------------------------------------------------------------------------------------------
+Version: 1.18.15
+Date: Jul 28 2020
+	- Removed debug prints
+	- Fixed handling of capsule damage and mod compat
+	- Moved shield dome circuit connection relative to dome
+	- Shield domes now have new modern graphics
+	- Fixed some missing locale from 0.17 update
+	- Redesigned plasma laser defence equipment, which had been unchanged since 2015
+	- Removed 2015-era train mass increases
+	- Changed uranium costs in some recipes
+	- Added setting to add major AoE damage to artillery shell impact
+	- Fixed turret logi chests sometimes surviving the removal of the parent entity or being placed wrong
+	- Strongly reduced artillery logi request
+---------------------------------------------------------------------------------------------------
+Version: 1.18.12
+Date: Jul 5 2020
+	- Added support for the native upgrading system on improved turrets and walls
+	- Fixed some sprite issues
+---------------------------------------------------------------------------------------------------
+Version: 1.18.10
+Date: Jun 29 2020
+	- Improved code performance
+	- Tweaked turret targeting based on biter health to better allocate turrets in mixed type attack waves
+	- Added option to buff green worms similar to the old one to buff green biters
+	- Plasma turrets now have aiming and shutdown sounds
+	- Made later game range techs more gated
+	- Reduced some tech costs in raw pack count
+	- Changed some ammo recipes to better reflect a cheap/expensive recipes split
+	- T2 flamethrower and napalm shells now do a unique kind of damage, bypassing normal fire resistances unless that resistance is 100%
+	- Rebalanced supercavitating ammo damage profile
+---------------------------------------------------------------------------------------------------
+Version: 1.18.6
+Date: Jun 15 2020
+	- Improved shockwave turret range boost tech
+	- Improved code performance
+---------------------------------------------------------------------------------------------------
+Version: 1.18.5
+Date: Jun 11 2020
+	- Plasma turrets now have new unique graphics
+	- Made concussion turret graphics more unique but more similar to modern gun turret style
+---------------------------------------------------------------------------------------------------
+Version: 1.18.2
+Date: Jun 7 2020
+	- Added option for shockwave turrets to use red circuits (and thus be oil-dependent)
+	- More code cleanup
+	- Halved turret alert volume
+---------------------------------------------------------------------------------------------------
+Version: 1.18.1
+Date: May 29 2020
+	- Update to 0.18
+	- Fixed fire capsule/spraying issues
+	- Massively cleaned up code
+---------------------------------------------------------------------------------------------------
+Version: 1.17.35
+Date: Dec 29 2019
+	- Fixed occasional crash on load due to typo
+	- Added more mods' technical entities to the turret range blacklist
+	- Fixed last_user attemping to set nil when that was the fetched value, pending vanilla bugfix to allow nil as set value (https://forums.factorio.com/viewtopic.php?f=11&t=76360)
+---------------------------------------------------------------------------------------------------
+Version: 1.17.24
+Date: Sep 30 2019
+	- Neutron weaponry now leaves long-lived fallout
+	- Power armor mk3 is now unbreakable
+	- Improved mod compatibility
+	- Fixed turret caching losing "last_user"
+---------------------------------------------------------------------------------------------------
+Version: 1.17.15
+Date: Jul 1 2019
+	- Added more mods' technical entities to the turret range blacklist
+	- More 0.17 fixes
+	- Redesigned plasma beam sprite to be more unique and more dramatic
+	- Fixed issues with locking things behind campaign only techs
+---------------------------------------------------------------------------------------------------
+Version: 1.17.12
+Date: Jun 17 2019
+	- More 0.17 fixes
+	- Added some more fixes to dome scripting
+	- Added more radiation resistances
+---------------------------------------------------------------------------------------------------
 Version: 1.17.6
 Date: Jun 6 2019
 	- Update to 0.17
@@ -61,7 +163,7 @@ Date: Sep 5 2018
 	- Cannon turret now uses cobalt instead of invar
 	- Acid turret now uses aluminum instead of cobalt
 	- Fixed spurious turret alarms
-	- Fixed some missing localizations
+	- Fixed some missing localizations	
 	- Added "weaponized electrical discharge" tech as a prereq for some defence technologies
 	- Turret logi chests no longer show "no network" icons
 	- Hid range-boost turrets from the bonus gui
@@ -148,6 +250,7 @@ Date: Sep 3 2017
 	- Added orbital scanner to reveal map area and allow firing orbital weaponry via the map
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.32
+Game: 0.15
 Date: Aug 17 2017
 	- Added shield domes
 	- Cannon turret now properly prioritizes spitters like it was always meant to
@@ -156,6 +259,7 @@ Date: Aug 17 2017
 	- Added manual orbital targeting
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.20
+Game: 0.15
 Date: Aug 6 2017
 	- Added shockwave turret
 	- Redesigned turret techs
@@ -164,6 +268,7 @@ Date: Aug 6 2017
 	- Added orbital strike system, with automated orbital firing to clear the map of nests
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
+Game: 0.15
 Date: Jul 25 2017
 	- Custom techs now have better effect description
 	- Added more radiation resistances to entities
@@ -176,6 +281,7 @@ Date: Jul 25 2017
 	- Fixed issues with range-boosted turrets
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
+Game: 0.15
 Date: Jul 14 2017
 	- Update to 0.15
 	- Added turret range boost and turret healing techs
