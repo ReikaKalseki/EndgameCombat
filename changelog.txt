@@ -251,7 +251,7 @@ Date: Sep 3 2017
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.32
 Game: 0.15
-Date: Aug 17 2017
+Date: Aug 18 2017
 	- Added shield domes
 	- Cannon turret now properly prioritizes spitters like it was always meant to
 	- Added defence trap
@@ -280,11 +280,24 @@ Date: Jul 25 2017
 	- Biter flesh now decomposes in inventories
 	- Fixed issues with range-boosted turrets
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.1
+Version: 1.0.0
 Game: 0.15
 Date: Jul 14 2017
+	- Release
+---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Game: 0.15
+Date: Jul 2 2017
+	- Added turret range boost techs
+	- Added alien tissue drops
+	- Added configuration system with integration into the native mod settings menu and several config options to control things like progression gating and alien tissue behavior
+	- Removed T2 night vision equipment
+---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Game: 0.15
+Date: Jun 20 2017
 	- Update to 0.15
-	- Added turret range boost and turret healing techs
+	- Added turret healing techs
 	- Plasma turrets now have compatibility with laser beam turret mod and a custom beam attack
 	- Removed nuke shell due to vanilla addition of atomic bomb
 	- Changed all use of uranium to be vanilla instead of UraniumPower
@@ -293,11 +306,9 @@ Date: Jul 14 2017
 	- Added new turret sprites and icons
 	- Removed bullet upcrafting due to vanilla recipe changes
 	- Made concussion turrets cheaper and earlier game
-	- Added alien tissue drops
-	- Added configuration system with integration into the native mod settings menu and several config options to control things like progression gating and alien tissue behavior
 	- Added rocket versions of all custom cannon shells
 	- Rebalanced ammo damage
-	- Removed T2 night vision equipment
+	- Changed T2 night vision colors
 	- Reduced Mk3 power armor equipment grid size
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.4
