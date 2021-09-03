@@ -397,6 +397,7 @@ end
 
 function Modify_Power(obj, factor)
 	local pow = obj.max_power
+	if pow == nil then return end
 	local num = string.sub(pow, 1, -3)
 	local endmult = string.sub(pow, -2, -1)
 	local newpow = num*factor

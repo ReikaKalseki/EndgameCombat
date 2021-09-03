@@ -354,4 +354,4 @@ Date: Nov 21 2015
 Version: 0.0.0
 Game: 0.11
 Date: Jun 8 2015
-	- Creation as "BetterTank"
+	- **Creation** (as "BetterTank")
