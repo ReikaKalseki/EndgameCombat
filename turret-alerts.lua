@@ -343,7 +343,7 @@ function tickTurretAlarms(egcombat, tick)
 							if (egcombat.turretMuteTime == nil or egcombat.turretMuteTime < tick) then
 								local snd = alerts[type].sound
 								if (not played[snd]) then
-									player.play_sound{path=snd, position=player.position, volume_modifier=1}
+									player.play_sound{path=snd, position=player.position, volume_modifier=1, override_sound_type='alert'}}
 									played[snd] = true
 								end
 							end
