@@ -343,7 +343,7 @@ function tickTurretAlarms(egcombat, tick)
 							if (egcombat.turretMuteTime == nil or egcombat.turretMuteTime < tick) then
 								local snd = alerts[type].sound
 								if (not played[snd]) then
-									player.play_sound{path=snd, position=player.position, volume_modifier=1}
+									player.play_sound{path=snd, position=player.position, volume_modifier=1, override_sound_type="alert"}
 									played[snd] = true
 								end
 							end
@@ -407,7 +407,7 @@ local function raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
 		--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
 		table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
 		if not (first and Config.continueAlarms) then
-			player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5}
+			player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5, override_sound_type="alert"}
 		end
 	end
 end
