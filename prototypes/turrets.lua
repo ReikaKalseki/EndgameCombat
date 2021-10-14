@@ -93,7 +93,7 @@ concuss.entity.resistances = {
 }
 concuss.entity.attack_parameters.cooldown = 6
 concuss.entity.attack_parameters.damage_modifier = 2
-concuss.entity.attack_parameters.range = 22
+concuss.entity.attack_parameters.range = 27
 concuss.entity.attack_parameters.shell_particle = {
         name = "shell-particle",
         direction_deviation = 0.1,
