@@ -167,7 +167,7 @@
 		energy_required = 45,
 		ingredients =
 		{
-		  {"flamethrower-ammo", 4},
+		  {"flamethrower-ammo", 10},
 		  {"steel-plate", 10},
 		  {"explosives", 20},
 		  {"plastic-bar", 8}
@@ -195,7 +195,7 @@
 		energy_required = 45,
 		ingredients =
 		{
-		  {"flamethrower-ammo", 4},
+		  {"flamethrower-ammo", 10},
 		  {"steel-plate", 10},
 		  {"explosives", 20},
 		  {"plastic-bar", 8},

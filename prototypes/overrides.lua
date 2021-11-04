@@ -92,8 +92,8 @@ for name,proto in pairs(data.raw.locomotive) do
 	proto.weight = proto.weight*f2
 	proto.braking_force = proto.braking_force*f2
 	--proto.max_power = proto.max_power*f2
-	if proto.burner then
-		proto.burner.effectivity = proto.burner.effectivity*f2
+	if proto.burner then --add correct handling for electrical efficiency?
+		proto.burner.effectivity = (proto.burner.effectivity or 1)*f2
 	end
 	Modify_Power(proto, f2)
 	addResistance("locomotive", name, "impact", 400, 99)

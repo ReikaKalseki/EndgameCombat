@@ -42,7 +42,7 @@ data:extend(
         }
       }
     },
-    magazine_size = 10,
+    magazine_size = 15,
 	subgroup = "ammo",
     order = "a",
     stack_size = 200
@@ -99,7 +99,7 @@ data:extend(
         }
       }
     },
-    magazine_size = 10,
+    magazine_size = 15,
 	subgroup = "ammo",
     order = "a",
     stack_size = 200
@@ -142,7 +142,7 @@ data:extend(
         }
       }
     },
-    magazine_size = 10,
+    magazine_size = 15,
 	subgroup = "ammo",
     order = "a",
     stack_size = 200

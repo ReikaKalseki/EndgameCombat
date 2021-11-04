@@ -405,6 +405,7 @@ function Modify_Power(obj, factor)
 end
 
 function changeAmmoDamage(ammo, damages)
+  if not data.raw.ammo[ammo].ammo_type.action.action_delivery then return end
 	local effects = data.raw.ammo[ammo].ammo_type.action.action_delivery.target_effects
 	local repl = {}
 	for _,effect in pairs(effects) do
