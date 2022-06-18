@@ -90,7 +90,8 @@ for name,proto in pairs(data.raw.locomotive) do
 	local f2 = HEAVY_TRAIN_FACTOR*f
 	proto.energy_per_hit_point = proto.energy_per_hit_point/f2
 	proto.weight = proto.weight*f2
-	proto.braking_force = proto.braking_force*f2
+	proto.braking_force = proto.braking_force and proto.braking_force*f2
+	proto.braking_power = proto.braking_power and proto.braking_power*f2
 	--proto.max_power = proto.max_power*f2
 	if proto.burner then
 		proto.burner.effectivity = proto.burner.effectivity*f2
