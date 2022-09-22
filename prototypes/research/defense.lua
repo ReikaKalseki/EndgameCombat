@@ -308,6 +308,7 @@ for type,vals in pairs(RETALIATIONS) do
 			{
 			  {
 				type = "nothing",
+				icons = {{icon = "__EndgameCombat__/graphics/technology/effect/damage-retaliation.png", icon_size = 64, mipmap_count = 2}},
 				effect_description = {"modifier-description.retaliation-" .. type, vals2.display1, vals2.display2},	
 			  },
 			},

@@ -38,6 +38,9 @@ for _,ammo in pairs(ammos) do
 			  {ammo.original.name, AMMO_CRATE_CAPACITY/ammo.original.magazine_size},
 			  {"iron-plate", 1},
 			},
+			icons = {
+				{icon=ammo.original.icon, icon_size = ammo.original.icon_size}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png", icon_size = 32},
+			},
 			result = ammo.item.name,
 			--allow_decomposition = false,
 			allow_as_intermediate = false
@@ -51,10 +54,14 @@ for _,ammo in pairs(ammos) do
 			{
 			  {ammo.item.name, 1},
 			},
-			result = ammo.original.name, 
-			result_count = AMMO_CRATE_CAPACITY/ammo.original.magazine_size,
+			icons = {
+				{icon=ammo.original.icon, icon_size = ammo.original.icon_size}, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png", icon_size = 32}, {icon = "__DragonIndustries__/graphics/icons/uncrafting_overlay.png", icon_size = 32}
+			},
+			localised_name = {"ammo-crate.unpacking", {"item-name." .. ammo.original.name}},
+			results = {{ammo.original.name, AMMO_CRATE_CAPACITY/ammo.original.magazine_size}, {"iron-plate", 1}},
 			allow_decomposition = false,
-			allow_as_intermediate = false
+			allow_as_intermediate = false,
+			subgroup = ammo.original.subgroup
 		},
 	})
 end

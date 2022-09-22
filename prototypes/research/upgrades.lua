@@ -46,7 +46,16 @@ end
 local function createShockwaveDmgUpgrade(lvl)
 	return {
 		type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/icons/shockwave-turret.png", icon_size = 32}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-damage.png", icon_size = 64, mipmap_count = 2}},
 		effect_description = {"modifier-description.shockwave-damage", tostring(40), tostring(40*lvl)},	
+	}
+end
+
+local function createTurretHealingUpgrade(lvl)
+	return {
+		type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/technology/turrets.png", icon_size = 128}, {icon = "__EndgameCombat__/graphics/technology/effect/healing.png", icon_size = 64, mipmap_count = 2}},
+        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[lvl]*60*100), tostring(REPAIR_FACTORS[lvl]*100), tostring(REPAIR_LIMITS[lvl])},	
 	}
 end
 
@@ -60,6 +69,7 @@ data:extend(
     {
       {
         type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/technology/effect/turret-logistics.png", icon_size = 32}},
         effect_description = {"modifier-description.turret-logistic-capability"},
       }
     },
@@ -87,6 +97,7 @@ data:extend(
     {
       {
         type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/technology/effect/turret-logistics.png", icon_size = 32}},
         effect_description = {"modifier-description.turret-auto-logistic-capability"},
       }
     },
@@ -115,6 +126,7 @@ data:extend(
     {
       {
         type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/technology/effect/turret-monitoring.png", icon_size = 32}},
         effect_description = {"modifier-description.turret-monitoring"},
       }
     },
@@ -143,10 +155,7 @@ data:extend(
 	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},
     effects =
     {
-      {
-        type = "nothing",
-        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[1]*60*100), tostring(REPAIR_FACTORS[1]*100), tostring(REPAIR_LIMITS[1])},	
-      }
+      createTurretHealingUpgrade(1)
     },
     prerequisites =
     {
@@ -177,10 +186,7 @@ data:extend(
 	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},
     effects =
     {
-      {
-        type = "nothing",
-        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[2]*60*100), tostring(REPAIR_FACTORS[2]*100), tostring(REPAIR_LIMITS[2])},	
-      }
+      createTurretHealingUpgrade(2)
     },
     prerequisites =
     {
@@ -211,10 +217,7 @@ data:extend(
 	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},
     effects =
     {
-      {
-        type = "nothing",
-        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[3]*60*100), tostring(REPAIR_FACTORS[3]*100), tostring(REPAIR_LIMITS[3])},	
-      }
+      createTurretHealingUpgrade(3)
     },
     prerequisites =
     {
@@ -245,10 +248,7 @@ data:extend(
 	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},
     effects =
     {
-      {
-        type = "nothing",
-        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[4]*60*100), tostring(REPAIR_FACTORS[4]*100), tostring(REPAIR_LIMITS[4])},	
-      }
+      createTurretHealingUpgrade(4)
     },
     prerequisites =
     {
@@ -279,10 +279,7 @@ data:extend(
 	--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},
     effects =
     {
-      {
-        type = "nothing",
-        effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[5]*60*100), tostring(REPAIR_FACTORS[5]*100), tostring(REPAIR_LIMITS[5])},	
-      }
+      createTurretHealingUpgrade(5)
     },
     prerequisites =
     {
@@ -446,6 +443,7 @@ data:extend({
 	{
 	  {
 		type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/icons/lightning-turret.png", icon_size = 32}, {icon = "__EndgameCombat__/graphics/technology/effect/recharge.png", icon_size = 64, mipmap_count = 2}},
 		effect_description = {"modifier-description.lightning-turret-charging", tostring(LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH/60), tostring((LIGHTNING_TURRET_RECHARGE_TIME-LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH*i)/60)}
 	  }
 	},
@@ -497,6 +495,7 @@ for i = 1,MAX_DOME_STRENGTH_TECH_LEVEL do
 		{
 		  {
 			type = "nothing",
+			icons = {{icon = "__EndgameCombat__/graphics/icons/shield-domes.png", icon_size = 32}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-health.png", icon_size = 64, mipmap_count = 2}},
 			effect_description = {"modifier-description.shield-dome-strength", tostring(100*(getCurrentDomeStrengthFactorByLevel(i)-1)), tostring(100*(getTotalDomeStrengthFactorByLevel(i)-1))}
 		  }
 		},
@@ -543,6 +542,7 @@ for i = 1,MAX_DOME_RECHARGE_TECH_LEVEL do
 		{
 		  {
 			type = "nothing",
+			icons = {{icon = "__EndgameCombat__/graphics/icons/shield-domes.png", icon_size = 32}, {icon = "__EndgameCombat__/graphics/technology/effect/recharge.png", icon_size = 64, mipmap_count = 2}},
 			effect_description = {"modifier-description.shield-dome-recharge", tostring(100*(1/getCurrentDomeCostFactorByLevel(i)-1)), tostring(100*math.floor((1/getTotalDomeCostFactorByLevel(i)-1)*10000+0.5)/10000)}
 		  }
 		},
@@ -588,6 +588,7 @@ for i = 1,MAX_DOME_EFFICIENCY_TECH_LEVEL do
 		{
 		  {
 			type = "nothing",
+			icons = {{icon = "__EndgameCombat__/graphics/icons/shield-domes.png", icon_size = 32}, {icon = "__EndgameCombat__/graphics/technology/effect/dome-efficiency.png", icon_size = 32}},
 			effect_description = {"modifier-description.shield-dome-efficiency", tostring(100*(1/getCurrentDomeEfficiencyFactorByLevel(i)-1)), tostring(100*math.floor((1/getTotalDomeEfficiencyFactorByLevel(i)-1)*10000+0.5)/10000)}
 		  }
 		},
@@ -624,6 +625,7 @@ for i = 1,MAX_DOME_REBOOT_TECH_LEVEL do
 		{
 		  {
 			type = "nothing",
+			icons = {{icon = "__EndgameCombat__/graphics/icons/shield-domes.png", icon_size = 32}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-speed.png", icon_size = 64, mipmap_count = 2}},
 			effect_description = {"modifier-description.shield-dome-reboot", tostring(100*getDomeRebootThresholdByLevel(i)), tostring(100*getDomeRebootThresholdByLevel(i-1)), tostring(100*getDomeRebootThresholdByLevel(0))}
 		  }
 		},
@@ -658,10 +660,7 @@ while #REPAIR_CHANCES >= i do
 		--localised_description = {"technology-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},
 		effects =
 		{
-		  {
-			type = "nothing",
-			effect_description = {"modifier-description.healing-alloys", tostring(REPAIR_CHANCES[i]*60*100), tostring(REPAIR_FACTORS[i]*100), tostring(REPAIR_LIMITS[i])},	
-		  }
+			createTurretHealingUpgrade(i)
 		},
 		prerequisites =
 		{
@@ -738,6 +737,7 @@ for l = 1,#TURRET_RANGE_BOOSTS do
 			{
 			  {
 				type = "nothing",
+				icons = {{icon = "__EndgameCombat__/graphics/technology/turrets.png", icon_size = 128}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-range.png", icon_size = 64, mipmap_count = 2}},
 				effect_description = {"modifier-description.turret-range", tostring(TURRET_RANGE_BOOSTS[l]), tostring(TURRET_RANGE_BOOST_SUMS[l])},	
 			  }
 			},
@@ -792,6 +792,7 @@ for l = 1,#SHOCKWAVE_RANGE_BOOSTS do
 			{
 			  {
 				type = "nothing",
+				icons = {{icon = "__EndgameCombat__/graphics/icons/shockwave-turret.png", icon_size = 32}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-range.png", icon_size = 64, mipmap_count = 2}},
 				effect_description = {"modifier-description.shockwave-range", tostring(SHOCKWAVE_RANGE_BOOSTS[l]), tostring(SHOCKWAVE_RANGE_BOOST_SUMS[l])},	
 			  }
 			},

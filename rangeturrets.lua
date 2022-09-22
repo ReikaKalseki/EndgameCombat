@@ -155,6 +155,7 @@ function convertTurretForRange(egcombat, turret, level, recache)
 	if not turret.valid then return turret end
 	if not turret.surface.valid then return turret end
 	local cur = tonumber(string.match(turret.name, "%d+"))
+	if cur == level then return turret end
 	--game.print("Changing rangeboost from " .. (cur and cur or 0) .. " to " .. level)
 	local n = getTurretBaseName(turret) .. "-rangeboost-" .. level
 	if game.entity_prototypes[n] then

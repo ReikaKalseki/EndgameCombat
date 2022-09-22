@@ -106,8 +106,8 @@ local function convertTurretCache(egcombat, doprint)
 			force.print("EGCombat: Reloading turret cache of size " .. n .. ".")
 		end
 		if n > 0 then
+			local lvl = getTurretRangeBoost(egcombat, force)
 			for k,entry in pairs(egcombat.placed_turrets[force.name]) do
-				local lvl = getTurretRangeBoost(egcombat, force)
 				--game.print("Attempting to convert ID " .. k .. " to " .. lvl .. ": " .. (entry.turret.valid and "valid" or "invalid"))
 				if entry.turret.valid then
 					--game.print("Converting " .. entry.turret.name .. " @ "  .. entry.turret.position.x .. ", " .. entry.turret.position.y .. " to tier " .. lvl)

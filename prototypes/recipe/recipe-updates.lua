@@ -1,6 +1,7 @@
 require "config"
 
 require "__DragonIndustries__.recipe"
+require "__DragonIndustries__.items"
 
 local turretArmorSteel = 10
 
@@ -32,11 +33,24 @@ else
 end
 
 if data.raw.item["titanium-plate"] then
-	addPlateToTurret("plasma-turret", "titanium", 25)
 	addPlateToTurret("cannon-turret", "cobalt", 50)
 	addPlateToTurret("shockwave-turret", "nickel", 40)
 	addPlateToTurret("acid-turret", "aluminium", 20)
 	addPlateToTurret("lightning-turret", "tungsten", 10)
+	addPlateToTurret("plasma-turret", "titanium", 25)
+	
+	local lens1,lensrec1 = createBasicCraftingItem("turret-lens-1", "__EndgameCombat__/graphics/icons/turret-lens-1.png", {{"amethyst-5", 100}}, 10)
+	local lens2,lensrec2 = createBasicCraftingItem("turret-lens-2", "__EndgameCombat__/graphics/icons/turret-lens-2.png", {{"turret-lens-1", 1}, {"sapphire-5", 75}, {"diamond-5", 40}}, 20)
+	data:extend({
+		lens1, lens2, lensrec1, lensrec2
+	})
+	table.insert(data.raw.technology["plasma-turrets"].effects, {type = "unlock-recipe", recipe = lensrec1.name})
+	table.insert(data.raw.technology["lightning-turrets"].effects, {type = "unlock-recipe", recipe = lensrec2.name})
+	table.insert(data.raw.recipe["plasma-turret"].ingredients, {lens1.name, 1})
+	table.insert(data.raw.recipe["lightning-turret"].ingredients, {lens2.name, 1})
+	
+	table.insert(data.raw.technology["plasma-turrets"].prerequisites, "gem-processing-2")
+	table.insert(data.raw.technology["lightning-turrets"].prerequisites, "gem-processing-2")
   
   table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"copper-tungsten-alloy", 25})
   table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "tungsten-processing")
