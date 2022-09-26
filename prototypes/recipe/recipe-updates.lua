@@ -63,6 +63,12 @@ else
 table.insert(data.raw["recipe"]["acid-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]40})
 end
 
+if data.raw.item["lead-plate"] then
+	table.insert(data.raw["recipe"]["supercavitating-bullet-magazine"].ingredients,{"lead-plate", 10})
+	data.raw["recipe"]["supercavitating-bullet-magazine"].ingredients[3][2] = data.raw["recipe"]["supercavitating-bullet-magazine"].ingredients[3][2]*0.8 --piercing ammo 10->8
+	data.raw["recipe"]["supercavitating-bullet-magazine"].result_count = data.raw["recipe"]["supercavitating-bullet-magazine"].result_count*1.6 -- 10->16
+end
+
 table.insert(data.raw["recipe"]["concussion-turret"].ingredients,{"steel-plate", --[[turretArmorSteel--]]25})
 table.insert(data.raw["recipe"]["plasma-turret"].ingredients,{"steel-plate", turretArmorSteel})
 table.insert(data.raw["recipe"]["cannon-turret"].ingredients,{"steel-plate", turretArmorSteel*2})

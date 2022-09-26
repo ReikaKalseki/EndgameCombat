@@ -246,7 +246,7 @@
     },
     result = "radiation-capsule"
   },
-      {
+  {
     type = "recipe",
     name = "acid-capsule",
     enabled = "false",
