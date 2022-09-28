@@ -34,7 +34,7 @@ if data.raw.item["sodium-hydroxide"] then
 	  lye,
 	  {
 		type = "recipe",
-		name = "lye",
+		name = lye.name,
 		category = "chemistry",
 		icon = lye.icon,
 		icon_size = lye.icon_size,
@@ -43,7 +43,7 @@ if data.raw.item["sodium-hydroxide"] then
 		subgroup = "fluid",
 		ingredients = {
 		  {type="item", name="sodium-hydroxide", amount=2},
-		  {type="fluid", name="lye", amount=10},
+		  {type="fluid", name="water", amount=10},
 		},
 		results = {
 			{type="fluid", name="lye", amount=10}
@@ -59,7 +59,35 @@ if data.raw.item["sodium-hydroxide"] then
 	})
 	
 	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "lye", damage_modifier = 1.4})
+	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = lye.name})
 end
+
+local function createAlternateAcidCapsuleRecipe(fluid, amountScalar)
+	if not data.raw.fluid[fluid] then return end
+	local recname = "acid-capsule-with-" .. fluid
+	data:extend({
+	{
+		type = "recipe",
+		name = recname,
+		enabled = "false",
+		energy_required = 30,
+		category = "crafting-with-fluid",
+		ingredients =
+		{
+		  {"steel-plate", 5},
+		  {"plastic-bar", 7},
+		  {type="fluid", name = fluid, amount = 80*(amountScalar and amountScalar or 1)}
+		},
+		result = "acid-capsule"
+	  }
+	})
+	table.insert(data.raw["technology"]["capsules"].effects, {type = "unlock-recipe", recipe = recname})
+end
+
+createAlternateAcidCapsuleRecipe("nitric-acid", 0.75)
+createAlternateAcidCapsuleRecipe("hydrochloric-acid", 1)
+createAlternateAcidCapsuleRecipe("hydrogen-chloride", 1)
+createAlternateAcidCapsuleRecipe("lye", 1.25)
 
 table.insert(data.raw.technology["discharge-defense-equipment"].prerequisites, "electrical-discharges")
 
