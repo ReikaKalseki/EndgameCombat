@@ -31,6 +31,8 @@ end;
 function createDerivedCapsule(typename, range, cooldown, duration, color, trigger)
 	local newname = typename .. "-capsule"
 	local ret = copyObject("capsule", "poison-capsule", newname)
+	if not ret.flags then ret.flags = {} end
+	table.insert(ret.flags, "hide-from-bonus-gui")
 	ret.icon = "__EndgameCombat__/graphics/icons/" .. newname .. ".png"
 	ret.icon_size = 32
 	ret.icon_mipmaps = 0
@@ -677,21 +679,44 @@ function isTechnicalTurret(name)
 	if name == "AlienControlStation_Area" then
 		return true
 	end
+	if name == "shield-projector" then
+		return true
+	end
 	if name == "se-meteor-defence-container" or name == "se-meteor-point-defence-container" then
 		return true
 	end
 	return false
 end
 
-local function getOrCreateLogiChest(turret, force)
-	local surface = turret.surface
-	local pos = turret.position
+local function getLogiChestPosition(turret)
 	local box = turret.prototype.collision_box
 	local dx = math.ceil((box.right_bottom.x-box.left_top.x)-1)/2
 	local dy = math.ceil((box.right_bottom.y-box.left_top.y)-1)/2
-	local p2 = {pos.x+dx, pos.y+dy}
+	return {turret.position.x+dx, turret.position.y+dy}
+end
+
+local function scanForLogiChests(turret)
+	local p2 = getLogiChestPosition(turret)
 	local scan = {{p2[1]-0.5, p2[2]-0.5}, {p2[1]+0.5, p2[2]+0.5}}
-	local has = surface.find_entities_filtered{name = "turret-logistic-interface", force = force, area = scan}
+	return turret.surface.find_entities_filtered{name = "turret-logistic-interface", force = turret.force, area = scan}
+end
+
+local function destroyAllLogiChests(turret)
+	local has = scanForLogiChests(turret)
+	for _,e in pairs(has) do
+		local inv = e.get_inventory(defines.inventory.chest)
+		inv.sort_and_merge()
+		for name,amt in pairs(inv.get_contents()) do
+			turret.surface.spill_item_stack(pos, {name = name, count = amt}, true, turret.force, false)
+		end
+		e.destroy()
+	end
+end
+
+local function getOrCreateLogiChest(turret, force, preventCreate)
+	local surface = turret.surface
+	local pos = turret.position
+	local has = scanForLogiChests(turret)
 	local items = nil
 	--force.print(serpent.block(has))
 	if has and #has > 0 then
@@ -710,7 +735,8 @@ local function getOrCreateLogiChest(turret, force)
 			end
 		end
 	end
-	local ret = surface.create_entity({name="turret-logistic-interface", position=p2, force=force})
+	if preventCreate then return nil end
+	local ret = surface.create_entity({name="turret-logistic-interface", position=getLogiChestPosition(turret), force=force})
 	if items then
 		for name,amt in pairs(items) do
 			local inv = ret.get_inventory(defines.inventory.chest)
@@ -740,6 +766,7 @@ function createTurretEntry(turret)
 end
 
 function removeTurretFromCache(egcombat, turret)
+	destroyAllLogiChests(turret)
 	local entity_list = egcombat.placed_turrets[turret.force.name]
 	--game.print("Reading remove of " .. turret.name .. " ID " .. turret.unit_number .. " in force " .. turret.force.name .. ", cache is " .. (entity_list ~= nil and "non-null" or "nil"))
 	--log(serpent.block(entity_list))

@@ -127,9 +127,13 @@ function tickLightningTurret(egcombat, entry, tick)
 	end
 end
 
+function isCannonTurretPriorityTarget(unit)
+	return unit.name == "wall-nuker" or string.find(unit.name, "spitter", 1, true)
+end
+
 function tickCannonTurret(egcombat, entry, tick)
 	if tick%entry.delay == 0 and (not entry.turret.get_inventory(defines.inventory.turret_ammo).is_empty()) then
-		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and string.find(entry.turret.shooting_target.name, "spitter", 1, true) then
+		if entry.turret.shooting_target and entry.turret.shooting_target.valid and entry.turret.shooting_target.health > 0 and isCannonTurretPriorityTarget(entry.turret.shooting_target) then
 			return
 		end
 		--game.print("Ticking turret @ " .. entry.turret.position.x .. "," .. entry.turret.position.y)
@@ -146,7 +150,7 @@ function tickCannonTurret(egcombat, entry, tick)
 					if biter.valid and biter.health > 0 then
 						local d = getDistance(biter, entry.turret)
 						if d <= CANNON_TURRET_RANGE and d >= CANNON_TURRET_INNER_RANGE then
-							if string.find(biter.name, "spitter", 1, true) then
+							if isCannonTurretPriorityTarget(biter) then
 								local last = entry.turret.shooting_target
 								entry.turret.shooting_target = biter
 								--game.print("Locking on " .. biter.name .. --[[" @ " .. biter.position.x .. " , " .. biter.position.y .. --]]" ; last = " .. (last and (last.name --[[.. " @ " .. last.position.x .. " , " .. last.position.y--]]) or "nil"))

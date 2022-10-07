@@ -21,47 +21,6 @@ if Config.superWorms then
 	data.raw.turret["behemoth-worm-turret"].max_health = data.raw.unit["behemoth-biter"].max_health
 end
 
-if data.raw.item["sodium-hydroxide"] then
-	local lye = table.deepcopy(data.raw.fluid.water)
-	lye.name = "lye"
-	lye.base_color = {r=0.75, g=0.75, b=0.85}
-	lye.flow_color = {r=0.8, g=0.8, b=0.9}
-	lye.icon = "__EndgameCombat__/graphics/icons/lye.png"
-	lye.icon_size = 32
-	
-	data:extend(
-	{
-	  lye,
-	  {
-		type = "recipe",
-		name = lye.name,
-		category = "chemistry",
-		icon = lye.icon,
-		icon_size = lye.icon_size,
-		energy_required = 3,
-		enabled = "false",
-		subgroup = "fluid",
-		ingredients = {
-		  {type="item", name="sodium-hydroxide", amount=2},
-		  {type="fluid", name="water", amount=10},
-		},
-		results = {
-			{type="fluid", name="lye", amount=10}
-		},
-		crafting_machine_tint =
-		{
-		  primary = lye.base_color,
-		  secondary = lye.base_color,
-		  tertiary = lye.base_color,
-		  quaternary = lye.base_color,
-		}
-	  }
-	})
-	
-	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "lye", damage_modifier = 1.4})
-	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = lye.name})
-end
-
 local function createAlternateAcidCapsuleRecipe(fluid, amountScalar)
 	if not data.raw.fluid[fluid] then return end
 	local recname = "acid-capsule-with-" .. fluid

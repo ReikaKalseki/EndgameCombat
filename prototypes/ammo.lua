@@ -219,7 +219,7 @@ data:extend(
     name = "neutron-shell",
     icon = "__EndgameCombat__/graphics/icons/neutron-shell.png",
 	icon_size = 32,
-    flags = {},
+    flags = {"hide-from-bonus-gui"},
     ammo_type =
     {
       category = "cannon-shell",
@@ -252,7 +252,7 @@ data:extend(
     name = "neutron-rocket",
     icon = "__EndgameCombat__/graphics/icons/neutron-rocket.png",
 	icon_size = 32,
-    flags = {},
+    flags = {"hide-from-bonus-gui"},
     ammo_type =
     {
       range_modifier = 3,
@@ -284,7 +284,7 @@ data:extend(
     name = "napalm-shell",
     icon = "__EndgameCombat__/graphics/icons/napalm-shell.png",
 	icon_size = 32,
-    flags = {},
+    flags = {"hide-from-bonus-gui"},
     ammo_type =
     {
       category = "cannon-shell",
@@ -317,7 +317,7 @@ data:extend(
     name = "napalm-rocket",
     icon = "__EndgameCombat__/graphics/icons/napalm-rocket.png",
 	icon_size = 32,
-    flags = {},
+    flags = {"hide-from-bonus-gui"},
     ammo_type =
     {
       range_modifier = 2,

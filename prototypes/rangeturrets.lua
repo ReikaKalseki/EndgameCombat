@@ -49,6 +49,10 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 				turret.attack_parameters.range = base.attack_parameters.range+math.ceil(TURRET_RANGE_BOOST_SUMS[i]/2)
 			end
 			--]]
+			turret.hidden = true
+			if not turret.flags then turret.flags = {} end
+			table.insert(turret.flags, "hidden")
+			--table.insert(turret.flags, "hide-from-bonus-gui")
 			turret.order = "z"
 			turret.placeable_by = {item=base.minable.result, count = 1}
 			if MAKE_ITEMS then
@@ -60,6 +64,9 @@ for i = 1,#TURRET_RANGE_BOOSTS do
 			if MAKE_ITEMS then
 				local item = util.table.deepcopy(data.raw.item[base.minable.result])
 				item.name = turret.name
+				if not item.flags then item.flags = {} end
+				table.insert(item.flags, "hidden")
+				table.insert(item.flags, "hide-from-bonus-gui")
 				item.localised_name = base.localised_name--turret.localised_name
 				item.order = "z"
 				item.place_result = turret.name

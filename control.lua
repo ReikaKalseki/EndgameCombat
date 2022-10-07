@@ -90,6 +90,13 @@ local function rebuildTurretCache(egcombat, forceCheck)
 		if forceCheck and forceCheck.name == k then
 			local n = getTableSize(egcombat.placed_turrets[force.name])
 			force.print("EndgameCombat: Rebuilt turret cache of size " .. n)
+			log("EndgameCombat: Rebuilt turret cache of size " .. n)
+		end
+	end
+	for _,e in pairs(game.surfaces.nauvis.find_entities_filtered{type = "logistic-container", name = "turret-logistic-interface"}) do
+		local turrets = game.surfaces.nauvis.find_entities_filtered{type = {"ammo-turret", "artillery-turret", "turret"}, area = {{e.position.x-2, e.position.y-2}, {e.position.x+2, e.position.y+2}}, force = e.force}
+		if #turrets == 0 then
+			e.destroy()
 		end
 	end
 end
@@ -247,8 +254,9 @@ script.on_event(defines.events.on_sector_scanned, function(event)
 	local force = event.radar.force
 	if event.radar.name == "orbital-destroyer" then
 		local index = getOrCreateIndexForOrbital(event.radar)
+		local launched = force.get_item_launched("destroyer-satellite")
 		--game.print("Got index " .. index .. " for orbital # " .. event.radar.unit_number .. " @ " .. event.radar.position.x .. ", " .. event.radar.position.y .. "; is out of " .. force.get_item_launched("destroyer-satellite"))
-		if (not Config.satellitePerOrbitalRadar) or force.get_item_launched("destroyer-satellite") > index then
+		if launched >= (Config.satellitePerOrbitalRadar and index or 1) then
 			fireOrbitalWeapon(force, event.radar)
 		end
 	end
@@ -410,6 +418,7 @@ local function onFinishedResearch(event)
 			if entry.turret.valid then
 				--game.print("Creating logistic interface for " .. entry.turret.name .. " @ " .. entry.turret.position.x .. ", " .. entry.turret.position.y)
 				--if entry.logistic then entry.logistic.destroy() end
+				destroyAllLogiChests(entry.turret)
 				entry.logistic = createLogisticInterface(entry.turret)
 			end
 		end
@@ -546,6 +555,10 @@ local function onEntityAttacked(event)
 	local entity = event.entity
 	local source = event.cause
 	local egcombat = global.egcombat	
+	
+	if source and source.valid and source.type == "unit" then
+		event.final_damage_amount = event.final_damage_amount*source.get_health_ratio()
+	end
 	
 	if string.find(entity.name, "shield-dome-edge", 1, true) then
 		getShieldDomeFromEdge(egcombat, entity, false, source, event.final_damage_amount)

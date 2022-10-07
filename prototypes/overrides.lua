@@ -38,6 +38,8 @@ addCategoryResistance("fluid-turret", "radiation", 0, 100)
 addCategoryResistance("wall", "radiation", 0, 100)
 addCategoryResistance("gate", "radiation", 0, 100)
 
+addCategoryResistance("wall", "acid", 0, 100)
+
 addCategoryResistance("cliff", "radiation", 0, 100)
 addCategoryResistance("simple-entity", "radiation", 0, 100)
 
@@ -90,9 +92,11 @@ for name,proto in pairs(data.raw.locomotive) do
 	local f2 = HEAVY_TRAIN_FACTOR*f
 	proto.energy_per_hit_point = proto.energy_per_hit_point/f2
 	proto.weight = proto.weight*f2
-	proto.braking_force = proto.braking_force*f2
+	if proto.braking_force then
+		proto.braking_force = proto.braking_force*f2
+	end
 	--proto.max_power = proto.max_power*f2
-	if proto.burner then
+	if proto.burner and proto.burner.effectivity then
 		proto.burner.effectivity = proto.burner.effectivity*f2
 	end
 	Modify_Power(proto, f2)
@@ -138,6 +142,47 @@ if data.raw.fluid["hydrochloric-acid"] then
 end
 if data.raw.fluid["hydrogen-chloride"] then
 	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "hydrogen-chloride", damage_modifier = 1.125})
+end
+
+if data.raw.item["sodium-hydroxide"] then
+	local lye = table.deepcopy(data.raw.fluid.water)
+	lye.name = "lye"
+	lye.base_color = {r=0.75, g=0.75, b=0.85}
+	lye.flow_color = {r=0.8, g=0.8, b=0.9}
+	lye.icon = "__EndgameCombat__/graphics/icons/lye.png"
+	lye.icon_size = 32
+	
+	data:extend(
+	{
+	  lye,
+	  {
+		type = "recipe",
+		name = lye.name,
+		category = "chemistry",
+		icon = lye.icon,
+		icon_size = lye.icon_size,
+		energy_required = 3,
+		enabled = "false",
+		subgroup = "fluid",
+		ingredients = {
+		  {type="item", name="sodium-hydroxide", amount=2},
+		  {type="fluid", name="water", amount=10},
+		},
+		results = {
+			{type="fluid", name="lye", amount=10}
+		},
+		crafting_machine_tint =
+		{
+		  primary = lye.base_color,
+		  secondary = lye.base_color,
+		  tertiary = lye.base_color,
+		  quaternary = lye.base_color,
+		}
+	  }
+	})
+	
+	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "lye", damage_modifier = 1.4})
+	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = lye.name})
 end
 
 table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")

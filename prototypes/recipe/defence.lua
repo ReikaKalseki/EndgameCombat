@@ -55,6 +55,21 @@
 	category = "advanced-crafting",
     result = "tough-spiked-wall"
   },
+   {
+    type = "recipe",
+    name = "tough-spiked-wall-2",
+    enabled = "false",
+    ingredients =
+    {
+	  {"spiked-wall", 2},
+      {"refined-concrete", 5},
+	  {"stone-brick", 10},
+      {"concrete", 2},
+      {"steel-plate", 1}
+    },
+	category = "advanced-crafting",
+    result = "tough-spiked-wall"
+  },
   
   --misc
  {

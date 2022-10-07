@@ -22,6 +22,10 @@ for name,ammo in pairs(data.raw.ammo) do
 	end
 end
 
+if data.raw.item["advanced-processing-unit"] then
+	replaceItemInRecipe("lightning-turret", "processing-unit", "advanced-processing-unit", 1, false)
+end
+
 --[[
 if data.raw.item["advanced-satellite"] then
 	local amt = data.raw.technology["orbital-destroyer"].unit.ingredients[6][2]

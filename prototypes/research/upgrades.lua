@@ -37,9 +37,9 @@ local function duplicateTurretDamageBoost(tech, from, to)
 end
 
 for name,tech in pairs(data.raw.technology) do
-	if string.find(name, "turret-damage", 1, true) or string.find(name, "turret-speed", 1, true) or string.find(name, "weapons-damage", 1, true) or string.find(name, "weapon-shooting-speed", 1, true) then
+	if string.find(name, "physical-projectile-damage", 1, true) or string.find(name, "energy-weapons-damage", 1, true) or string.find(name, "turret-damage", 1, true) or string.find(name, "turret-speed", 1, true) or string.find(name, "weapons-damage", 1, true) or string.find(name, "weapon-shooting-speed", 1, true) or string.find(name, "laser-shooting-speed", 1, true) then
 		duplicateTurretDamageBoost(tech, "gun-turret", "concussion-turret")
-		duplicateTurretDamageBoost(tech, "laser-turret", "plasma-turret")
+		duplicateTurretDamageBoost(tech, "laser", "plasma-turret")
 	end
 end
 

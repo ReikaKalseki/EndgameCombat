@@ -87,6 +87,10 @@ data:extend(
         type = "unlock-recipe",
         recipe = "tough-spiked-wall"
       },
+      {
+        type = "unlock-recipe",
+        recipe = "tough-spiked-wall-2"
+      },
     },
     unit =
     {
