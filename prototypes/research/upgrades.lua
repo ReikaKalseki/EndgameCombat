@@ -429,7 +429,7 @@ data:extend(
 }
 )
 
-for i = 1,5 do
+for i = 1,LIGHTNING_TURRET_RECHARGE_TECH_COUNT do
 data:extend({
     {
     type = "technology",
@@ -456,6 +456,44 @@ data:extend({
         {"logistic-science-pack", 1},
         {"chemical-science-pack", 1},
         {"military-science-pack", 1},
+      },
+      time = 75
+    },
+    upgrade = true,
+    order = "a-f",
+	icon_size = 128,
+  }
+})
+end
+
+for i = 1,#LIGHTNING_TURRET_SPLASH_FACTORS do
+data:extend({
+    {
+    type = "technology",
+    name = "lightning-turret-splash-" .. i,
+    icon = "__EndgameCombat__/graphics/technology/lightning-turret-splash-damage.png",
+    prerequisites =
+    {
+	  i == 1 and "lightning-turrets" or ("lightning-turret-splash-" .. i-1),
+    },
+	effects =
+	{
+	  {
+		type = "nothing",
+		icons = {{icon = "__EndgameCombat__/graphics/icons/lightning-turret.png", icon_size = 32}, {icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-range.png", icon_size = 64, mipmap_count = 2}},
+		effect_description = {"modifier-description.lightning-turret-splash", tostring(LIGHTNING_TURRET_SPLASH_FACTORS[i]*100)}
+	  }
+	},
+    unit =
+    {
+      count = 250+(i-1)*250,
+      ingredients =
+      {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"military-science-pack", 1},
+        {"utility-science-pack", 1},
       },
       time = 75
     },

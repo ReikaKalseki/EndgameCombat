@@ -61,5 +61,9 @@ data:extend(
     type = "damage-type",
     name = "napalm" --bypasses fire resist
   },
+  {
+    type = "damage-type",
+    name = "turret-acid" --most player defense and logistic structures are immune without making them spitterproof
+  },
 }
 )

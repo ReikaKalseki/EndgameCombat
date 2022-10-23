@@ -1,9 +1,13 @@
 require "config"
+
 require "functions"
 
 local alerts = {}
 local alertsByCategory = {}
 local categoryPriorities = {}
+
+local readyForData = false
+local readyForControl = false
 
 local function getSoundForPriority(priority)
 	if priority == 0 then
@@ -31,49 +35,46 @@ end
 
 local function createAlertSignal(category, catpri, priority, check, sound)
 	local key = getKeywordForPriority(priority)
-	categoryPriorities[category] = catpri
 	local name = "turret-" .. category .. "-" .. key
-	log("Creating alert " .. name)
-	if check then
-		local sound = sound and sound or getSoundForPriority(priority) --not key, since sound may not match priority
-		alerts[name] = {name=name, sound="alert-" .. sound, callback = check, category = category, priority = priority}
-		if not alertsByCategory[category] then alertsByCategory[category] = {} end
-		alertsByCategory[category][priority] = name
+	if readyForData then
+		categoryPriorities[category] = catpri
+		log("Creating alert " .. name)
+		if check then
+			local sound = sound and sound or getSoundForPriority(priority) --not key, since sound may not match priority
+			sound = "alert-" .. sound
+			if not Config.alertSounds[priority] then sound = nil end
+			alerts[name] = {name=name, sound=sound, callback = check, category = category, priority = priority}
+			if not alertsByCategory[category] then alertsByCategory[category] = {} end
+			alertsByCategory[category][priority] = name
+		end
 	end
-	if data and data.raw and not game then
-		data:extend({{
-			type = "virtual-signal",
-			name = name,
-			icon = "__EndgameCombat__/graphics/icons/" .. name .. ".png",
-			icon_size = 64,
-			subgroup = "virtual-signal-special",
-			order = name,
-			hidden = true,
-		}})
+	if readyForData and not readyForControl then
+		data:extend({
+			{
+				type = "virtual-signal",
+				name = name,
+				icon = "__EndgameCombat__/graphics/icons/" .. name .. ".png",
+				icon_size = 64,
+				subgroup = "virtual-signal-special",
+				order = name,
+				hidden = true,
+			}
+		})
+		Config.alerts[name] = settings.startup["enable-alert-" .. name].value
 	end
-end
-
-if data and data.raw and not game then
-	data:extend({
-		{
-			type = "sound",
-			name = "alert-low",
-			filename = "__EndgameCombat__/sounds/alert-low.ogg",
-			volume = 1
-		},
-		{
-			type = "sound",
-			name = "alert-critical",
-			filename = "__EndgameCombat__/sounds/alert-critical.ogg",
-			volume = 1
-		},
-		{
-			type = "sound",
-			name = "alert-immediate",
-			filename = "__EndgameCombat__/sounds/alert-immediate.ogg",
-			volume = 1
-		},
-	})
+	if not readyForData and not readyForControl then
+		data:extend({
+			{
+				type = "bool-setting",
+				name = "enable-alert-" .. name,
+				setting_type = "startup",
+				default_value = true,
+				order = "r",
+				localised_name = {"alert-setting.name", {"virtual-signal-name." .. name}},
+				localised_description = {"alert-setting.desc", {"virtual-signal-name." .. name}}
+			}
+		})
+	end
 end
 
 local function isHealthCritical(turret)
@@ -258,18 +259,6 @@ local function isEnergyCritical(turret)--[[
 	--end
 end
 
-createAlertSignal("health", 0, 1, isHealthCritical, "immediate")
-createAlertSignal("health", 0, 2, isHealthLow)
-createAlertSignal("ammo", 1, 0, isAmmoEmpty)
-createAlertSignal("ammo", 1, 1, isAmmoCritical)
-createAlertSignal("ammo", 1, 2, isAmmoLow)
-createAlertSignal("fluid", 2, 0, isFluidEmpty)
-createAlertSignal("fluid", 2, 1, isFluidCritical)
-createAlertSignal("fluid", 2, 2, isFluidLow)
-createAlertSignal("energy", 3, 0, isEnergyEmpty)
-createAlertSignal("energy", 3, 1, isEnergyCritical)
-createAlertSignal("energy", 3, 2, isEnergyLow)
-
 local function isCategoryApplicable(category, turret)
 	if category == "ammo" then
 		return turret.type == "ammo-turret" and turret.get_inventory(defines.inventory.turret_ammo) and #turret.get_inventory(defines.inventory.turret_ammo) > 0
@@ -289,7 +278,7 @@ local function checkAllAlerts(turret)
 				local key = li[i]
 				if key then
 					local alert = alerts[key]
-					if alert.callback(turret) then
+					if Config.alerts[alert.name] and alert.callback(turret) then
 						table.insert(ret, alert.name)
 						break --if hit an alarm, do not check lower-priority alerts
 					end
@@ -303,7 +292,7 @@ end
 local function isAlarmNoLongerApplicable(alarm)
 	if not alarm.turret.valid then return true end
 	local func = alerts[alarm.type].callback
-	return not func(alarm.turret)
+	return not (Config.alerts[alarm.type] and func(alarm.turret))
 end
 
 local function createAlarmTick(time, first)
@@ -406,7 +395,7 @@ local function raiseTurretAlarm(egcombat, turret, alarm, first, alertQueue)
 	for _,player in pairs(turret.force.connected_players) do
 		--player.add_custom_alert(turret, {type = "virtual", name = alarm}, {"virtual-signal-name." .. alarm}, true)
 		table.insert(alertQueue, {turret = turret, id = alarm, player = player, priority = getAlertPriority(alarm)})
-		if not (first and Config.continueAlarms) then
+		if alerts[alarm].sound and not (first and Config.continueAlarms) then
 			player.play_sound{path=alerts[alarm].sound, volume_modifier = 0.5}
 		end
 	end
@@ -481,3 +470,67 @@ function updateTurretMonitoring(egcombat, turret, first)
 	end
 	--]]
 end
+
+function initializeAlerts(dat, con)
+		readyForData = dat
+		readyForControl = con
+		createAlertSignal("health", 0, 1, isHealthCritical, "immediate")
+		createAlertSignal("health", 0, 2, isHealthLow)
+		createAlertSignal("ammo", 1, 0, isAmmoEmpty)
+		createAlertSignal("ammo", 1, 1, isAmmoCritical)
+		createAlertSignal("ammo", 1, 2, isAmmoLow)
+		createAlertSignal("fluid", 2, 0, isFluidEmpty)
+		createAlertSignal("fluid", 2, 1, isFluidCritical)
+		createAlertSignal("fluid", 2, 2, isFluidLow)
+		createAlertSignal("energy", 3, 0, isEnergyEmpty)
+		createAlertSignal("energy", 3, 1, isEnergyCritical)
+		createAlertSignal("energy", 3, 2, isEnergyLow)
+
+		if not readyForData and not readyForControl then
+			data:extend({
+				{
+					type = "bool-setting",
+					name = "enable-alert-sound-low",
+					setting_type = "startup",
+					default_value = true,
+					order = "r",
+				},
+				{
+					type = "bool-setting",
+					name = "enable-alert-sound-critical",
+					setting_type = "startup",
+					default_value = true,
+					order = "r",
+				},
+				{
+					type = "bool-setting",
+					name = "enable-alert-sound-immediate",
+					setting_type = "startup",
+					default_value = true,
+					order = "r",
+				}
+			})
+		end
+		if readyForData and not readyForControl then
+			data:extend({
+				{
+					type = "sound",
+					name = "alert-low",
+					filename = "__EndgameCombat__/sounds/alert-low.ogg",
+					volume = 1
+				},
+				{
+					type = "sound",
+					name = "alert-critical",
+					filename = "__EndgameCombat__/sounds/alert-critical.ogg",
+					volume = 1
+				},
+				{
+					type = "sound",
+					name = "alert-immediate",
+					filename = "__EndgameCombat__/sounds/alert-immediate.ogg",
+					volume = 1
+				},
+			})
+		end
+	end

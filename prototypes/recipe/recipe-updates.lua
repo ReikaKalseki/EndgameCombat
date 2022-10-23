@@ -54,14 +54,39 @@ table.insert(data.raw["recipe"]["acid-turret"].ingredients,{"steel-plate", --[[t
 end
 
 if data.raw.item["ruby-5"] then
-	local lens0,lensrec0 = createBasicCraftingItem("turret-lens-0", "__EndgameCombat__/graphics/icons/turret-lens-0.png", {{"gold-plate", 10}, {"silver-plate", 8}, {"ruby-5", 40}}, 5)
-	local lens1,lensrec1 = createBasicCraftingItem("turret-lens-1", "__EndgameCombat__/graphics/icons/turret-lens-1.png", {{"turret-lens-0", 1}, {"titanium-plate", 6}, {"amethyst-5", 100}}, 10)
-	local lens2,lensrec2 = createBasicCraftingItem("turret-lens-2", "__EndgameCombat__/graphics/icons/turret-lens-2.png", {{"turret-lens-1", 1}, {"tungsten-carbide", 12}, {"sapphire-5", 75}, {"diamond-5", 40}}, 20)
+	local lens0,lensrec0 = createBasicCraftingItem("turret-lens-0", "__EndgameCombat__/graphics/icons/turret-lens-0.png", {{"ruby-5", 40}}, 5)
+	local lens1,lensrec1 = createBasicCraftingItem("turret-lens-1", "__EndgameCombat__/graphics/icons/turret-lens-1.png", {{"amethyst-5", 80}, {"topaz-5", 20}}, 10)
+	local lens2,lensrec2 = createBasicCraftingItem("turret-lens-2", "__EndgameCombat__/graphics/icons/turret-lens-2.png", {{"sapphire-5", 75}, {"diamond-5", 40}}, 20)
+	local lensD0,lensrecD0 = createBasicCraftingItem("dome-lens-0", "__EndgameCombat__/graphics/icons/dome-lens-0.png", {{"emerald-5", 100}}, 10)
+	local lensD1,lensrecD1 = createBasicCraftingItem("dome-lens-1", "__EndgameCombat__/graphics/icons/dome-lens-1.png", {{"topaz-5", 50}}, 20)
+	local lensD2,lensrecD2 = createBasicCraftingItem("dome-lens-2", "__EndgameCombat__/graphics/icons/dome-lens-2.png", {{"sapphire-5", 40}}, 40)
+	if data.raw.item["silver-plate"] then
+		table.insert(lensrec0.ingredients, {"gold-plate", 12})
+		table.insert(lensrec0.ingredients, {"silver-plate", 30})
+		
+		table.insert(lensrecD0.ingredients, {"gold-plate", 25})
+		table.insert(lensrecD0.ingredients, {"silver-plate", 200})
+		
+		table.insert(lensrecD0.ingredients, {"gold-plate", 25})
+		table.insert(lensrecD0.ingredients, {"silver-plate", 200})
+		
+		table.insert(lensrecD1.ingredients, {"titanium-plate", 80})
+		
+		if data.raw.item["silicon-nitride"] then
+			table.insert(lensrec1.ingredients, {"silicon-nitride", 24})
+			table.insert(lensrecD2.ingredients, {"silicon-nitride", 80})
+		else
+			table.insert(lensrec1.ingredients, {"cobalt-steel-alloy", 24})
+		end
+		table.insert(lensrec2.ingredients, {"tungsten-carbide", 12})
+		table.insert(lensrecD2.ingredients, {"tungsten-plate", 50})
+	end
 	lens0.stack_size = 10
 	lens1.stack_size = 10
 	lens2.stack_size = 10
 	data:extend({
-		lens0, lens1, lens2, lensrec0, lensrec1, lensrec2
+		lens0, lens1, lens2, lensrec0, lensrec1, lensrec2,
+		lensD0, lensD1, lensD2, lensrecD0, lensrecD1, lensrecD2
 	})
 	table.insert(data.raw.technology["laser-turret"].effects, {type = "unlock-recipe", recipe = lensrec0.name})
 	table.insert(data.raw.technology["plasma-turrets"].effects, {type = "unlock-recipe", recipe = lensrec1.name})
@@ -73,6 +98,16 @@ if data.raw.item["ruby-5"] then
 	table.insert(data.raw.technology["laser-turret"].prerequisites, "gem-processing-2")
 	table.insert(data.raw.technology["plasma-turrets"].prerequisites, "gem-processing-2")
 	table.insert(data.raw.technology["lightning-turrets"].prerequisites, "gem-processing-2")
+	
+	table.insert(data.raw.technology["laser-turret"].effects, {type = "unlock-recipe", recipe = lensrec0.name})
+	table.insert(data.raw.technology["plasma-turrets"].effects, {type = "unlock-recipe", recipe = lensrec1.name})
+	table.insert(data.raw.technology["lightning-turrets"].effects, {type = "unlock-recipe", recipe = lensrec2.name})
+	
+	table.insert(data.raw.recipe["small-shield-dome"].ingredients, {lensD0.name, 2})
+	table.insert(data.raw.recipe["medium-shield-dome"].ingredients, {lensD1.name, 5})
+	table.insert(data.raw.recipe["big-shield-dome"].ingredients, {lensD2.name, 8})
+	
+	table.insert(data.raw.technology["shield-domes"].prerequisites, "gem-processing-2")
 end
 
 if data.raw.item["lead-plate"] then
@@ -192,4 +227,7 @@ end
 
 if data.raw.item["electronic-components"] then
 	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"electronic-components", 30})
+	
+	table.insert(data.raw.recipe["small-shield-dome"].ingredients, {"insulated-cable", 30})
+	table.insert(data.raw.recipe["medium-shield-dome"].ingredients, {"gilded-copper-cable", 200})
 end

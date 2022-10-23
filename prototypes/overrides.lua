@@ -32,38 +32,41 @@ table.insert(data.raw["player"]["player"].flags,"animal")
 --]]
 
 --addCategoryResistance("turret", "radiation", 0, 100) --worms, do not make resistant
-addCategoryResistance("ammo-turret", "radiation", 0, 100)
-addCategoryResistance("electric-turret", "radiation", 0, 100)
-addCategoryResistance("fluid-turret", "radiation", 0, 100)
-addCategoryResistance("wall", "radiation", 0, 100)
-addCategoryResistance("gate", "radiation", 0, 100)
+addCategoryResistance("ammo-turret", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("electric-turret", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("fluid-turret", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("wall", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("gate", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("radar", {"turret-acid", "radiation"}, 0, 100)
 
-addCategoryResistance("wall", "acid", 0, 100)
+addCategoryResistance("cliff", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("simple-entity", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("tree", {"turret-acid", "radiation"}, 0, 100)
 
-addCategoryResistance("cliff", "radiation", 0, 100)
-addCategoryResistance("simple-entity", "radiation", 0, 100)
-
-addCategoryResistance("logistic-robot", "radiation", 0, 100)
-addCategoryResistance("construction-robot", "radiation", 0, 100)
-addCategoryResistance("car", "radiation", 0, 100) --also includes tank
-addCategoryResistance("locomotive", "radiation", 0, 100)
-addCategoryResistance("cargo-wagon", "radiation", 0, 100)
-addCategoryResistance("fluid-wagon", "radiation", 0, 100)
+addCategoryResistance("logistic-robot", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("construction-robot", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("car", {"turret-acid", "radiation"}, 0, 100) --also includes tank
+addCategoryResistance("locomotive", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("cargo-wagon", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("fluid-wagon", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("train-stop", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("rail-signal", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("rail-chain-signal", {"turret-acid", "radiation"}, 0, 100)
 
 addCategoryResistance("assembling-machine", "radiation", 0, 100)
-addCategoryResistance("electric-pole", "radiation", 0, 100)
-addCategoryResistance("straight-rail", "radiation", 0, 100)
-addCategoryResistance("curved-rail", "radiation", 0, 100)
-addCategoryResistance("pipe", "radiation", 0, 100)
-addCategoryResistance("pipe-to-ground", "radiation", 0, 100)
-addCategoryResistance("transport-belt", "radiation", 0, 100)
-addCategoryResistance("underground-belt", "radiation", 0, 100)
+addCategoryResistance("electric-pole", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("straight-rail", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("curved-rail", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("pipe", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("pipe-to-ground", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("transport-belt", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("underground-belt", {"turret-acid", "radiation"}, 0, 100)
 addCategoryResistance("splitter", "radiation", 0, 100)
 addCategoryResistance("inserter", "radiation", 0, 100)
-addCategoryResistance("container", "radiation", 0, 100)
+addCategoryResistance("container", {"turret-acid", "radiation"}, 0, 100)
 addCategoryResistance("logistic-container", "radiation", 0, 100)
-addCategoryResistance("mining-drill", "radiation", 0, 100)
-addCategoryResistance("lamp", "radiation", 0, 100)
+addCategoryResistance("mining-drill", {"turret-acid", "radiation"}, 0, 100)
+addCategoryResistance("lamp", {"turret-acid", "radiation"}, 0, 100)
 addCategoryResistance("storage-tank", "radiation", 0, 100)
 
 addCategoryResistance("constant-combinator", "radiation", 0, 100)
@@ -152,6 +155,8 @@ if data.raw.item["sodium-hydroxide"] then
 	lye.icon = "__EndgameCombat__/graphics/icons/lye.png"
 	lye.icon_size = 32
 	
+	local craftCost = {2, 5}
+	
 	data:extend(
 	{
 	  lye,
@@ -161,15 +166,27 @@ if data.raw.item["sodium-hydroxide"] then
 		category = "chemistry",
 		icon = lye.icon,
 		icon_size = lye.icon_size,
-		energy_required = 3,
 		enabled = "false",
 		subgroup = "fluid",
-		ingredients = {
-		  {type="item", name="sodium-hydroxide", amount=2},
-		  {type="fluid", name="water", amount=10},
+		normal = {
+			energy_required = 1.5,
+			ingredients = {
+			  {type="item", name="sodium-hydroxide", amount=craftCost[1]},
+			  {type="fluid", name="water", amount=10},
+			},
+			results = {
+				{type="fluid", name="lye", amount=10}
+			},
 		},
-		results = {
-			{type="fluid", name="lye", amount=10}
+		expensive = {
+			energy_required = 4,
+			ingredients = {
+			  {type="item", name="sodium-hydroxide", amount=craftCost[2]},
+			  {type="fluid", name="water", amount=25},
+			},
+			results = {
+				{type="fluid", name="lye", amount=10}
+			},
 		},
 		crafting_machine_tint =
 		{
@@ -178,11 +195,36 @@ if data.raw.item["sodium-hydroxide"] then
 		  tertiary = lye.base_color,
 		  quaternary = lye.base_color,
 		}
-	  }
+	  },
+	  {
+		type = "recipe",
+		name = "lye-drying",
+		enabled = false,
+		category = "crafting-with-fluid",
+		normal = {
+			energy_required = 2,
+			ingredients = {
+			  {type="fluid", name=lye.name, amount=10}
+			},
+			results = {
+				{type="item", name="sodium-hydroxide", amount=craftCost[1]}
+			},
+		},
+		expensive = {
+			energy_required = 2,
+			ingredients = {
+			  {type="fluid", name=lye.name, amount=10}
+			},
+			results = {
+				{type="item", name="sodium-hydroxide", amount=craftCost[2]}
+			},
+		},
+	  },
 	})
 	
 	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "lye", damage_modifier = 1.4})
 	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = lye.name})
+	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = "lye-drying"})
 end
 
 table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")

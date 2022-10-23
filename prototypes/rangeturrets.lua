@@ -3,6 +3,7 @@ require "constants"
 require "functions"
 
 require "__DragonIndustries__.tech"
+require "__DragonIndustries__.items"
 require "__DragonIndustries__.registration"
 
 local MAKE_ITEMS = true--false
@@ -33,46 +34,59 @@ end
 
 local turrets = {}
 local items = {}
+
+local function createRangeTurret(base, i)
+	local turret = util.table.deepcopy(base)
+	turret.name = turret.name .. "-rangeboost-" .. i
+	table.insert(turret.flags, "hidden")
+	turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
+	turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
+	if turret.attack_parameters.type == "beam" and turret.attack_parameters.ammo_type then
+		turret.attack_parameters.ammo_type.action.action_delivery.max_length = turret.attack_parameters.range
+	end
+	--[[
+	if base.name == "shockwave-turret" then
+		turret.attack_parameters.range = base.attack_parameters.range+math.ceil(TURRET_RANGE_BOOST_SUMS[i]/2)
+	end
+	--]]
+	turret.hidden = true
+	if not turret.flags then turret.flags = {} end
+	table.insert(turret.flags, "hidden")
+	--table.insert(turret.flags, "hide-from-bonus-gui")
+	turret.order = "z"
+	turret.placeable_by = {item=base.minable.result, count = 1}
+	if MAKE_ITEMS then
+		--turret.minable.result = turret.name can work without
+	end
+	--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
+	table.insert(turrets, turret)
+				
+	if MAKE_ITEMS then
+		local baseitem = getItemByName(base.minable.result)
+		if baseitem then
+			local item = util.table.deepcopy(baseitem)
+			item.name = turret.name
+			if not item.flags then item.flags = {} end
+			table.insert(item.flags, "hidden")
+			table.insert(item.flags, "hide-from-bonus-gui")
+			item.localised_name = base.localised_name--turret.localised_name
+			item.order = "z"
+			item.place_result = turret.name
+			item.hidden = true
+			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
+			table.insert(items, item)
+		else
+			log("Could not create range boost version of turret with no item: " .. base.type .. " / " .. base.name)
+		end
+	end
+end
+
 for i = 1,#TURRET_RANGE_BOOSTS do
 	for _,base in pairs(baseturrets) do
 		if shouldCreateRangeTurret(base) then
-			local turret = util.table.deepcopy(base)
-			turret.name = turret.name .. "-rangeboost-" .. i
-			table.insert(turret.flags, "hidden")
-			turret.localised_name = {"turrets.upgrade", {"entity-name." .. base.name}, i}
-			turret.attack_parameters.range = turret.attack_parameters.range+TURRET_RANGE_BOOST_SUMS[i]
-			if turret.attack_parameters.type == "beam" and turret.attack_parameters.ammo_type then
-				turret.attack_parameters.ammo_type.action.action_delivery.max_length = turret.attack_parameters.range
-			end
-			--[[
-			if base.name == "shockwave-turret" then
-				turret.attack_parameters.range = base.attack_parameters.range+math.ceil(TURRET_RANGE_BOOST_SUMS[i]/2)
-			end
-			--]]
-			turret.hidden = true
-			if not turret.flags then turret.flags = {} end
-			table.insert(turret.flags, "hidden")
-			--table.insert(turret.flags, "hide-from-bonus-gui")
-			turret.order = "z"
-			turret.placeable_by = {item=base.minable.result, count = 1}
-			if MAKE_ITEMS then
-				--turret.minable.result = turret.name can work without
-			end
-			--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
-			table.insert(turrets, turret)
-			
-			if MAKE_ITEMS then
-				local item = util.table.deepcopy(data.raw.item[base.minable.result])
-				item.name = turret.name
-				if not item.flags then item.flags = {} end
-				table.insert(item.flags, "hidden")
-				table.insert(item.flags, "hide-from-bonus-gui")
-				item.localised_name = base.localised_name--turret.localised_name
-				item.order = "z"
-				item.place_result = turret.name
-				item.hidden = true
-				--log("Adding ranged L" .. i .. " for " .. base.name .. ", range = R+" .. TURRET_RANGE_BOOST_SUMS[i])
-				table.insert(items, item)
+			local status,err = pcall(function() createRangeTurret(base, i) end)
+			if not status then
+				log("Encountered error trying to make range turret " .. base.type .. " / " .. base.name .. ": " .. serpent.block(err))
 			end
 		end
 	end

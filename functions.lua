@@ -399,6 +399,7 @@ end
 
 function Modify_Power(obj, factor)
 	local pow = obj.max_power
+	if not pow then return end
 	if pow == nil then return end
 	local num = string.sub(pow, 1, -3)
 	local endmult = string.sub(pow, -2, -1)
@@ -776,7 +777,7 @@ function removeTurretFromCache(egcombat, turret)
 	--game.print(serpent.block(entry))
 	if not entry then --[[game.print("Turret " .. turret.name .. " had no entry?!")--]] return end --this is normal when rangeboost is enabled
 	entity_list[turret.unit_number] = nil
-	if entry.logistic then
+	if entry.logistic and entry.logistic.valid then
 		local inv = entry.logistic.get_inventory(defines.inventory.chest)
 		for name,count in pairs(inv.get_contents()) do
 			entry.logistic.surface.spill_item_stack(entry.logistic.position, {name=name, count=count}, true)

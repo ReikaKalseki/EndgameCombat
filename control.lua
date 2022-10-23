@@ -8,7 +8,8 @@ require "rangeturrets"
 require "turretai"
 require "shield-domes"
 require "orbital-strikes"
-require "turret-alerts"
+require ("turret-alerts")
+initializeAlerts(true, true)
 
 require "tracker-hooks"
 
@@ -554,10 +555,14 @@ end
 local function onEntityAttacked(event)	
 	local entity = event.entity
 	local source = event.cause
-	local egcombat = global.egcombat	
+	local egcombat = global.egcombat
 	
-	if source and source.valid and source.type == "unit" then
-		event.final_damage_amount = event.final_damage_amount*source.get_health_ratio()
+	if source and source.valid then
+		if source.type == "unit" then
+			event.final_damage_amount = event.final_damage_amount*source.get_health_ratio()
+		elseif entity and source.name == "lightning-turret" then
+			doLightningTurretSplashDamage(source, entity)
+		end
 	end
 	
 	if string.find(entity.name, "shield-dome-edge", 1, true) then

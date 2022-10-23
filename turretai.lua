@@ -36,10 +36,18 @@ end
 
 function getLightningRechargeTime(force)
 	local lvl = 1
-	while force.technologies["lightning-turret-charging-" .. lvl].researched and lvl < 5 do
+	while lvl <= LIGHTNING_TURRET_RECHARGE_TECH_COUNT and force.technologies["lightning-turret-charging-" .. lvl].researched do
 		lvl = lvl+1
 	end
-	return LIGHTNING_TURRET_RECHARGE_TIME-lvl*LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH
+	return LIGHTNING_TURRET_RECHARGE_TIME-(lvl-1)*LIGHTNING_TURRET_RECHARGE_TIME_REDUCTION_PER_TECH
+end
+
+function getLightningTurretSplashFactor(force)
+	local lvl = 1
+	while lvl <= #LIGHTNING_TURRET_SPLASH_FACTORS and force.technologies["lightning-turret-splash-" .. lvl].researched do
+		lvl = lvl+1
+	end
+	return lvl > 0 and LIGHTNING_TURRET_SPLASH_FACTORS[lvl] or 0
 end
 
 function rechargeLightningTurret(egcombat, entity)
@@ -47,6 +55,25 @@ function rechargeLightningTurret(egcombat, entity)
 		egcombat.lightning_turrets[entity.force.name][entity.unit_number].last_fire_time = game.tick
 		egcombat.lightning_turrets[entity.force.name][entity.unit_number].last_fire_direction = entity.orientation
 	end
+end
+
+local splashing = false
+
+function doLightningTurretSplash(source, target)
+	if splashing then return end
+	splashing = true
+	local factor = getLightningTurretSplashFactor(force)
+	source.force.print("Lightning turret splash damage: " .. factor)
+	if factor > 0 then
+		for _,e in pairs(source.surface.find_enemy_units(target.position, 8, source.force)) do
+			local dist = getDistance(e, target)
+			local f = factor*LIGHTNING_TURRET_DAMAGE/(dist*dist)
+			if f > 0 then
+				e.damage(f, source.force, "electric", source)
+			end
+		end
+	end
+	splashing = false
 end
 
 function tickLightningTurret(egcombat, entry, tick)

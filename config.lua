@@ -1,5 +1,7 @@
 Config = {}
 
+if not settings then return end
+
 Config.spacePlasma = settings.startup["space-plasma"].value--false
 
 Config.spaceNukes = settings.startup["space-nukes"].value--false
@@ -32,6 +34,14 @@ Config.plasticShockwave = settings.startup["plastic-shockwave"].value
 Config.artilleryRange = settings.startup["artillery-range"].value
 
 Config.satellitePerOrbitalRadar = settings.startup["orbital-radar-each"].value
+
+Config.alerts = {}
+
+Config.alertSounds = {
+	settings.startup["enable-alert-sound-immediate"].value,
+	settings.startup["enable-alert-sound-critical"].value,
+	settings.startup["enable-alert-sound-low"].value
+}
 
 --Config.orbitalLaunches = settings.startup["orbital-launches"].value
 

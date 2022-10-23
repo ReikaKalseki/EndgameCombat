@@ -39,4 +39,5 @@ require("prototypes.research.defense")
 require("prototypes.research.turrets")
 require("prototypes.research.upgrades")
 
-require("turret-alerts")
+require ("turret-alerts")
+initializeAlerts(true, false)

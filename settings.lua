@@ -145,3 +145,6 @@ data:extend({
             order = "r",
         },
 })
+
+require ("turret-alerts")
+initializeAlerts(false, false)

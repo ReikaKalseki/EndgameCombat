@@ -282,7 +282,7 @@ stream.action = {
           {
             {
               type = "damage",
-              damage = { amount = 8, type = "acid" },
+              damage = { amount = 8, type = "turret-acid" },
               apply_damage_to_trees = false
             }
           }

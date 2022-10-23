@@ -164,5 +164,5 @@ data:extend({
 		weight = 10e10,
 		guns = {},
 		inventory_size = 10
-	}
+	},
 })
