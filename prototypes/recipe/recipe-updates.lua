@@ -59,7 +59,7 @@ if data.raw.item["ruby-5"] then
 	local lens2,lensrec2 = createBasicCraftingItem("turret-lens-2", "__EndgameCombat__/graphics/icons/turret-lens-2.png", {{"sapphire-5", 75}, {"diamond-5", 40}}, 20)
 	local lensD0,lensrecD0 = createBasicCraftingItem("dome-lens-0", "__EndgameCombat__/graphics/icons/dome-lens-0.png", {{"emerald-5", 100}}, 10)
 	local lensD1,lensrecD1 = createBasicCraftingItem("dome-lens-1", "__EndgameCombat__/graphics/icons/dome-lens-1.png", {{"topaz-5", 50}}, 20)
-	local lensD2,lensrecD2 = createBasicCraftingItem("dome-lens-2", "__EndgameCombat__/graphics/icons/dome-lens-2.png", {{"sapphire-5", 40}}, 40)
+	local lensD2,lensrecD2 = createBasicCraftingItem("dome-lens-2", "__EndgameCombat__/graphics/icons/dome-lens-2.png", {{"sapphire-5", 40}, {"diamond-5", 10}}, 40)
 	if data.raw.item["silver-plate"] then
 		table.insert(lensrec0.ingredients, {"gold-plate", 12})
 		table.insert(lensrec0.ingredients, {"silver-plate", 30})
@@ -99,9 +99,9 @@ if data.raw.item["ruby-5"] then
 	table.insert(data.raw.technology["plasma-turrets"].prerequisites, "gem-processing-2")
 	table.insert(data.raw.technology["lightning-turrets"].prerequisites, "gem-processing-2")
 	
-	table.insert(data.raw.technology["laser-turret"].effects, {type = "unlock-recipe", recipe = lensrec0.name})
-	table.insert(data.raw.technology["plasma-turrets"].effects, {type = "unlock-recipe", recipe = lensrec1.name})
-	table.insert(data.raw.technology["lightning-turrets"].effects, {type = "unlock-recipe", recipe = lensrec2.name})
+	table.insert(data.raw.technology["shield-domes"].effects, {type = "unlock-recipe", recipe = lensrecD0.name})
+	table.insert(data.raw.technology["shield-domes"].effects, {type = "unlock-recipe", recipe = lensrecD1.name})
+	table.insert(data.raw.technology["shield-domes"].effects, {type = "unlock-recipe", recipe = lensrecD2.name})
 	
 	table.insert(data.raw.recipe["small-shield-dome"].ingredients, {lensD0.name, 2})
 	table.insert(data.raw.recipe["medium-shield-dome"].ingredients, {lensD1.name, 5})
