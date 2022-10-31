@@ -149,7 +149,7 @@ local function createShieldDome(name, params)
 			{
 			  type = "electric",
 			  buffer_capacity = params.energy_per_point*20 .. "kJ", --20 ticks worth of recharge
-			  input_flow_limit = params.max_recharge .. "MW",
+			  input_flow_limit = (params.max_recharge*2.5) .. "MW",
 			  drain = params.idle_drain .. "MW",
 			  usage_priority = "primary-input"
 			},
@@ -378,12 +378,12 @@ local function createShieldDome(name, params)
 			--icon = "__EndgameCombat__/graphics/icons/.png",
 			icon_size = 32,
 			flags = {"not-on-map", "placeable-off-grid"},
-			duration = 300,
+			duration = 180,
 			fade_in_duration = 60,
 			fade_away_duration = 60,
 			spread_duration = 10,
 			start_scale = 1,
-			end_scale = 2,
+			end_scale = 1,
 			cyclic = false,
 			affected_by_wind = false,
 			movement_slow_down_factor = 1,
@@ -393,14 +393,14 @@ local function createShieldDome(name, params)
 			{
 			  filename = "__EndgameCombat__/graphics/entity/dome/reboot-" .. name .. ".png",
 			  priority = "high",
-			  width = 192,
-			  height = 192,
+			  width = 170,
+			  height = 140,
 			  apply_projection = false,
-			  frame_count = 28,
-			  line_length = 7,
+			  frame_count = 16,
+			  line_length = 16,
 			  shift = {0, -1},
 			  scale = 4*params.radius/SHIELD_DOMES["small"].radius,
-			  animation_speed = 0.5,
+			  animation_speed = 1,
 			  blend_mode = "additive"
 			},
 		},

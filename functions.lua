@@ -638,6 +638,35 @@ function removeLightningTurret(egcombat, entity)
 	end
 end
 
+local function getDomeCircuitPosition(turret)
+	return {turret.position.x-0.125, turret.position.y+0.25}
+end
+
+local function scanForDomeCircuits(turret)
+	local p2 = getDomeCircuitPosition(turret)
+	local scan = {{p2[1]-0.5, p2[2]-0.5}, {p2[1]+0.5, p2[2]+0.5}}
+	return turret.surface.find_entities_filtered{name = "dome-circuit-connection", force = turret.force, area = scan}
+end
+
+local function getOrCreateDomeCircuitConnection(turret, force, preventCreate)
+	local surface = turret.surface
+	local pos = turret.position
+	local has = scanForDomeCircuits(turret)
+	--force.print(serpent.block(has))
+	if has and #has > 0 then
+		if #has == 1 then
+			return has[1]
+		else
+			for _,e in pairs(has) do
+				e.destroy()
+			end
+		end
+	end
+	if preventCreate then return nil end
+	local ret = surface.create_entity({name="dome-circuit-connection", position = getDomeCircuitPosition(turret), force=force})
+	return ret
+end
+
 function checkAndCacheTurret(egcombat, turret, force)
 	if string.find(turret.name, "shockwave-turret", 1, true) then
 		if egcombat.shockwave_turrets[force.name] == nil then
@@ -669,7 +698,7 @@ function checkAndCacheTurret(egcombat, turret, force)
 			egcombat.shield_domes[force.name] = {}
 		end
 		local idx = string.sub(turret.name, 1, -string.len("shield-dome")-2) --is the name
-		local conn = turret.surface.create_entity({name="dome-circuit-connection", position = {turret.position.x-0.125, turret.position.y+0.25}, force=force})
+		local conn = getOrCreateDomeCircuitConnection(turret, force)
 		conn.operable = false
 		egcombat.shield_domes[force.name][turret.unit_number] = {dome=turret, circuit = conn, delay = 60, index = idx, current_shield = 0, strength_factor = getCurrentDomeStrengthFactor(force), cost_factor = getCurrentDomeCostFactor(force), edges = {}}
 		--game.print("Cannon turret @ " .. turret.position.x .. ", " .. turret.position.y)

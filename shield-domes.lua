@@ -19,7 +19,9 @@ local function createAndAddEdgeForAttack(egcombat, entry, r, tick, attacker)
 			egcombat.shield_dome_edges[attacker.unit_number] = entry2
 			attacker.set_command({type=defines.command.attack, target=edge, distraction=defines.distraction.none})
 		elseif attacker.type == "projectile" or attacker.type == "stream" then
+			--this is not the main way of handling spitters; they preferentially target the edges; this is just for ones that make it through
 			--entry.dome.surface.create_entity({name="acid-splash-purple", position = attacker.position, force=game.forces.neutral})
+			--game.print("Dome intercepting projectile " .. stream.name .. " @ " .. attacker.position.x .. ", " .. attacker.position.y)
 			attackShieldDome(entry, 25) --cannot get actual damage, so go for 25 (normally 10/20/30/50 for S/M/Bg/Bhm)
 			attacker.destroy()
 		end
@@ -200,17 +202,20 @@ function tickShieldDome(egcombat, entry, tick)
 			end
 		end
 	end
-	local maxe = getShieldDomeStrength(entry)
+	local maxe = getShieldDomeStrength(entry) --this runs every tick!!
 	if entry.current_shield < maxe then
 		local cost = getShieldDomeRechargeCost(entry)
-		local cycles = math.min(maxe-entry.current_shield, math.floor(entry.dome.energy/cost))
-		if cycles > 1 then
-			entry.dome.energy = entry.dome.energy-cost*cycles
+		local cycles = math.min(maxe-entry.current_shield, math.floor(math.min(entry.dome.energy/cost, SHIELD_DOMES[entry.index].max_recharge*1000000/(60*cost/1000))))
+		--game.print("Recharge ticking " .. entry.index .. " dome @ " .. entry.dome.position.x .. "," .. entry.dome.position.y .. " @ " .. game.tick .. ": " .. entry.dome.energy .. " & " .. SHIELD_DOMES[entry.index].max_recharge*1000000/60 .. " of " .. cost .. " > " .. cycles)
+		if cycles >= 1 then
+			entry.dome.energy = math.max(1, entry.dome.energy-cost*cycles)
 			entry.current_shield = entry.current_shield+cycles
 			if entry.rebooting and entry.current_shield >= getShieldDomeRebootThreshold(entry)*getShieldDomeStrength(entry) then
 				entry.rebooting = false
 				--game.print("Shields back online @ " .. entry.current_shield)
 			end
+		else
+			--game.print("Dome " .. entry.index .. " @ " .. entry.dome.position.x .. "," .. entry.dome.position.y .. " @ " .. game.tick .. " insufficient energy to charge: " .. entry.dome.energy .. " & " .. SHIELD_DOMES[entry.index].max_recharge*1000000/0.06 .. " of " .. cost)
 		end
 	end
 	if entry.dome.energy == 0 then
