@@ -1,4 +1,41 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.148.1
+Date: Oct 31 2022
+	- Added options for controlling each possible turret alert
+	- Added options to disable sound of each tier of turret alert
+	- Added lightning turret splash damage and tech to boost its effect
+	- Moved acid capsule, turret, etc from vanilla "acid" damage type to new "caustic" type
+	- Added invulnerability to caustic damage to most defence or perimeter structures, to prevent acid turrets causing massive friendly-fire damage
+	- Removed acid invulnerability from walls
+	- Fixed locale of biter flesh
+	- Added recipe to resolidify lye back to hydroxide
+	- Changed focusing lens recipes to not be recursive, and fixed some intermod issues
+	- Added new focusing lenses for shield domes, to utilize the remaining colors of BobMods gems
+	- Added other BobMods items to some recipes
+	- Fixed shield dome circuit connection duplication
+	- Added new much-improved "rebooting" animation to shield domes
+	- Fixed recharging shield domes being low-power, often resulting in flicker
+---------------------------------------------------------------------------------------------------
+Version: 1.144.1
+Date: Oct 7 2022
+	- Added many fixes for prototypes with nulled values for things like energy sources or emissions thereof
+	- Fixed duplication of turret logistics chests
+	- Technology effects now have icons
+	- Added "focusing lenses" to laser, plasma, and lightning turrets, to integrate BobMods gems if present
+	- Fix crated ammo compatibility with some modded ammo items
+	- Added "lye" fluid, made from sodium hydroxide, if that item is present; usable as "acid" in acid capsule and turret
+	- Added BobMods lead to supercavitating ammo if present, but cheapen other ingredients
+	- Fixed potential issues with destroyer satellite functionality
+	- Injured biters now deal less damage, in a linear relationship
+	- Added BobMods blue circuits to lightning turrets if present
+	- Excluded more technical turrets from range boost system
+	- Fixed upgrade techs not applying to plasma turrets
+	- Made walls immune to acid to prevent destruction from acid turrets
+	- Fixed spam of technical "-rangeboost-" turrets from most GUIs
+	- Added conversion recipe from spiked wall to reinforced spiked wall
+	- Added conversion recipe from explosive to napalm rockets
+	- Cannon turrets now also prioritize NauvisDay wall nukers
+---------------------------------------------------------------------------------------------------
 Version: 1.105.1
 Date: Apr 28 2021
 	- Update to 1.1

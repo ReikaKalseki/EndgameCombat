@@ -174,7 +174,7 @@ function tickShieldDome(egcombat, entry, tick)
 				entry.delay = math.min(60, entry.delay+10)
 			end
 		end
-		local n = entry.rebooting and 20 or 30
+		local n = entry.rebooting and 140 or 30
 		if tick%n == 0 then
 			if entry.rebooting then
 				entry.dome.surface.create_trivial_smoke({name="shield-dome-rebooting-effect-" .. entry.index, position = entry.dome.position, force=entry.dome.force.name})
