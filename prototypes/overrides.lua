@@ -243,8 +243,20 @@ if data.raw.car["heli-entity-_-"] then
 		if string.find(name, "heli", 1, true) then
 			--error(serpent.block(car.consumption .. " >> " .. string.sub(car.consumption, 1, -3) .. " >>> " .. tonumber(string.sub(car.consumption, 1, -3))))
 			if car.guns and #car.guns > 0 then --skip technical entities
+				table.remove(car.guns, 1) --remove the basic flamethrower
 				table.insert(car.guns, "flamethrower-2")
+				car.equipment_grid = "helicopter-equipment-grid"
 			end
 		end
 	end
+	
+	data:extend({
+	{
+		type = "equipment-grid",
+		name = "helicopter-equipment-grid",
+		width = 10,
+		height = 7,
+		equipment_categories = {"armor"}
+	}
+	})
 end
