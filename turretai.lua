@@ -63,7 +63,7 @@ function doLightningTurretSplash(source, target)
 	if splashing then return end
 	splashing = true
 	local factor = getLightningTurretSplashFactor(force)
-	source.force.print("Lightning turret splash damage: " .. factor)
+	--source.force.print("Lightning turret splash damage: " .. factor)
 	if factor > 0 then
 		for _,e in pairs(source.surface.find_enemy_units(target.position, 8, source.force)) do
 			local dist = getDistance(e, target)

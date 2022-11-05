@@ -78,7 +78,7 @@ tank.friction = 2e-3
 tank.rotation_speed = 0.005
 tank.weight = 40000
 tank.inventory_size = 80
-tank.guns = { "better-tank-cannon", "better-submachine-gun" }
+tank.guns = { "better-tank-cannon", "better-submachine-gun", "flamethrower-2"}
 
 --rerouteSprite(tank.animation)
 
