@@ -408,6 +408,7 @@ local function onFinishedResearch(event)
 		egcombat.range_cache[force].turret = lvl
 	end
 	if string.find(tech, "shockwave-range", 1, true) then
+		local lvl = tonumber(string.match(tech, "%d+"))
 		if not egcombat.range_cache[force] then egcombat.range_cache[force] = {} end
 		egcombat.range_cache[force].shockwave = lvl
 	end

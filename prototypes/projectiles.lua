@@ -296,11 +296,26 @@ data:extend({
                   {
                     type = "damage",
                     damage = {
-					amount = 600, type = "explosion", --was 400, then 600, this only
-					amount = 300, type = "impact",
-					amount = 200, type = "fire",
-					amount = 100, type = "physical"
-					}
+                      amount = 600, type = "explosion", --was 400, then 600, this only
+                    }
+                  },
+                  {
+                    type = "damage",
+                    damage = {
+                      amount = 300, type = "impact",
+                    }
+                  },
+                  {
+                    type = "damage",
+                    damage = {
+                      amount = 200, type = "fire",
+                    }
+                  },
+                  {
+                    type = "damage",
+                    damage = {
+                      amount = 100, type = "physical"
+                    }
                   },
                   {
                     type = "create-entity",

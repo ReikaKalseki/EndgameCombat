@@ -61,6 +61,6 @@ data:extend({{
 	icon = "__EndgameCombat__/graphics/icons/biter-nest-spawn.png",
 	icon_size = 64,
 	subgroup = "virtual-signal-special",
-	order = name,
+	order = "orbital-detect-nest-spawn",
 	hidden = true,
 }})
