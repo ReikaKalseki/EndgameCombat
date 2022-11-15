@@ -225,9 +225,14 @@ if data.raw.item["sodium-hydroxide"] then
 	table.insert(data.raw["fluid-turret"]["acid-turret"].attack_parameters.fluids, {type = "lye", damage_modifier = 1.4})
 	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = lye.name})
 	table.insert(data.raw.technology["electrolysis-2"].effects, {type = "unlock-recipe", recipe = "lye-drying"})
+	markForProductivityAllowed(lye.name);
 end
 
-table.insert(data.raw["lab"]["lab"].inputs,"biter-flesh")
+for name,lab in pairs(data.raw["lab"]) do
+	if not string.find(name, "module", 1, true) then
+		table.insert(lab.inputs, "biter-flesh")
+	end
+end
 
 table.insert(data.raw.technology["military-3"].effects, {type = "unlock-recipe", recipe = "supercavitating-bullet-magazine"})
 

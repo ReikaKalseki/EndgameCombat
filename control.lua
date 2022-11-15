@@ -215,7 +215,7 @@ script.on_init(function()
 	--setupTrackers()
 end)
 
-script.on_configuration_changed(function()
+script.on_configuration_changed(function(data)
 	initGlobal(true)
 	--setupTrackers()
 	rebuildTurretCache(global.egcombat)
@@ -467,7 +467,7 @@ script.on_event(defines.events.on_pre_build, function(event)
 	local player = game.players[event.player_index]
 	local stack = player.cursor_stack
 	
-	if not (stack.valid_for_read) then
+	if not (stack and stack.valid_for_read) then
 		return
 	end
 	
@@ -490,7 +490,7 @@ local function onEntityAdded(event)
 	trackEntityAddition(entity, egcombat)
 	
 	if entity.name == "orbital-manual-target" or entity.name == "orbital-scanner" then
-		game.players[event.player_index].insert{name = entity.name} --not placeable by robot, so can assume player
+		placer.insert{name = entity.name}
 		entity.destroy()
 		return
 	end
@@ -510,7 +510,7 @@ local function onEntityAdded(event)
 		local orig_name = entity.name
 		local turret = trackNewTurret(egcombat, entity)
 		if turret.name ~= orig_name then
-			script.raise_event(defines.events.script_raised_built, {entity = turret, player_index = event.player_index, stack = event.stack})
+			script.raise_event(defines.events.script_raised_built --[[@as uint]], {entity = turret, player_index = event.player_index, stack = event.stack})
 		end
 		return
 	end

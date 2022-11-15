@@ -36,12 +36,12 @@ Date: Oct 7 2022
     - Added conversion recipe from explosive to napalm rockets
     - Added conversion recipe from spiked wall to reinforced spiked wall
     - Added many fixes for prototypes with nulled values for things like energy sources or emissions thereof
+    - Technology effects now have icons
   Misc Changes:
     - Cannon turrets now also prioritize NauvisDay wall nukers
     - Excluded more technical turrets from range boost system
     - Injured biters now deal less damage, in a linear relationship
     - Made walls immune to acid to prevent destruction from acid turrets
-    - Technology effects now have icons
 ---------------------------------------------------------------------------------------------------
 Version: 1.101.105
 Date: Apr 28 2021
@@ -81,11 +81,11 @@ Date: Jul 28 2020
     - Fixed turret logi chests sometimes surviving the removal of the parent entity or being placed wrong
   New Features:
     - Added setting to add major AoE damage to artillery shell impact
+    - Shield domes now have new modern graphics
   Misc Changes:
     - Changed uranium costs in some recipes
     - Moved shield dome circuit connection relative to dome
     - Redesigned plasma laser defence equipment, which had been unchanged since 2015
-    - Shield domes now have new modern graphics
     - Strongly reduced artillery logi request
   Removed Features:
     - Removed 2015-era train mass increases
@@ -102,14 +102,14 @@ Version: 1.018.10
 Date: Jun 29 2020
   New Features:
     - Added option to buff green worms similar to the old one to buff green biters
+    - Plasma turrets now have aiming and shutdown sounds
   Rebalancing:
     - Rebalanced supercavitating ammo damage profile
+    - Reduced some tech costs in raw pack count
   Misc Changes:
     - Changed some ammo recipes to better reflect a cheap/expensive recipes split
     - Improved code performance
     - Made later game range techs more gated
-    - Plasma turrets now have aiming and shutdown sounds
-    - Reduced some tech costs in raw pack count
     - T2 flamethrower and napalm shells now do a unique kind of damage, bypassing normal fire resistances unless that resistance is 100%
     - Tweaked turret targeting based on biter health to better allocate turrets in mixed type attack waves
 ---------------------------------------------------------------------------------------------------
@@ -121,9 +121,10 @@ Date: Jun 15 2020
 ---------------------------------------------------------------------------------------------------
 Version: 1.018.5
 Date: Jun 11 2020
+  New Features:
+    - Plasma turrets now have new unique graphics
   Misc Changes:
     - Made concussion turret graphics more unique but more similar to modern gun turret style
-    - Plasma turrets now have new unique graphics
 ---------------------------------------------------------------------------------------------------
 Version: 1.018.2
 Date: Jun 7 2020
@@ -272,19 +273,21 @@ Date: Sep 2 2018
     - Added option for more intelligent "low ammo" warnings, based on dealable damage and its relation to average enemy health at that evolution factor
   Rebalancing:
     - Rebalanced technology dependencies and recipes, with a focus on BobMods integration
+    - Reduced concussion turret damage from 5x to 2x
   Misc Changes:
     - Brought incendiary uranium ammo more in line with vanilla ammo DPS
     - Made concussion turrets available much earlier
-    - Reduced concussion turret damage from 5x to 2x
     - Split incendiary ammo tech into pre and post uranium
     - T2 Flamethrower now requires Advanced Electronics 2
 ---------------------------------------------------------------------------------------------------
 Version: 1.016.120
 Date: Aug 20 2018
+  New Features:
+    - Redesigned robot and electric pole defence techs, they now have proper tiered and tech-level-dependent behavior
+  Rebalancing:
+    - Reduced reinforced-only wall strength from 4000 to 2000, and made it cheaper
   Misc Changes:
     - Improved orbital strike performance
-    - Redesigned robot and electric pole defence techs, they now have proper tiered and tech-level-dependent behavior
-    - Reduced reinforced-only wall strength from 4000 to 2000, and made it cheaper
     - Trains and cliffs are now properly radiation-immune
 ---------------------------------------------------------------------------------------------------
 Version: 1.016.115
@@ -351,7 +354,6 @@ Date: Jan 30 2018
 Version: 1.015.46
 Date: Sep 3 2017
   Bugfixes:
-    - Added system to clean up alien tissue
     - Fixed crated ammo being used as an intermediate recipe
     - Fixed particle overload and memory leak when killing mass quantities of biters with orbital strikes or shockwave turrets
     - Fixed some potential script breakage with shockwave turret and domes
@@ -361,10 +363,11 @@ Date: Sep 3 2017
     - Added more radiation resistances
     - Added new orbital strike VFX
     - Added orbital scanner to reveal map area and allow firing orbital weaponry via the map
+    - Added system to clean up alien tissue
     - Added turret logistics
+    - Domes now have tiered structure health
   Misc Changes:
     - "Space plasma" option now decreases space science cost of orbital destroyer
-    - Domes now have tiered structure health
     - Orbital strikes now automatically chain if enemy structures or units continue to exist nearby
     - Significantly increased plasma turret power throughput and slightly increased buffer size
 ---------------------------------------------------------------------------------------------------
@@ -398,10 +401,10 @@ Date: Jul 25 2017
     - Added crated ammo
     - Added more radiation resistances to entities
     - Added several more options
-  Misc Changes:
-    - Biter flesh now decomposes in inventories
     - Custom techs now have better effect description
     - Plasma turrets now have custom sounds with laser beam turrets mod
+  Misc Changes:
+    - Biter flesh now decomposes in inventories
     - Settings now use locale
     - Tweaked some recipes and tech costs
 ---------------------------------------------------------------------------------------------------
@@ -412,10 +415,9 @@ Date: Jul 14 2017
 ---------------------------------------------------------------------------------------------------
 Version: 0.015.8
 Date: Jul 2 2017
-  Bugfixes:
+  New Features:
     - Added alien tissue drops
     - Added configuration system with integration into the native mod settings menu and several config options to control things like progression gating and alien tissue behavior
-  New Features:
     - Added turret range boost techs
   Removed Features:
     - Removed T2 night vision equipment
@@ -426,16 +428,16 @@ Date: Jun 20 2017
     - Added new turret sprites and icons
     - Added rocket versions of all custom cannon shells
     - Added turret healing techs
+    - Plasma turrets now have compatibility with laser beam turret mod and a custom beam attack
   Rebalancing:
     - Rebalanced ammo damage
+    - Reduced Mk3 power armor equipment grid size
   Misc Changes:
     - Cannon turret now has a unique ammo item
     - Changed T2 night vision colors
     - Changed all use of uranium to be vanilla instead of UraniumPower
     - Made concussion turrets cheaper and earlier game
-    - Plasma turrets now have compatibility with laser beam turret mod and a custom beam attack
     - Redesigned all tech costs to match 0.15 styling and science pack set
-    - Reduced Mk3 power armor equipment grid size
     - Update to 0.15
   Removed Features:
     - Removed bullet upcrafting due to vanilla recipe changes
@@ -450,9 +452,9 @@ Date: Oct 28 2016
     - Added neutron bomb shell using UraniumPower materials
     - Added radiation capsule
     - Added recipe to upcraft yellow ammo into red
+    - Plasma turrets now have custom sound
   Misc Changes:
     - Mk3 power armor now comes with a 40 slot inventory bonus
-    - Plasma turrets now have custom sound
     - Update to 0.14
 ---------------------------------------------------------------------------------------------------
 Version: 0.012.3

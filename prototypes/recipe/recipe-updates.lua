@@ -80,6 +80,13 @@ if data.raw.item["ruby-5"] then
 		end
 		table.insert(lensrec2.ingredients, {"tungsten-carbide", 12})
 		table.insert(lensrecD2.ingredients, {"tungsten-plate", 50})
+
+		markForProductivityAllowed(lensrec0);
+		markForProductivityAllowed(lensrec1);
+		markForProductivityAllowed(lensrec2);
+		markForProductivityAllowed(lensrecD0);
+		markForProductivityAllowed(lensrecD1);
+		markForProductivityAllowed(lensrecD2);
 	end
 	lens0.stack_size = 10
 	lens1.stack_size = 10
@@ -225,9 +232,27 @@ else
 	table.insert(data.raw["technology"]["lightning-turrets"].prerequisites, "electric-energy-distribution-2")
 end
 
-if data.raw.item["electronic-components"] then
-	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"electronic-components", 30})
+if data.raw.item["insulated-cable"] then
+	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"insulated-cable", 100})
 	
 	table.insert(data.raw.recipe["small-shield-dome"].ingredients, {"insulated-cable", 30})
 	table.insert(data.raw.recipe["medium-shield-dome"].ingredients, {"gilded-copper-cable", 200})
+end
+
+markForProductivityAllowed("sticky-cheap");
+markForProductivityAllowed("sticky-expensive");
+markForProductivityAllowed("biter-fuel");
+markForProductivityAllowed("biter-cooking");
+
+if data.raw.item["bp-biter-egg"] then
+	data:extend({{
+		type = "recipe",
+		name = "biter-egg-decomposition",
+		enabled = "true",
+		ingredients = {{"bp-biter-egg", 1}},
+		energy_required = 1,
+		category = "crafting",
+		result = "biter-flesh",
+		result_count = 6,
+	}});
 end

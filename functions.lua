@@ -731,13 +731,13 @@ local function scanForLogiChests(turret)
 	return turret.surface.find_entities_filtered{name = "turret-logistic-interface", force = turret.force, area = scan}
 end
 
-local function destroyAllLogiChests(turret)
+function destroyAllLogiChests(turret)
 	local has = scanForLogiChests(turret)
 	for _,e in pairs(has) do
 		local inv = e.get_inventory(defines.inventory.chest)
 		inv.sort_and_merge()
 		for name,amt in pairs(inv.get_contents()) do
-			turret.surface.spill_item_stack(pos, {name = name, count = amt}, true, turret.force, false)
+			turret.surface.spill_item_stack(e.position, {name = name, count = amt}, true, turret.force, false)
 		end
 		e.destroy()
 	end

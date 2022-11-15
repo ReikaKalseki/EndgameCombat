@@ -1,4 +1,29 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.152.1
+Date: Nov 15 2022
+	- Further code cleanup, fixing lightning turret splash damage again, turret logistic chests, and more
+	- Automated turret logistic requests will now request far less ammo if it is crated
+	- Added recipe to convert "Biter Power" mod eggs into alien tissue x6
+	- Added productivity support for sticky fluid, lye, biter cooking, and biter fuel
+	- Added productivity support to turret/dome lenses
+	- Added missing rocket control unit to neutron rocket ammo
+	- Fixed modded labs not accepting alien tissue
+	- Fixed script error with robot-placed orbital strike orders
+	- Fixed recipe code mistaking Krastorio for BobMods
+	- Replaced transistors in lightning turret recipe with insulated cable
+---------------------------------------------------------------------------------------------------
+Version: 1.151.1
+Date: Nov 5 2022
+	- Major code cleanup, and associated bugfixes, especially to shockwave range tech and lightning turret splash damage
+	- Hi-Ex cannon shells deal more damage
+---------------------------------------------------------------------------------------------------
+Version: 1.150.1
+Date: Nov 4 2022
+	- Added a larger equipment grid to helicopters
+	- Fixed guns on improved tank and helicopter
+	- Fixed T2 flamethrower not properly inheriting from the vanilla one
+	- Removed lightning turret splash damage debug print
+---------------------------------------------------------------------------------------------------
 Version: 1.148.1
 Date: Oct 31 2022
 	- Added options for controlling each possible turret alert

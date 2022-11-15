@@ -1,4 +1,6 @@
- data:extend(
+require "__DragonIndustries__.recipe"
+
+data:extend(
 {
     {
     type = "recipe",
@@ -138,6 +140,7 @@
 		ingredients =
 		{
 		  {"steel-plate", 10},
+		  {"rocket-control-unit", 1},
 		  {"processing-unit", 4},
 		  {"uranium-235", 12},
 		  {"explosives", 80},
@@ -150,6 +153,7 @@
 		ingredients =
 		{
 		  {"steel-plate", 10},
+		  {"rocket-control-unit", 4},
 		  {"processing-unit", 5},
 		  {"uranium-235", 20},
 		  {"explosives", 100},

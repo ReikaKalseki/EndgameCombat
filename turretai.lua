@@ -59,7 +59,7 @@ end
 
 local splashing = false
 
-function doLightningTurretSplash(source, target)
+function doLightningTurretSplashDamage(source, target)
 	if splashing then return end
 	splashing = true
 	local factor = getLightningTurretSplashFactor(source.force)
@@ -293,9 +293,14 @@ function handleTurretLogistics(egcombat, force)
 		if entry.turret.valid and entry.logistic then
 			local inv = entry.turret.get_inventory(defines.inventory.turret_ammo)
 			local logi = entry.logistic.get_inventory(defines.inventory.chest)
+			local has = 0
+			if inv[1] and inv[1].valid_for_read then
+				has = inv[1].count
+			end
 			if auto then
 				if inv[1] and inv[1].valid_for_read then
 					local amt = math.min(100, math.max(5, math.ceil(inv[1].prototype.stack_size/2)))
+					if stringEndsWith(inv[1].name, "-crate") then amt = 10 end
 					if entry.turret.type == "artillery-turret" then
 						amt = math.max(2, amt/4)
 					end
@@ -306,9 +311,13 @@ function handleTurretLogistics(egcombat, force)
 			end
 			if logi[1] and logi[1].valid_for_read and logi[1].prototype.magazine_size then --check if ammo
 				local n = logi[1].name
-				local add = inv.insert({name=n, count=logi[1].count, ammo=logi[1].ammo})
-				if add > 0 then
-					logi.remove({name=n, count=add})
+				local move = logi[1].count
+				if stringEndsWith(n, "-crate") then move = 10-has end
+				if move > 0 then
+					local add = inv.insert({name=n, count=move, ammo=logi[1].ammo})
+					if add > 0 then
+						logi.remove({name=n, count=add})
+					end
 				end
 			end
 		end

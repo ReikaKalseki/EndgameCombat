@@ -91,7 +91,7 @@ function getGlobal()
 	return global.egcombat
 end
 
-addMatcherTracker("shockwave-turret",		nil,	removeShockwaveTurret,		tickShockwaveTurrets,		"egcombat",	getGlobal())
-addMatcherTracker("lightning-turret",		nil,	removeLightningTurret,		tickLightningTurrets,		"egcombat",	getGlobal())
-addMatcherTracker("cannon-turret",			nil,	removeCannonTurret,			tickCannonTurrets,			"egcombat",	getGlobal())
-addMatcherTracker("shield-dome",			nil,	removeShieldDome,			tickShieldDomes,			"egcombat",	getGlobal())
+addMatcherTracker("shockwave-turret",		nil,	removeShockwaveTurret,		tickShockwaveTurrets)
+addMatcherTracker("lightning-turret",		nil,	removeLightningTurret,		tickLightningTurrets)
+addMatcherTracker("cannon-turret",			nil,	removeCannonTurret,			tickCannonTurrets)
+addMatcherTracker("shield-dome",			nil,	removeShieldDome,			tickShieldDomes)
