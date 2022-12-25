@@ -32,6 +32,7 @@ data:extend(
         ammo_category = "capsule",
         cooldown = 30,
         range = 0,
+	activation_type = "consume",
         ammo_type =
         {
           category = "capsule",
