@@ -13,6 +13,7 @@ local function addPlateToTurret(turret, item, amt)
 	local ing = data.raw.item[item]
 	if not ing then ing = data.raw.item[item .. "-plate"] end
 	if not ing then ing = data.raw.item[item .. "-alloy"] end
+	if not ing and mods["bztitanium"] then return end
 	if not ing then error("Could not find item " .. item .. " for turret " .. turret) end
 	table.insert(data.raw["recipe"][turret].ingredients,{ing.name, amt})
 	local tech = data.raw.technology[turret]
@@ -42,9 +43,17 @@ if data.raw.item["titanium-plate"] then
 	addPlateToTurret("lightning-turret", "tungsten", 10)
 	addPlateToTurret("plasma-turret", "titanium", 25)
   
-  table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{"copper-tungsten-alloy", 25})
-  table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "tungsten-processing")
-  table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "nitinol-processing")
+  local ing = data.raw.item["copper-tungsten-alloy"]
+  if not ing then ing = data.raw.item["tungsten-plate"] end
+  if ing then
+    table.insert(data.raw["recipe"]["power-armor-mk3"].ingredients,{ing.name, 25})
+  end
+  if data.raw.technology["tungsten-processing"] then
+    table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "tungsten-processing")
+  end
+  if data.raw.technology["nitinol-processing"] then
+    table.insert(data.raw.technology["power-armor-mk3"].prerequisites, "nitinol-processing")
+  end
 else
 	turretArmorSteel = 50
 	table.insert(data.raw["recipe"]["lightning-turret"].ingredients,{"steel-plate", 6})
