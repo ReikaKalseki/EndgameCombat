@@ -11,7 +11,11 @@ for name,base in pairs(data.raw.ammo) do
 		ammo.name = name .. "-crate"
 		ammo.magazine_size = AMMO_CRATE_CAPACITY
 		ammo.stack_size = 100 --halve the total stack size, but still 5x as much ammo per slot
-		ammo.localised_name = {"ammo-crate.name", {"item-name." .. name}}
+		if ammo.localised_name then
+			ammo.localised_name = {"ammo-crate.name", ammo.localised_name}
+		else
+			ammo.localised_name = {"ammo-crate.name", {"item-name." .. name}}
+		end
 		if ammo.icons then
 			table.insert(ammo.icons, {icon="__EndgameCombat__/graphics/icons/crated-ammo.png", icon_size = 32})
 		else
