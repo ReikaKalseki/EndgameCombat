@@ -438,6 +438,7 @@ end
 function doRetaliation(attacker, raw, target, type)
 	local force = target.force
 	if attacker.force == force then return end--friendly fire
+	if not attacker.is_entity_with_health then return end
 	local lvl = getRetaliationLevel(force, type)
 	if lvl <= 0 then return end
 	local amt = RETALIATIONS[type][lvl].func(raw, attacker.prototype.max_health)
