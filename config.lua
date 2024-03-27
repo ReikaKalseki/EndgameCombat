@@ -35,6 +35,8 @@ Config.artilleryRange = settings.startup["artillery-range"].value--[[@as number]
 
 Config.satellitePerOrbitalRadar = settings.startup["orbital-radar-each"].value--[[@as boolean]]
 
+Config.biterAlert = settings.startup["biter-nest-spawn-alert"].value--[[@as boolean]]
+
 Config.alerts = {}
 
 Config.alertSounds = {

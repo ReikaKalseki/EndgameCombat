@@ -127,6 +127,13 @@ data:extend({
             setting_type = "startup",
             default_value = 15.0,
             order = "r",
+        },
+        {
+            type = "bool-setting",
+            name = "biter-nest-spawn-alert",
+            setting_type = "startup",
+            default_value = true,
+            order = "r",
         },--[[
 		{
             type = "int-setting",

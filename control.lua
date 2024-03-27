@@ -637,7 +637,9 @@ script.on_event(defines.events.on_research_finished, onFinishedResearch)
 script.on_event(defines.events.on_biter_base_built, function(event)
 	if game.forces.player.technologies["orbital-destroyer"].researched then
 		for _,player in pairs(game.forces.player.connected_players) do
-			player.add_custom_alert(event.entity, {type = "virtual", name = "orbital-detect-nest-spawn"}, {"virtual-signal-name.orbital-detect-nest-spawn"}, true)
+			if Config.biterAlert == true then
+				player.add_custom_alert(event.entity, {type = "virtual", name = "orbital-detect-nest-spawn"}, {"virtual-signal-name.orbital-detect-nest-spawn"}, true)
+			end
 			player.force.chart(event.entity.surface, {{event.entity.position.x-16, event.entity.position.y-16}, {event.entity.position.x+16, event.entity.position.y+16}})
 			--player.play_sound{path=?, volume_modifier = 0.5}
 		end
